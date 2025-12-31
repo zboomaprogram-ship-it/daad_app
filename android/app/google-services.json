@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "454248900345",
+    "project_id": "daad-64fee",
+    "storage_bucket": "daad-64fee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454248900345:android:3bbdd5c69295a3bed7e428",
+        "android_client_info": {
+          "package_name": "com.example.daad_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDLs00ypinogjNfW0mT_7-7uaXsSXDd8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454248900345:android:abb05017bb80bf75d7e428",
+        "android_client_info": {
+          "package_name": "com.example.stock_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDLs00ypinogjNfW0mT_7-7uaXsSXDd8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
