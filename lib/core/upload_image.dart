@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:daad_app/core/widgets/app_text.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +92,8 @@ class ImagesPickerGrid extends StatelessWidget {
           children: [
             Positioned.fill(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r)
+,
                 child: _isBase64(img.data)
                     ? Image.memory(
                         base64Decode(img.data),
@@ -113,9 +116,10 @@ class ImagesPickerGrid extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const CircularProgressIndicator(),
-                        const SizedBox(height: 8),
-                        Text('جارٍ الرفع...',
-                            style: const TextStyle(color: Colors.white)),
+                          SizedBox(height: 8.h
+),
+                        const AppText(title:'جارٍ الرفع...',
+                          ),
                       ],
                     ),
                   ),
@@ -143,7 +147,8 @@ class ImagesPickerGrid extends StatelessWidget {
                     icon: Icons.swap_horiz,
                     onTap: () => onReplace(i),
                   ),
-                  const SizedBox(width: 6),
+                   SizedBox(width: 6.w
+),
                   _IconChip(
                     tooltip: 'حذف',
                     icon: Icons.delete,
@@ -163,7 +168,8 @@ class ImagesPickerGrid extends StatelessWidget {
         onTap: onAddPressed,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r)
+,
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: const Center(
@@ -195,12 +201,14 @@ class _IconChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.black54,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20.r)
+,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r)
+,
         child: Padding(
-          padding: const EdgeInsets.all(6.0),
+          padding:   EdgeInsets.all(6.0.r),
           child: Tooltip(
             message: tooltip,
             child: Icon(icon, color: Colors.white, size: 18),

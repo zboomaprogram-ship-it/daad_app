@@ -9,8 +9,8 @@ class RemoteConfigService {
   Future<void> ensureLoaded() async {
     try {
       await _rc.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 30),  // Increased timeout duration
-        minimumFetchInterval: const Duration(minutes: 10), // Increased fetch interval
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(seconds: 1),
       ));
 
       await _rc.setDefaults({
@@ -19,15 +19,12 @@ class RemoteConfigService {
         'home_banner_image': '',
       });
 
-      // Fetch and activate configurations
-      bool fetched = await _rc.fetchAndActivate();
-      if (fetched) {
-        print("Remote config activated successfully.");
-      } else {
-        print("Remote config not activated. Using default values.");
-      }
+      final bool updated = await _rc.fetchAndActivate();
+      print("🔥 RemoteConfig updated: $updated");
+      print("🔥 show_home_banner = ${_rc.getBool('show_home_banner')}");
+      print("🔥 home_banner_image = ${_rc.getString('home_banner_image')}");
     } catch (e) {
-      print("Error fetching remote config: $e");
+      print("❌ RemoteConfig error: $e");
     }
   }
 

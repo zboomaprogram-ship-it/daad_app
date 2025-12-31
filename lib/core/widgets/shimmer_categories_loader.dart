@@ -8,12 +8,14 @@ class ShimmerCategoriesLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100.h,
+      height: 100.h
+.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         reverse: true,
         itemCount: 6,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        separatorBuilder: (_, __) => SizedBox(width: 12.w
+.w),
         itemBuilder: (context, index) {
           return Column(
             children: [
@@ -21,8 +23,10 @@ class ShimmerCategoriesLoader extends StatelessWidget {
                 baseColor: Colors.grey.shade300,
                 highlightColor: Colors.grey.shade100,
                 child: Container(
-                  height: 70.h,
-                  width: 70.w,
+                  height: 70.h
+.h,
+                  width: 70.w
+.w,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -37,17 +41,21 @@ class ShimmerCategoriesLoader extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 8.h),
+              SizedBox(height: 8.h
+.h),
 
               Shimmer.fromColors(
                 baseColor: Colors.grey.shade300,
                 highlightColor: Colors.grey.shade100,
                 child: Container(
-                  height: 12.h,
-                  width: 45.w,
+                  height: 12.h
+.h,
+                  width: 45.w
+.w,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(6.r)
+,
                   ),
                 ),
               ),

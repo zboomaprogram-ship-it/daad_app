@@ -1,18 +1,43 @@
 import 'dart:ui';
-
+import 'package:daad_app/core/route_utils/route_utils.dart';
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/core/widgets/daad_image.dart';
+import 'package:daad_app/features/home/home_nav_bar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GlassBackButton extends StatelessWidget {
+  final IconData? icon;
+  final VoidCallback? onPressed;
+
+  const GlassBackButton({this.icon, this.onPressed});
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: GlassIconButton(
-        icon: Icons.arrow_back_ios_rounded,
-        onPressed: () => Navigator.of(context).pop(),
-      ),
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(8.r),
+          child: GlassIconButton(
+            icon: icon ?? Icons.arrow_back_ios_rounded,
+            onPressed: onPressed ?? () => _handleBackPress(context),
+          ),
+        ),
+      ],
     );
+  }
+
+  /// ✅ Smart back navigation - handles deep links
+  void _handleBackPress(BuildContext context) {
+    if (Navigator.of(context).canPop()) {
+      // Normal back navigation if there's a previous screen
+      Navigator.of(context).pop();
+    } else {
+      // If no previous screen (came from deep link), go to home
+      print('📱 No previous screen - navigating to home');
+      RouteUtils.pushAndPopAll(  HomeNavigationBar());
+    }
   }
 }
 
@@ -20,41 +45,97 @@ class GlassIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const GlassIconButton({
-    required this.icon,
+  const GlassIconButton({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          width: 40.w,
+          height: 40.h,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.45),
+                Colors.white.withOpacity(0.04),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: Colors.transparent, width: 1.w),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(12.r),
+              child: Icon(icon, color: Colors.white, size: 18.sp),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GlassImageButton extends StatelessWidget {
+  final String imagePath;
+  final VoidCallback onPressed;
+  final bool white;
+
+  const GlassImageButton({
+    required this.imagePath,
     required this.onPressed,
+    this.white = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          width: 40,
-          height: 40,
+          width: 40.w,
+          height: 40.h,
+          padding: EdgeInsets.all(2.r),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.transparent.withOpacity(0.2),
-                Colors.transparent.withOpacity(0.2),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
+            color: white
+                ? Colors
+                      .white // ← إذا white = true → خلفية بيضاء
+                : null, // خلاف ذلك → نستخدم التصميم الأصلي
+            gradient: white
+                ? null
+                : LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.45),
+                      Colors.white.withOpacity(0.04),
+                    ],
+                  ),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: Colors.transparent,
-              width: 1,
+              color: white ? Colors.white : Colors.transparent,
+              width: 1.w,
             ),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
-              borderRadius: BorderRadius.circular(12),
-              child: Icon(icon, color: Colors.white, size: 18),
+              borderRadius: BorderRadius.circular(12.r),
+              child: Padding(
+                padding: EdgeInsets.all(6.r),
+                child: Image.asset(
+                  imagePath,
+                  width: 20.w,
+                  height: 20.h,
+                  color: white
+                      ? Colors.black
+                      : null, // ← يفضل تغيّر لون الصورة عند خلفية بيضاء
+                ),
+              ),
             ),
           ),
         ),
@@ -79,7 +160,7 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10.r),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
@@ -88,15 +169,12 @@ class GlassContainer extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.transparent.withOpacity(0.2),
-                Colors.transparent.withOpacity(0.2),
-              ],
+              colors: [Color(0xff922D4E), Color(0xff480118)],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
-              color: Colors.transparent,
-              width: 1,
+              color: Colors.white.withOpacity(0.45),
+              width: 1.w,
             ),
             // boxShadow: [
             //   BoxShadow(
@@ -121,8 +199,10 @@ class GlassTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
   final int? maxLines;
+  final String? Function(String?)? validator;
 
   const GlassTextField({
+    super.key,
     required this.controller,
     required this.label,
     required this.icon,
@@ -130,51 +210,91 @@ class GlassTextField extends StatelessWidget {
     this.keyboardType,
     this.suffixIcon,
     this.maxLines,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-     final finalMaxLines = obscureText ? 1 : maxLines;
+    final finalMaxLines = obscureText ? 1 : (maxLines ?? 1);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.transparent.withOpacity(0.2),
-                Colors.transparent.withOpacity(0.2),
-              ],
+    return FormField<String>(
+      initialValue: controller.text,
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      builder: (state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end, // عربي
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(9.78.r),
+              child: Container(
+                height: kIsWeb ? 55: 50.sp,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.45),
+                      Colors.white.withOpacity(0.04),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(9.78.r),
+                  border: Border.all(
+                    color: state.hasError
+                        ? Colors.red.withOpacity(0.6)
+                        : Colors.white.withOpacity(0.28),
+                    width: 1.w,
+                  ),
+                ),
+                child: TextField(
+                  controller: controller,
+                  obscureText: obscureText,
+                  maxLines: finalMaxLines,
+                  keyboardType: keyboardType,
+                  onChanged: (v) => state.didChange(v),
+                  style: TextStyle(color: Colors.white, fontSize: kIsWeb ? 15: 15.sp),
+                  textAlign: TextAlign.right,
+                  decoration: InputDecoration(
+                    labelText: label,
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: kIsWeb ? 12: 12.sp,
+                    ),
+                    prefixIcon: Icon(
+                      icon,
+                      color: Colors.white.withOpacity(0.8),
+                      size: kIsWeb ? 20: 20.sp,
+                    ),
+                    suffixIcon: suffixIcon,
+                    border: InputBorder.none,
+
+                    // ✅ مهم: لا تعرض error داخل الحقل
+                    errorText: null,
+                  ),
+                ),
+              ),
             ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.transparent,
-              width: 1,
-            ),
-          ),
-          child: TextField(
-            controller: controller,
-            obscureText: obscureText,
-            maxLines: finalMaxLines, 
-            keyboardType: keyboardType,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              labelText: label,
-              labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
-              prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.8)),
-              suffixIcon: suffixIcon,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
-            ),
-          ),
-        ),
-      ),
+
+            // ✅ error تحت الحقل (خارج الكونتينر)
+            if (state.hasError) ...[
+              SizedBox(height: 6.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Text(
+                  state.errorText ?? '',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: 12.sp,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }
-
 
 
 class ContactGlassButton extends StatelessWidget {
@@ -191,11 +311,11 @@ class ContactGlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16.r),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          height: 56,
+          height: 56.h,
           decoration: BoxDecoration(
             gradient: isOutlined
                 ? null
@@ -205,7 +325,7 @@ class ContactGlassButton extends StatelessWidget {
                       Colors.transparent.withOpacity(0.2),
                     ],
                   ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
               color: Colors.transparent,
               width: isOutlined ? 2 : 1,
@@ -215,7 +335,7 @@ class ContactGlassButton extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
               child: Center(
                 child: DefaultTextStyle(
                   style: const TextStyle(color: Colors.white),
@@ -247,33 +367,25 @@ class ProfileInfoCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: Colors.transparent.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                AppText(title: title, fontSize: 12),
+                SizedBox(height: 4.h),
+                AppText(
+                  title: value,
+
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ],
             ),
@@ -288,10 +400,7 @@ class PlanCard extends StatelessWidget {
   final String serviceName;
   final String date;
 
-  const PlanCard({
-    required this.serviceName,
-    required this.date,
-  });
+  const PlanCard({required this.serviceName, required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -299,34 +408,30 @@ class PlanCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.check_circle_outline,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  serviceName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                AppText(
+                  title: serviceName,
+
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'أضيفت في: $date',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 12,
-                  ),
-                ),
+                SizedBox(height: 4.h),
+                AppText(title: 'أضيفت في: $date', fontSize: 12),
               ],
             ),
           ),
@@ -352,7 +457,7 @@ class MessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPending = status == 'pending';
-    
+
     return GlassContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,67 +465,45 @@ class MessageCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isPending 
+                  color: isPending
                       ? Colors.orange.withOpacity(0.3)
                       : Colors.green.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Text(
-                  isPending ? 'قيد المراجعة' : 'تم الرد',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: AppText(
+                  title: isPending ? 'قيد المراجعة' : 'تم الرد',
+
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
-              Text(
-                date,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
-                  fontSize: 10,
-                ),
-              ),
+              AppText(title: date, fontSize: 10),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
+          SizedBox(height: 12.h),
+          AppText(title: message, color: Colors.white, fontSize: 14),
           if (adminResponse.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.r),
               decoration: BoxDecoration(
                 color: Colors.transparent.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'رد المسؤول:',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  AppText(
+                    title: 'رد المسؤول:',
+
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    adminResponse,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
+                  SizedBox(height: 4.h),
+                  AppText(title: adminResponse, fontSize: 13),
                 ],
               ),
             ),
@@ -430,7 +513,6 @@ class MessageCard extends StatelessWidget {
     );
   }
 }
-
 
 class PortfolioCard extends StatelessWidget {
   final String title;
@@ -450,7 +532,7 @@ class PortfolioCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
@@ -465,12 +547,8 @@ class PortfolioCard extends StatelessWidget {
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.transparent,
-                width: 1,
-              ),
-            
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(color: Colors.transparent, width: 1.w),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -497,7 +575,7 @@ class PortfolioCard extends StatelessWidget {
                         left: 0,
                         right: 0,
                         child: Container(
-                          height: 60,
+                          height: 60.h,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.bottomCenter,
@@ -505,7 +583,6 @@ class PortfolioCard extends StatelessWidget {
                               colors: [
                                 Colors.transparent.withOpacity(0.2),
                                 Colors.transparent.withOpacity(0.2),
-
                               ],
                             ),
                           ),
@@ -516,29 +593,27 @@ class PortfolioCard extends StatelessWidget {
                         top: 8,
                         right: 8,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.transparent.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8.r),
                                 border: Border.all(
                                   color: Colors.transparent,
-                                  width: 0.5,
+                                  width: 0.5.w,
                                 ),
                               ),
-                              child: Text(
-                                industry,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: AppText(
+                                title: industry,
+
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -547,27 +622,27 @@ class PortfolioCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 // Content Section
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12.r),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        AppText(
+                          title: title,
+
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8.h),
                         Row(
                           children: [
                             Icon(
@@ -575,14 +650,12 @@ class PortfolioCard extends StatelessWidget {
                               color: Colors.white.withOpacity(0.8),
                               size: 16,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'عرض التفاصيل',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            SizedBox(width: 4.w),
+                            AppText(
+                              title: 'عرض التفاصيل',
+
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
                             ),
                           ],
                         ),

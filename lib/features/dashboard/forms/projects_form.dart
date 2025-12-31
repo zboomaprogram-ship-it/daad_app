@@ -1,5 +1,7 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/labeled_field.dart';
 
 Future<void> showProjectForm(
@@ -36,10 +38,12 @@ Future<void> showProjectForm(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               LabeledField(label: 'عنوان المشروع', controller: titleCtrl),
               LabeledField(label: 'معرف المستخدم', controller: userIdCtrl),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h
+),
               DropdownButtonFormField<String>(
                 value: status,
                 decoration: const InputDecoration(
@@ -47,13 +51,14 @@ Future<void> showProjectForm(
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'pending', child: Text('معلق')),
-                  DropdownMenuItem(value: 'in_progress', child: Text('جاري العمل')),
-                  DropdownMenuItem(value: 'completed', child: Text('مكتمل')),
+                  DropdownMenuItem(value: 'pending', child: AppText(title:'معلق')),
+                  DropdownMenuItem(value: 'in_progress', child: AppText(title:'جاري العمل')),
+                  DropdownMenuItem(value: 'completed', child: AppText(title:'مكتمل')),
                 ],
                 onChanged: (v) => setModalState(() => status = v ?? 'pending'),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {

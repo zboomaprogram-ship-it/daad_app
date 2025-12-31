@@ -1,3 +1,4 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,7 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(data['name'] ?? 'معلومات المستخدم'),
+      title:  AppText(title:data['name'] ?? 'معلومات المستخدم'),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +34,7 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('إغلاق'),
+          child: const  AppText(title:'إغلاق'),
         ),
       ],
     ),
@@ -42,15 +43,15 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
 
 Widget _buildInfoRow(String label, String value) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: 4),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+   AppText(title:
           '$label: ',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        fontWeight: FontWeight.bold,
         ),
-        Expanded(child: Text(value)),
+        Expanded(child:  AppText(title:value)),
       ],
     ),
   );

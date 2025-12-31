@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/features/dashboard/widgets/glass_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../widgets/labeled_field.dart';
+
 
 Future<void> showUserForm(
   BuildContext context, {
@@ -18,7 +20,8 @@ Future<void> showUserForm(
     builder: (context) => Dialog(
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r)
+,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
@@ -32,14 +35,16 @@ Future<void> showUserForm(
                   const Color(0xFF4A2735).withOpacity(0.9),
                 ],
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r)
+,
               border: Border.all(
                 color: Colors.white.withOpacity(0.3),
-                width: 1,
+                width: 1.w
+,
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(24.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,20 +52,21 @@ Future<void> showUserForm(
                   Row(
                     children: [
                       const Icon(Icons.person, color: Colors.white, size: 28),
-                      const SizedBox(width: 12),
+                        SizedBox(width: 12.w
+),
                       Expanded(
-                        child: Text(
+                        child:AppText(title:
                           data['name'] ?? 'معلومات المستخدم',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                          ),
+                          
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h
+),
                   _buildGlassInfoRow('📧 البريد', data['email'] ?? '-'),
                   _buildGlassInfoRow('📱 الهاتف', data['phone'] ?? '-'),
                   _buildGlassInfoRow('🏷️ الدور', data['role'] ?? 'client'),
@@ -74,10 +80,11 @@ Future<void> showUserForm(
                     '🕐 آخر ظهور',
                     _formatTimestamp(data['lastSeenAt']),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h
+),
                   GlassButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('إغلاق'),
+                    child: const AppText(title:'إغلاق'),
                   ),
                 ],
               ),
@@ -90,37 +97,37 @@ Future<void> showUserForm(
 }
 Widget _buildGlassInfoRow(String label, String value) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
+    padding: EdgeInsets.symmetric(vertical: 6),
     child: ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(8.r)
+,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.r),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r)
+,
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
-              width: 0.5,
+              width: 0.5.w
+,
             ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+             AppText(title:
                 '$label: ',
-                style: const TextStyle(
-                  color: Colors.white,
+         
                   fontWeight: FontWeight.bold,
-                ),
+            
               ),
               Expanded(
-                child: Text(
+                child:AppText(title:
                   value,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
+                  
                 ),
               ),
             ],

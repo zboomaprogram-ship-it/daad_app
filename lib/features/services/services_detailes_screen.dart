@@ -1,137 +1,258 @@
-import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/constants.dart';
+import 'package:daad_app/core/utils/app_colors/app_colors.dart';
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/core/widgets/daad_image.dart';
+import 'package:daad_app/features/contact/widgets.dart';
+import 'package:daad_app/features/home/widegts/recently_viewed_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ServiceDetailScreen extends StatelessWidget {
-  final String title;
-  final String description;
-  final dynamic imageUrl; // This can be String or List<dynamic>
-  final List<dynamic> priceTiers;
+class ServiceDetailScreen extends StatefulWidget {
+  final String serviceId;
 
-  const ServiceDetailScreen({
-    Key? key,
-    required this.title,
-    required this.description,
-    required this.imageUrl,
-    required this.priceTiers,
-  }) : super(key: key);
+  const ServiceDetailScreen({super.key, required this.serviceId});
 
-  // Function to handle image rendering (either Base64 or URL)
-  Widget _buildImage() {
-    if (imageUrl == null || imageUrl == '') {
-      return _buildPlaceholderImage();  // Placeholder if no image
+  @override
+  State<ServiceDetailScreen> createState() => _ServiceDetailScreenState();
+}
+
+class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
+  final _recentlyViewedService = RecentlyViewedService();
+  Map<String, dynamic>? _cachedService;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadServiceData();
+  }
+
+  Future<void> _loadServiceData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('services')
+          .doc(widget.serviceId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        
+        if (mounted) {
+          setState(() {
+            _cachedService = data;
+            _isLoading = false;
+          });
+        }
+
+        // Track view in background
+        _trackServiceView(data);
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    } catch (e) {
+      print('Error loading service: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
+  }
 
-    // If imageUrl is a list, use the first image URL or Base64 string
-    if (imageUrl is List) {
-      final firstImage = imageUrl.isNotEmpty ? imageUrl[0] : null;
-      if (firstImage == null) return _buildPlaceholderImage();
-      return DaadImage(firstImage);
+  Future<void> _trackServiceView(Map<String, dynamic> data) async {
+    try {
+      await _recentlyViewedService.addRecentlyViewed(
+        itemId: widget.serviceId,
+        collection: 'services',
+        title: data['title'] ?? '',
+        imageUrl: (data['images'] as List?)?.first ?? '',
+        body: data['body'] ?? '',
+        additionalData: {
+          'industry': data['industry'] ?? '',
+        },
+      );
+    } catch (e) {
+      print('Error tracking view: $e');
     }
-
-    // If imageUrl is a String, handle it (URL or Base64)
-    return DaadImage(imageUrl);
   }
 
-  // Placeholder image if no image URL is provided
-  Widget _buildPlaceholderImage() {
-    return CachedNetworkImage(
-      imageUrl: kDefaultImage,  // Use a default placeholder image
-      height: 200,  // Adjust as needed
-      width: double.infinity,  // Adjust as needed
-      fit: BoxFit.cover,
-      placeholder: (_, __) => _buildLoadingWidget(),
-      errorWidget: (_, __, ___) => _buildErrorWidget(),
-    );
-  }
+  Future<void> _sendWhatsAppMessage(BuildContext context, String title) async {
+    final message = 'مرحباً، أود الاستفسار عن خدمة: $title';
+    final phone = "+966564639466";
+    final url = "https://wa.me/$phone?text=${Uri.encodeComponent(message)}";
 
-  Widget _buildLoadingWidget() {
-    return SizedBox(
-      height: 200,
-      width: double.infinity,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget() {
-    return SizedBox(
-      height: 200,
-      width: double.infinity,
-      child: const Icon(Icons.broken_image, size: 50),
-    );
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("تعذر فتح واتساب")),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("حدث خطأ")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    if (_isLoading || _cachedService == null) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(kBackgroundImage),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    final title = _cachedService!["title"] ?? "بدون اسم";
+    final desc = _cachedService!["desc"] ?? "";
+    final image = _cachedService!["images"];
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Display image (Base64 or URL)
-            _buildImage(),
-            const SizedBox(height: 16),
-            // Title
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineLarge,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(kBackgroundImage),
+                fit: BoxFit.cover,
+              ),
             ),
-            const SizedBox(height: 8),
+          ),
 
-            // Description
-            Text(
-              description,
-              style: Theme.of(context).textTheme.bodyMedium,
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: size.height * 0.30,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.textColor.withOpacity(0.06),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: 20,
+                    offset: const Offset(0, -8),
+                  ),
+                ],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
+          ),
 
-            // Price Tiers
-            Text(
-              'السعر:',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 8),
-            for (var tier in priceTiers)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
+              child: Column(
                 children: [
-                  Text(
-                    tier['name'] ?? 'غير محدد',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  Row(
+                    children: [
+                      const GlassBackButton(),
+                      SizedBox(width: 5.w,),
+                      // const Spacer(),
+                      AppText(
+                        title: title,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'السعر: ${tier['price']} ريال',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  if (tier['features'] != null && tier['features'].isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        Text(
-                          'المميزات:',
-                          style: Theme.of(context).textTheme.headlineMedium,
+
+                  SizedBox(height: 25.h),
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30.r),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        height: 280.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          // color: Colors.white.withOpacity(0.10),
+                          borderRadius: BorderRadius.circular(30.r),
+                          // border: Border.all(
+                          //   // color: Colors.white.withOpacity(0.20),
+                          //   width: 1.5.w,
+                          // ),
                         ),
-                        for (var feature in tier['features'])
-                          Text(
-                            '- $feature',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30.r),
+                          child: DaadImage(
+                            image,
+                            fit: BoxFit.fill,
                           ),
-                      ],
+                        ),
+                      ),
                     ),
-                  const SizedBox(height: 16),
+                  ),
+
+                  SizedBox(height: 25.h),
+
+                  AppText(
+                    title: desc,
+                    fontSize: 16,
+                    height: 1.7,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white.withOpacity(0.95),
+                  ),
+
+                  SizedBox(height: 12.h),
+
+                  GestureDetector(
+                    onTap: () => _sendWhatsAppMessage(context, title),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(14.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.35),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: const AppText(
+                        title: "اشترك في الخدمة",
+                        fontSize: 12,
+                        // fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

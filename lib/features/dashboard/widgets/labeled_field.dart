@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LabeledField extends StatelessWidget {
   final String label;
@@ -19,9 +20,10 @@ class LabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r)
+,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
@@ -32,10 +34,12 @@ class LabeledField extends StatelessWidget {
                   Colors.transparent.withOpacity(0.2),
                 ],
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r)
+,
               border: Border.all(
                 color: Colors.transparent,
-                width: 1,
+                width: 1.w
+,
               ),
             ),
             child: TextField(
@@ -47,7 +51,7 @@ class LabeledField extends StatelessWidget {
                 labelText: label,
                 labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(16),
+                contentPadding: EdgeInsets.all(16.r),
               ),
             ),
           ),

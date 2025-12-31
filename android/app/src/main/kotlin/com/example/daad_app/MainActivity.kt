@@ -1,4 +1,4 @@
-package com.example.daad_app
+package com.zbooma.daad
 
 import io.flutter.embedding.android.FlutterActivity
 

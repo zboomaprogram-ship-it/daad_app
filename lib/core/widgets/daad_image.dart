@@ -1,10 +1,16 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:daad_app/core/utils/app_colors/app_colors.dart';
+import 'package:daad_app/core/widgets/shimmer_loadfing.dart';
+import 'package:daad_app/features/auth/presentation/pdf_viewer_page.dart' hide ShimmerLoading;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+ 
 
 class DaadImage extends StatelessWidget {
-  final dynamic url;  // Can be a string or an array of strings
+  final dynamic url; // Can be a string or an array of strings
   final double? height;
   final double? width;
   final BoxFit fit;
@@ -14,19 +20,17 @@ class DaadImage extends StatelessWidget {
     super.key,
     this.height,
     this.width,
-    this.fit = BoxFit.cover,
+    this.fit = BoxFit.contain,
   });
 
   bool _isBase64(String str) {
-    // Check if string is Base64 (starts with common Base64 patterns)
     if (str.startsWith('data:image')) return true;
     if (str.startsWith('http://') || str.startsWith('https://')) return false;
-    
-    // Try to decode as Base64
+
     try {
       base64Decode(str);
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
@@ -42,23 +46,21 @@ class DaadImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Handle null or empty URL
-    if (url == null || (url is String && url.isEmpty) || (url is List && url.isEmpty)) {
-      return _buildPlaceholder();
+    // Null or empty URL → placeholder
+    if (url == null ||
+        (url is String && url.isEmpty) ||
+        (url is List && url.isEmpty)) {
+      return _buildShimmerPlaceholder();
     }
 
-    // If the URL is an array (List), handle the first URL in the array
+    // Multiple images → carousel
     if (url is List) {
-      final firstUrl = url.first;
-      if (_isBase64(firstUrl)) {
-        return _buildBase64Image(firstUrl);
-      } else {
-        return _buildNetworkImage(firstUrl);
-      }
+      return _buildCarousel(url);
     }
 
-    // If it's a string, check if it's Base64 or a network URL
+    // Single string image
     final cleanUrl = url.toString().trim();
+
     if (_isBase64(cleanUrl)) {
       return _buildBase64Image(cleanUrl);
     }
@@ -66,73 +68,114 @@ class DaadImage extends StatelessWidget {
     return _buildNetworkImage(cleanUrl);
   }
 
+  // ------------------------------------------
+  // 🔄 Carousel with shimmer support
+  // ------------------------------------------
+  Widget _buildCarousel(List images) {
+    final PageController controller = PageController();
+    final bool showIndicator = images.length > 1;
+
+    return SizedBox(
+      height: height ?? double.infinity,
+      width: width ?? double.infinity,
+      child: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: controller,
+              itemCount: images.length,
+              itemBuilder: (_, index) {
+                final img = images[index];
+                return _isBase64(img)
+                    ? _buildBase64Image(img)
+                    : _buildNetworkImage(img);
+              },
+            ),
+          ),
+
+          if (showIndicator) ...[
+            SizedBox(height: 6.h),
+            SmoothPageIndicator(
+              controller: controller,
+              count: images.length,
+              effect: CustomizableEffect(
+                spacing: 6,
+                dotDecoration: DotDecoration(
+                  width: 10.w,
+                  height: 4.h,
+                  color: AppColors.secondaryColor.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                activeDotDecoration: DotDecoration(
+                  width: 26.w,
+                  height: 4.h,
+                  color: AppColors.secondaryTextColor,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ------------------------------------------
+  // 🧩 Base64 Image (with shimmer)
+  // ------------------------------------------
   Widget _buildBase64Image(String base64String) {
     try {
       final cleanBase64 = _cleanBase64(base64String);
       final imageBytes = base64Decode(cleanBase64);
-      
+
       return Image.memory(
         imageBytes,
         height: height,
         width: width,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('Error loading Base64 image: $error');
-          return _buildErrorWidget();
-        },
+        errorBuilder: (_, __, ___) => _buildShimmerPlaceholder(),
       );
     } catch (e) {
-      debugPrint('Error decoding Base64: $e');
-      return _buildErrorWidget();
+      return _buildShimmerPlaceholder();
     }
   }
 
+  // ------------------------------------------
+  // 🌐 Network Image (shimmer while loading)
+  // ------------------------------------------
   Widget _buildNetworkImage(String imageUrl) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       height: height,
       width: width,
       fit: fit,
-      placeholder: (_, __) => _buildLoadingWidget(),
+      placeholder: (_, __) => _buildShimmerPlaceholder(),
       errorWidget: (_, __, ___) => _buildErrorWidget(),
     );
   }
 
-  Widget _buildLoadingWidget() {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: const Center(
-        child: CircularProgressIndicator(),
+  // ------------------------------------------
+  // ✨ Shimmer Placeholder
+  // ------------------------------------------
+  Widget _buildShimmerPlaceholder() {
+    return ShimmerLoading(
+      child: ShimmerBox(
+        width: width ?? double.infinity,
+        height: height ?? 180.h,
+        borderRadius: BorderRadius.circular(16.r),
       ),
     );
   }
 
+  // ------------------------------------------
+  // ❌ Error Placeholder
+  // ------------------------------------------
   Widget _buildErrorWidget() {
-    return CachedNetworkImage(
-      imageUrl: kDefaultImage,
-      height: height,
-      width: width,
-      fit: fit,
-      errorWidget: (_, __, ___) => SizedBox(
-        height: height,
-        width: width,
-        child: const Icon(Icons.broken_image, size: 50),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return CachedNetworkImage(
-      imageUrl: kDefaultImage,
-      height: height,
-      width: width,
-      fit: fit,
-      placeholder: (_, __) => _buildLoadingWidget(),
-      errorWidget: (_, __, ___) => SizedBox(
-        height: height,
-        width: width,
-        child: const Icon(Icons.image, size: 50),
+    return ShimmerLoading(
+      child: ShimmerBox(
+        width: width ?? double.infinity,
+        height: height ?? 180.h,
+        borderRadius: BorderRadius.circular(16.r),
       ),
     );
   }

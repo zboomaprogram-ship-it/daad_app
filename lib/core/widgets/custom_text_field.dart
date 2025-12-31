@@ -74,7 +74,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         width: widget.width?.w,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(16.r)
+,
             color: _isFocused ? AppColors.textColor : AppColors.primaryColor,
           ),
           child: TextFormField(
@@ -85,7 +86,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             keyboardType: widget.keyboardType ?? TextInputType.text,
             focusNode: _focusNode,
             cursorColor: AppColors.textColor,
-            cursorWidth: 1,
+            // cursorwidth: 1,
+            cursorWidth: 1.w,
             obscureText: widget.isObsecure ?? false,
             onChanged: widget.onChange,
             onTap: widget.onTap,
@@ -116,17 +118,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               border:
                   widget.hasUnderline
-                      ?  const UnderlineInputBorder(
+                      ?    UnderlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.textColor,
-                          width: 1,
+                          width: 1.w
+,
                         ),
                       )
                       : OutlineInputBorder(
                         borderRadius:
                             (widget.borderRadius is BorderRadius)
                                 ? widget.borderRadius as BorderRadius
-                                : BorderRadius.circular(16),
+                                : BorderRadius.circular(16.r)
+,
                         borderSide:  const BorderSide(
                           color: AppColors.textColor,
                         ),
@@ -135,20 +139,24 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 borderRadius:
                     (widget.borderRadius is BorderRadius)
                         ? widget.borderRadius as BorderRadius
-                        : BorderRadius.circular(16),
-                borderSide: const BorderSide(
+                        : BorderRadius.circular(16.r)
+,
+                borderSide:   BorderSide(
                   color: AppColors.primaryColor,
-                  width: 1.5,
+                  width: 1.5.w
+,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
                     (widget.borderRadius is BorderRadius)
                         ? widget.borderRadius as BorderRadius
-                        : BorderRadius.circular(16),
-                borderSide:  const BorderSide(
+                        : BorderRadius.circular(16.r)
+,
+                borderSide:    BorderSide(
                   color: AppColors.textColor,
-                  width: 1,
+                  width: 1.w
+,
                 ),
               ),
             ),

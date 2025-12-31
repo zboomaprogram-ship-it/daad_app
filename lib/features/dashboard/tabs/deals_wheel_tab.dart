@@ -1,3 +1,4 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/features/dashboard/widgets/colletion_tab_builder.dart';
 import 'package:flutter/material.dart';
 import '../forms/deal_form.dart';
@@ -25,7 +26,7 @@ class DealsWheelTab extends StatelessWidget {
               color: isActive ? Colors.green : Colors.grey,
             ),
             title: Text(label),
-            subtitle: Text('خصم: $discount% • ${isActive ? "مفعل" : "معطل"}'),
+            subtitle: AppText(title:'خصم: $discount% • ${isActive ? "مفعل" : "معطل"}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

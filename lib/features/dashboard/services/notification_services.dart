@@ -2,7 +2,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class NotificationService {
+class OldNotificationService {
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;

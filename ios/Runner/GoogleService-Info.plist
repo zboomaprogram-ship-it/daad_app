@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.daadApp</string>
+	<string>com.zbooma.daad</string>
 	<key>PROJECT_ID</key>
 	<string>daad-64fee</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:454248900345:ios:7619e6f2c9281bc2d7e428</string>
+	<string>1:454248900345:ios:32fb9b24753c2301d7e428</string>
 </dict>
 </plist>

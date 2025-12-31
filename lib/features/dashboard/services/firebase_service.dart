@@ -3,9 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseService {
   static final _firestore = FirebaseFirestore.instance;
-  // static final _auth = FirebaseAuth.instance;
 
-  // Save user to Firestore after signup/login
+  // Save user after login/signup
   static Future<void> saveUserToFirestore(User user) async {
     final userDoc = _firestore.collection('users').doc(user.uid);
     final exists = (await userDoc.get()).exists;
@@ -36,7 +35,32 @@ class FirebaseService {
     });
   }
 
-  // Get all users (for Excel export)
+  // ➕ Add or subtract points and save history
+  static Future<void> updateUserPoints({
+    required String userId,
+    required int change,
+    required String reason,
+  }) async {
+    final userRef = _firestore.collection('users').doc(userId);
+    final userData = await userRef.get();
+    final currentPoints = userData['points'] ?? 0;
+    final newPoints = currentPoints + change;
+
+    // Update points
+    await userRef.update({
+      'points': newPoints,
+    });
+
+    // Add history
+    await userRef.collection('points_history').add({
+      'change': change,
+      'newTotal': newPoints,
+      'reason': reason,
+      'date': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Get all users
   static Future<List<Map<String, dynamic>>> getAllUsers() async {
     final snapshot = await _firestore.collection('users').get();
     return snapshot.docs.map((doc) {

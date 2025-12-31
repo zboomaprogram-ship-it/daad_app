@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ConsultationScreen extends StatefulWidget {
   final String serviceTitle;
@@ -26,7 +28,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
     if (name.isEmpty || email.isEmpty || phone.isEmpty || date == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى ملء جميع الحقول')),
+        const SnackBar(content: AppText(title:'يرجى ملء جميع الحقول')),
       );
       return;
     }
@@ -42,7 +44,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تم حجز الاستشارة بنجاح')),
+      const SnackBar(content: AppText(title:'تم حجز الاستشارة بنجاح')),
     );
 
     // Optionally, navigate back to the previous screen
@@ -69,16 +71,17 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('حجز استشارة - ${widget.serviceTitle}'),
+        title: AppText(title:'حجز استشارة - ${widget.serviceTitle}'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:   EdgeInsets.all(16.0.r),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('إملأ بياناتك لحجز الاستشارة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
+              const AppText(title:'إملأ بياناتك لحجز الاستشارة', fontSize: 18, fontWeight: FontWeight.bold),
+                SizedBox(height: 16.h
+),
 
               // Name Input Field
               TextField(
@@ -88,7 +91,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
 
               // Email Input Field
               TextField(
@@ -99,7 +103,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
 
               // Phone Input Field
               TextField(
@@ -110,7 +115,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
 
               // Date Picker
               Row(
@@ -123,13 +129,14 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
 
               // Book Consultation Button
               Center(
                 child: ElevatedButton(
                   onPressed: _bookConsultation,
-                  child: const Text('حجز الاستشارة'),
+                  child: const AppText(title:'حجز الاستشارة'),
                 ),
               ),
             ],

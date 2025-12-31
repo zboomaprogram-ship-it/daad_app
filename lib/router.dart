@@ -25,6 +25,6 @@
 //     GoRoute(path: '/articles', name: 'articles', builder: (c, s) => const ArticlesScreen()),
 //   ],
 //   errorBuilder: (c, s) => Scaffold(
-//     body: Center(child: Text('حدث خطأ: ${s.error}')),
+//     body: Center(child: AppText(title:'حدث خطأ: ${s.error}')),
 //   ),
 // );

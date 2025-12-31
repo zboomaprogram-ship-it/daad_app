@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -18,7 +19,8 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20.r)
+,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
@@ -36,10 +38,12 @@ class GlassCard extends StatelessWidget {
               ],
               stops: const [0.0, 0.5, 1.0],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r)
+,
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1,
+              width: 1.w
+,
             ),
             boxShadow: [
               BoxShadow(

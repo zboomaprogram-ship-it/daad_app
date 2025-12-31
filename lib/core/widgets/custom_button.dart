@@ -10,14 +10,14 @@ class AppButton extends StatelessWidget {
     required this.btnText,
     this.onTap,
     this.width = double.infinity,
-    this.height = 45,
+    this.height = 50,
     this.borderRadius,
     this.isLoading = false,
-    this.btnColor = AppColors.primaryColor,
-    this.textColor = Colors.white,
+    this.btnColor = AppColors.textColor,
+    this.textColor = AppColors.primaryColor,
     this.icon,
     this.iconSpacing = 8,
-    this.fontSize = 16,
+    this.fontSize = 14,
   });
 
   final String btnText;
@@ -45,8 +45,9 @@ class AppButton extends StatelessWidget {
           width: width.w,
           decoration: BoxDecoration(
             color: btnColor,
-            borderRadius: borderRadius ?? BorderRadius.circular(16.r),
-            border: Border.all(color: AppColors.primaryColor, width: 1),
+            borderRadius: borderRadius ?? BorderRadius.circular(9.78.r),
+            border: Border.all(color: AppColors.primaryColor, width: 1.w
+),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -64,8 +65,8 @@ class AppButton extends StatelessWidget {
               AppText(
                 title: btnText,
                 color: textColor ?? AppColors.textColor,
-                fontSize: fontSize ?? 16,
-                fontWeight: FontWeight.w600,
+                fontSize: fontSize ?? 14.48,
+                fontWeight: FontWeight.w900,
               ),
               if (icon != null) ...[SizedBox(width: iconSpacing), icon!],
             ],

@@ -1,5 +1,10 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:convert';
+// 'AIzaSyDAswcXa-xrVZ3kG6Wts0fxVya8t1oHI7k'
+// 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
+// "'gemini-2.5-flash-lite'"
 import 'package:http/http.dart' as http;
 
 // 🧪 صفحة اختبار API مباشرة
@@ -17,7 +22,7 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
 
   Future<void> _testAPI() async {
     final apiKey = _apiKeyController.text.trim();
-    
+
     if (apiKey.isEmpty) {
       setState(() {
         _result = '⚠️ يرجى إدخال API Key';
@@ -34,41 +39,41 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
     try {
       // ✅ استخدام gemini-1.5-flash بدلاً من gemini-pro
       final url = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$apiKey'
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$apiKey',
       );
 
       final requestBody = {
         'contents': [
           {
             'parts': [
-              {'text': 'قل مرحبا بالعربية'}
-            ]
-          }
+              {'text': 'قل مرحبا بالعربية'},
+            ],
+          },
         ],
-        'generationConfig': {
-          'temperature': 0.7,
-          'maxOutputTokens': 100,
-        }
+        'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 100},
       };
 
       print('🌐 Sending request...');
 
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(requestBody),
+          )
+          .timeout(const Duration(seconds: 30));
 
       print('📥 Response: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         if (data['candidates'] != null && data['candidates'].isNotEmpty) {
           final text = data['candidates'][0]['content']['parts'][0]['text'];
-          
+
           setState(() {
-            _result = '✅ نجح الاختبار!\n\n'
+            _result =
+                '✅ نجح الاختبار!\n\n'
                 '📝 الرد من Gemini:\n$text\n\n'
                 '🎉 API Key يعمل بشكل صحيح!\n'
                 'يمكنك الآن استخدام المساعد الذكي.';
@@ -83,7 +88,8 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
       } else {
         final errorData = json.decode(response.body);
         setState(() {
-          _result = '❌ خطأ من API:\n'
+          _result =
+              '❌ خطأ من API:\n'
               'Status: ${response.statusCode}\n'
               'Error: ${errorData['error']['message']}\n\n'
               'الحلول الممكنة:\n'
@@ -95,7 +101,8 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
       }
     } catch (e) {
       setState(() {
-        _result = '❌ خطأ في الاتصال:\n$e\n\n'
+        _result =
+            '❌ خطأ في الاتصال:\n$e\n\n'
             'تأكد من:\n'
             '1. الاتصال بالإنترنت\n'
             '2. صحة API Key\n'
@@ -108,11 +115,9 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('اختبار Gemini API'),
-      ),
+      appBar: AppBar(title: const AppText(title: 'اختبار Gemini API')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -120,13 +125,13 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
               '🔑 أدخل API Key:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             TextField(
               controller: _apiKeyController,
               decoration: InputDecoration(
                 hintText: 'AIzaSy...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.paste),
@@ -136,46 +141,41 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             const Text(
               'احصل على مفتاح من:\nhttps://makersuite.google.com/app/apikey',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: _isLoading ? null : _testAPI,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(16),
-              ),
+              style: ElevatedButton.styleFrom(padding: EdgeInsets.all(16.r)),
               child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                  ? SizedBox(
+                      height: 20.h,
+                      width: 20.w,
+                      child: CircularProgressIndicator(strokeWidth: 2.w),
                     )
-                  : const Text('🧪 اختبار API', style: TextStyle(fontSize: 16)),
+                  : const AppText(title: '🧪 اختبار API', fontSize: 16),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: Colors.grey[300]!),
               ),
-              constraints: const BoxConstraints(minHeight: 200),
+              constraints: BoxConstraints(minHeight: 200.h),
               child: SelectableText(
                 _result,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 14,
-                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
               ),
             ),
-            const SizedBox(height: 16),
-            const Card(
+            SizedBox(height: 16.h),
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(16.r),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -183,7 +183,7 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
                       '💡 ملاحظات مهمة:',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       '• يستخدم gemini-1.5-flash (أسرع وأحدث)\n'
                       '• يعمل مع v1beta API\n'
@@ -200,7 +200,7 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
       ),
     );
   }
-  
+
   @override
   void dispose() {
     _apiKeyController.dispose();

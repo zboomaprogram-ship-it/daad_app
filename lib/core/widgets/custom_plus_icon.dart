@@ -12,8 +12,10 @@ class CustomPlusIcon extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 25.w,
-        height: 25.h,
+        width: 25.w
+.w,
+        height: 25.h
+.h,
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           shape: BoxShape.circle,

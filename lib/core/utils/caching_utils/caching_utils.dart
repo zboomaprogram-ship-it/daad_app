@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:daad_app/core/utils/services/secure_storage_service.dart';
 
 class CachingUtils {
   static late SharedPreferences _prefs;
@@ -48,7 +49,8 @@ class CachingUtils {
     await _prefs.remove(favKey);
   }
 
-  // user caching
+  // user caching - NOW USES SECURE STORAGE FOR PII
+  /// Save user info to ENCRYPTED secure storage
   static Future<void> saveUserInfo({
     required String firstName,
     required String lastName,
@@ -63,47 +65,46 @@ class CachingUtils {
     required String floor,
     required String apartment,
   }) async {
-    await _prefs.setString('first_name', firstName);
-    await _prefs.setString('last_name', lastName);
-    await _prefs.setString('email', email);
-    await _prefs.setString('phone', phone);
-    await _prefs.setString('whatAppPhone', whatAppPhone);
-    await _prefs.setString('address', address);
-    await _prefs.setString('city', city);
-    await _prefs.setString('country', country);
-    await _prefs.setString('street', street);
-    await _prefs.setString('building', building);
-    await _prefs.setString('floor', floor);
-    await _prefs.setString('apartment', apartment);
+    // Use SecureStorageService for PII (encrypted)
+    await SecureStorageService.saveUserInfo(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      whatsAppPhone: whatAppPhone,
+      address: address,
+      city: city,
+      country: country,
+      street: street,
+      building: building,
+      floor: floor,
+      apartment: apartment,
+    );
   }
 
+  /// Get user info from ENCRYPTED secure storage
   static Future<Map<String, String>> getUserInfo() async {
-    return {
-      'first_name': _prefs.getString('first_name') ?? '',
-      'last_name': _prefs.getString('last_name') ?? '',
-      'email': _prefs.getString('email') ?? '',
-      'phone': _prefs.getString('phone') ?? '',
-      'whatAppPhone': _prefs.getString('whatAppPhone') ?? '',
-      'address': _prefs.getString('address') ?? '',
-      'city': _prefs.getString('city') ?? '',
-      'country': _prefs.getString('country') ?? '',
-      'street': _prefs.getString('street') ?? '',
-      'building': _prefs.getString('building') ?? '',
-      'floor': _prefs.getString('floor') ?? '',
-      'apartment': _prefs.getString('apartment') ?? '',
-    };
+    return await SecureStorageService.getUserInfo();
   }
 
+  /// Get first name from secure storage
   static Future<String?> getUserFirstName() async {
-    return _prefs.getString('first_name');
+    return await SecureStorageService.getUserFirstName();
   }
 
+  /// Get last name from secure storage
   static Future<String?> getUserSecondName() async {
-    return _prefs.getString('last_name');
+    return await SecureStorageService.getUserLastName();
   }
 
+  /// Get email from secure storage
   static Future<String?> getUserEmail() async {
-    return _prefs.getString('email');
+    return await SecureStorageService.getUserEmail();
+  }
+
+  /// Clear all secure user info on logout
+  static Future<void> clearUserInfo() async {
+    await SecureStorageService.clearUserInfo();
   }
 
   static Future<void> saveImageToLocalStorage(File imageFile) async {

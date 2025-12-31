@@ -21,7 +21,8 @@
 //                   color: AppColors.boldTextColor,
 //                   size: 50.0,
 //                 ),
-//                 SizedBox(height: 10.height,),
+//                 SizedBox(height: 10.h
+// .height,),
 //                 const AppText(title: 'Wait...',color: AppColors.boldTextColor,fontSize:23 ,fontWeight: FontWeight.bold,)
 //               ],
 //             ),

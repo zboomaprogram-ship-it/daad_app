@@ -20,7 +20,7 @@
 //       padding: EdgeInsets.only(right: 35.width, left: 35.width),
 //       child: Container(
 //         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(30),
+//           borderRadius: BorderRadius.circular(30.r),
 //           color: AppColors.white,
 //           boxShadow: [
 //             BoxShadow(
@@ -49,17 +49,20 @@
 //               border: OutlineInputBorder(
 //                   borderSide: const BorderSide(
 //                     color: AppColors.white,
-//                     width: 3,
+//                     width: 3.w
+// ,
 //                   ),
 //                   borderRadius: BorderRadius.circular(30.width)),
 //               focusedBorder: OutlineInputBorder(
 //                 borderSide:
-//                     const BorderSide(color: AppColors.offWhite, width: 3),
+//                     const BorderSide(color: AppColors.offWhite, width: 3.w
+// ),
 //                 borderRadius: BorderRadius.circular(50.width),
 //               ),
 //               enabledBorder: OutlineInputBorder(
 //                   borderSide:
-//                       const BorderSide(color: AppColors.offWhite, width: 3),
+//                       const BorderSide(color: AppColors.offWhite, width: 3.w
+// ),
 //                   borderRadius: BorderRadius.circular(30.width)),
 //               focusedErrorBorder: OutlineInputBorder(
 //                 borderSide: const BorderSide(color: Colors.red),

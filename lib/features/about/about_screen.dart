@@ -1,5 +1,7 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/core/widgets/custom_back_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/widgets/daad_image.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -7,15 +9,17 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('من نحن'),leading: CustomBackButton(),),
+      appBar: AppBar(title: const AppText(title:'من نحن'),leading: CustomBackButton(),),
       body: Directionality(
         textDirection: TextDirection.rtl,
         child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: const [
-            DaadImage(null, height: 160),
-            SizedBox(height: 12),
-            Text('شركة ضاد للتسويق — نبني لك حلولًا تسويقية متخصصة عبر المنطقة...'),
+          padding:   EdgeInsets.all(16.r),
+          children:   [
+            DaadImage(null, height: 160.h
+),
+            SizedBox(height: 12.h
+),
+            AppText(title:'شركة ضاد للتسويق — نبني لك حلولًا تسويقية متخصصة عبر المنطقة...'),
           ],
         ),
       ),

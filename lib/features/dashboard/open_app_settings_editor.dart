@@ -1,6 +1,8 @@
   import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daad_app/core/widgets/app_text.dart';
  import 'package:daad_app/features/dashboard/widgets/labeled_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> openAppSettingsEditor(BuildContext context) async {
     final docRef = FirebaseFirestore.instance
@@ -34,14 +36,15 @@ Future<void> openAppSettingsEditor(BuildContext context) async {
                   'إعدادات التطبيق',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
                 SwitchListTile(
-                  title: const Text('إظهار عجلة العروض'),
+                  title: const AppText(title:'إظهار عجلة العروض'),
                   value: showDeals,
                   onChanged: (v) => setSheet(() => showDeals = v),
                 ),
                 SwitchListTile(
-                  title: const Text('إظهار بانر الصفحة الرئيسية'),
+                  title: const AppText(title:'إظهار بانر الصفحة الرئيسية'),
                   value: showBanner,
                   onChanged: (v) => setSheet(() => showBanner = v),
                 ),
@@ -49,7 +52,8 @@ Future<void> openAppSettingsEditor(BuildContext context) async {
                   label: 'رابط صورة البانر',
                   controller: bannerCtrl,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h
+),
                 ElevatedButton.icon(
                   onPressed: () async {
                     await docRef.set({
@@ -61,7 +65,7 @@ Future<void> openAppSettingsEditor(BuildContext context) async {
                     if (context.mounted) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.save),
-                  label: const Text('حفظ'),
+                  label: const AppText(title:'حفظ'),
                 ),
               ],
             ),

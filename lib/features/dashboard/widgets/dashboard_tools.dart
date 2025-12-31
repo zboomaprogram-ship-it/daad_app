@@ -1,5 +1,6 @@
 
-  import 'package:flutter/material.dart';
+  import 'package:daad_app/core/widgets/app_text.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> confirmDelete({
@@ -11,12 +12,12 @@ Future<void> confirmDelete({
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text(title ?? 'تأكيد الحذف'),
-      content: const Text('هل أنت متأكد من الحذف؟ لا يمكن التراجع عن هذا الإجراء.'),
+      title:  AppText(title:title ?? 'تأكيد الحذف'),
+      content: const  AppText(title:'هل أنت متأكد من الحذف؟ لا يمكن التراجع عن هذا الإجراء.'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('إلغاء'),
+          child: const  AppText(title:'إلغاء'),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -24,7 +25,7 @@ Future<void> confirmDelete({
             foregroundColor: Colors.white,
           ),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('حذف'),
+          child: const  AppText(title:'حذف'),
         ),
       ],
     ),
@@ -35,7 +36,7 @@ Future<void> confirmDelete({
     
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم الحذف بنجاح')),
+        const SnackBar(content:  AppText(title:'تم الحذف بنجاح')),
       );
     }
   }

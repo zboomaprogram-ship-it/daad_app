@@ -48,7 +48,8 @@ class AppDialog extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     return Dialog(
       backgroundColor: AppColors.textColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)
+),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
         child: Column(

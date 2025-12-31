@@ -1,0 +1,2 @@
+/Users/seg/Desktop/Shemais/daad_app/build/.cxx/debug/4d1vj24k/x86_64/CMakeFiles/edit_cache.dir
+/Users/seg/Desktop/Shemais/daad_app/build/.cxx/debug/4d1vj24k/x86_64/CMakeFiles/rebuild_cache.dir

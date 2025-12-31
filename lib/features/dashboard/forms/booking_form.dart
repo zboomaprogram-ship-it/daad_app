@@ -1,5 +1,7 @@
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/labeled_field.dart';
 
 Future<void> showBookingForm(
@@ -40,7 +42,8 @@ Future<void> showBookingForm(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               LabeledField(label: 'معرف المستخدم', controller: userIdCtrl),
               DropdownButtonFormField<String>(
                 value: type,
@@ -51,16 +54,17 @@ Future<void> showBookingForm(
                 items: const [
                   DropdownMenuItem(
                     value: 'strategy_call',
-                    child: Text('استشارة استراتيجية'),
+                    child: AppText(title:'استشارة استراتيجية'),
                   ),
                   DropdownMenuItem(
                     value: 'consultation',
-                    child: Text('استشارة عامة'),
+                    child: AppText(title:'استشارة عامة'),
                   ),
                 ],
                 onChanged: (v) => setModalState(() => type = v ?? 'strategy_call'),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h
+),
               DropdownButtonFormField<String>(
                 value: status,
                 decoration: const InputDecoration(
@@ -68,14 +72,15 @@ Future<void> showBookingForm(
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'pending', child: Text('معلق')),
-                  DropdownMenuItem(value: 'confirmed', child: Text('مؤكد')),
-                  DropdownMenuItem(value: 'completed', child: Text('مكتمل')),
-                  DropdownMenuItem(value: 'cancelled', child: Text('ملغي')),
+                  DropdownMenuItem(value: 'pending', child: AppText(title:'معلق')),
+                  DropdownMenuItem(value: 'confirmed', child: AppText(title:'مؤكد')),
+                  DropdownMenuItem(value: 'completed', child: AppText(title:'مكتمل')),
+                  DropdownMenuItem(value: 'cancelled', child: AppText(title:'ملغي')),
                 ],
                 onChanged: (v) => setModalState(() => status = v ?? 'pending'),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h
+),
               OutlinedButton.icon(
                 icon: const Icon(Icons.calendar_today),
                 label: Text(
@@ -114,7 +119,8 @@ Future<void> showBookingForm(
                 controller: notesCtrl,
                 maxLines: 3,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {

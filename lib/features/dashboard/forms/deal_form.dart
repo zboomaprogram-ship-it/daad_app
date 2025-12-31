@@ -1,5 +1,8 @@
+import 'package:daad_app/core/utils/app_colors/app_colors.dart';
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/labeled_field.dart';
 
 Future<void> showDealForm(
@@ -41,14 +44,15 @@ Future<void> showDealForm(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              AppText(title:
                 isEdit ? 'تعديل عرض' : 'إضافة عرض',
-                style: const TextStyle(
+                
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                ),
+          
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               LabeledField(label: 'التسمية', controller: labelCtrl),
               LabeledField(label: 'كود الخصم', controller: codeCtrl),
               LabeledField(
@@ -62,7 +66,7 @@ Future<void> showDealForm(
                 keyboardType: TextInputType.number,
               ),
               SwitchListTile(
-                title: const Text('مفعل'),
+                title: AppText(title:'مفعل'),
                 value: isActive,
                 onChanged: (v) => setModalState(() => isActive = v),
               ),
@@ -72,10 +76,11 @@ Future<void> showDealForm(
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.calendar_today),
-                      label: Text(
+                      label: AppText(title:
                         startsAt == null
                             ? 'تاريخ البداية'
-                            : 'من: ${startsAt!.toString().split(' ')[0]}',
+                            : 'من: ${startsAt!.toString().split(' ')[0]}'
+                            ,color: AppColors.primaryColor,
                       ),
                       onPressed: () async {
                         final picked = await showDatePicker(
@@ -90,11 +95,12 @@ Future<void> showDealForm(
                       },
                     ),
                   ),
-                  const SizedBox(width: 8),
+                    SizedBox(width: 8.w
+),
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.calendar_today),
-                      label: Text(
+                      label:AppText(title:
                         endsAt == null
                             ? 'تاريخ النهاية'
                             : 'إلى: ${endsAt!.toString().split(' ')[0]}',
@@ -114,7 +120,8 @@ Future<void> showDealForm(
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h
+),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {
@@ -143,12 +150,12 @@ Future<void> showDealForm(
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(isEdit ? 'تم التحديث' : 'تم الإضافة')),
+                      SnackBar(content: AppText(title:isEdit ? 'تم التحديث' : 'تم الإضافة')),
                     );
                   }
                 },
                 icon: const Icon(Icons.save),
-                label: Text(isEdit ? 'حفظ' : 'إضافة'),
+                label: AppText(title:isEdit ? 'حفظ' : 'إضافة',color: AppColors.primaryColor,),
               ),
             ],
           ),

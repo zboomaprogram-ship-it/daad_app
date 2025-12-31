@@ -22,11 +22,13 @@ class AppAppBar extends StatelessWidget {
         //     iconSize: 30.sp,
         //   )
         // else
-          SizedBox(width: 48.w),
+          SizedBox(width: 48.w
+.w),
         AppText(title: title, fontSize: 24, fontWeight: FontWeight.bold),
 
         // UserAvatar(),
-        SizedBox(width: 46.w),
+        SizedBox(width: 46.w
+.w),
       ],
     );
   }

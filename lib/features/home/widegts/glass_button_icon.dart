@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GlassIconButton extends StatelessWidget {
   final IconData icon;
@@ -14,12 +15,15 @@ class GlassIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r)
+,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          width: 44,
-          height: 44,
+          width: 44.w
+,
+          height: 44.h
+,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -29,10 +33,12 @@ class GlassIconButton extends StatelessWidget {
                 Colors.white.withOpacity(0.15),
               ],
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r)
+,
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1,
+              width: 1.w
+,
             ),
             boxShadow: [
               BoxShadow(
@@ -46,7 +52,8 @@ class GlassIconButton extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r)
+,
               child: Icon(
                 icon,
                 color: Colors.white,

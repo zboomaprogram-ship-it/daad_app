@@ -1,7 +1,3 @@
  
 
-class AppConstants {
 
-}
-
-class Constants {}

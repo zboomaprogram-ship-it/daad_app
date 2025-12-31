@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget buildGlassBottomSheet({
   required BuildContext context,
@@ -22,7 +24,7 @@ Widget buildGlassBottomSheet({
     child: ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -33,9 +35,12 @@ Widget buildGlassBottomSheet({
             ),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             border: Border(
-              top: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
-              left: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
-              right: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+              top: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.w
+),
+              left: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.w
+),
+              right: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.w
+),
             ),
           ),
           child: Padding(
@@ -51,24 +56,28 @@ Widget buildGlassBottomSheet({
                 children: [
                   // Drag Handle
                   Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 20),
+                    width: 40.w
+,
+                    height: 4.h
+,
+                    margin: EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(2.r)
+,
                     ),
                   ),
                   // Title
-                  Text(
+                AppText(title:
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
+                   
+                    
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                    ),
+                     
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h
+),
                   ...children,
                 ],
               ),
@@ -96,11 +105,13 @@ class GlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r)
+,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          height: 50,
+          height: 50.h
+,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: color != null
@@ -113,17 +124,20 @@ class GlassButton extends StatelessWidget {
                       Colors.white.withOpacity(0.2),
                     ],
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r)
+,
             border: Border.all(
               color: Colors.white.withOpacity(0.4),
-              width: 1,
+              width: 1.w
+,
             ),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r)
+,
               child: Center(
                 child: DefaultTextStyle(
                   style: const TextStyle(
@@ -151,17 +165,18 @@ class GlassSwitchTile extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
-    required this.onChanged,
+    required this.onChanged,  String? subtitle,
   });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r)
+,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
+          margin: EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -169,21 +184,24 @@ class GlassSwitchTile extends StatelessWidget {
                 Colors.white.withOpacity(0.1),
               ],
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r)
+,
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1,
+              width: 1.w
+,
             ),
           ),
           child: SwitchListTile(
-            title: Text(
+            title:  AppText(title:
               title,
-              style: const TextStyle(color: Colors.white),
+
             ),
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
-            activeTrackColor: Colors.white.withOpacity(0.5),
+            activeColor: Colors.black,
+            activeTrackColor: Colors.black.withOpacity(0.5),
+          
           ),
         ),
       ),
@@ -209,11 +227,12 @@ class GlassDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r)
+,
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -222,10 +241,12 @@ class GlassDropdown extends StatelessWidget {
                   Colors.white.withOpacity(0.1),
                 ],
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r)
+,
               border: Border.all(
                 color: Colors.white.withOpacity(0.3),
-                width: 1,
+                width: 1.w
+,
               ),
             ),
             child: DropdownButtonFormField<String>(
@@ -235,7 +256,7 @@ class GlassDropdown extends StatelessWidget {
                 labelText: label,
                 labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(16),
+                contentPadding: EdgeInsets.all(16.r),
               ),
               style: const TextStyle(color: Colors.white),
               items: items,

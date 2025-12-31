@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GlassCircleAvatar extends StatelessWidget {
   final double radius;
@@ -31,7 +32,8 @@ class GlassCircleAvatar extends StatelessWidget {
             ),
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1.5,
+              width: 1.5.w
+,
             ),
             boxShadow: [
               BoxShadow(
