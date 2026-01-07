@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
-import 'package:daad_app/core/widgets/app_loading_indicator.dart';
+import 'package:daad_app/core/utils/services/debug_logger.dart';
+import 'package:daad_app/core/utils/caching_utils/hive_cache_service.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/features/auth/presentation/user_contracts_screen.dart';
 import 'package:daad_app/features/dashboard/forms/show_add_contract_dialog.dart';
 import 'package:daad_app/features/dashboard/forms/show_add_package_dialog.dart';
-import 'package:daad_app/features/dashboard/forms/show_user_info_dialog.dart';
 import 'package:daad_app/features/dashboard/widgets/points_history_dialog.dart';
 import 'package:daad_app/features/auth/presentation/user_packages_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,11 +22,18 @@ class UsersTab extends StatefulWidget {
 }
 
 class _UsersTabState extends State<UsersTab> {
+  // Pagination constants
+  static const int _pageSize = 15;
+
+  // State variables
   String _searchQuery = '';
   String _roleFilter = 'all';
-  // Removed Pagination for Admin to allow Search to work correctly
   List<DocumentSnapshot> _users = [];
+  List<Map<String, dynamic>>? _cachedUserData; // Hive cached data
   bool _isLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  DocumentSnapshot? _lastDocument;
   final ScrollController _scrollController = ScrollController();
   String? _currentUserId;
   String? _currentUserRole;
@@ -35,7 +42,23 @@ class _UsersTabState extends State<UsersTab> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _getCurrentUser();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      if (!_isLoadingMore && _hasMore && _cachedUserData == null) {
+        _loadMore();
+      }
+    }
   }
 
   Future<void> _getCurrentUser() async {
@@ -63,17 +86,21 @@ class _UsersTabState extends State<UsersTab> {
     _loadUsers();
   }
 
-  // ✅ FIX: Load users robustly without strict pagination for Admin
-  Future<void> _loadUsers() async {
+  // ✅ Load users with pagination and Hive caching
+  Future<void> _loadUsers({bool forceRefresh = false}) async {
     if (_isLoading || _currentUserId == null) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _users = [];
+      _cachedUserData = null;
+      _lastDocument = null;
+      _hasMore = true;
+    });
 
     try {
-      List<DocumentSnapshot> loadedDocs = [];
-
       if (_currentUserRole == 'sales') {
-        // --- SALES LOGIC ---
+        // --- SALES LOGIC (no pagination - limited users) ---
         if (_assignedUserIds.isEmpty) {
           setState(() {
             _users = [];
@@ -82,7 +109,7 @@ class _UsersTabState extends State<UsersTab> {
           return;
         }
 
-        // Batch load assigned users (Firestore limit 10 per batch)
+        List<DocumentSnapshot> loadedDocs = [];
         const batchSize = 10;
         for (int i = 0; i < _assignedUserIds.length; i += batchSize) {
           final batch = _assignedUserIds.skip(i).take(batchSize).toList();
@@ -92,35 +119,107 @@ class _UsersTabState extends State<UsersTab> {
               .get();
           loadedDocs.addAll(snapshot.docs);
         }
-      } else {
-        // --- ADMIN LOGIC (FIXED) ---
-        // 1. Removed 'limit(10)' -> Fetches all so Search works.
-        // 2. Removed 'orderBy(lastSeenAt)' -> Fixes missing Admins.
 
+        if (mounted) {
+          setState(() {
+            _users = loadedDocs;
+            _hasMore = false;
+            _isLoading = false;
+          });
+        }
+      } else {
+        // --- ADMIN LOGIC with PAGINATION ---
+        // Try cache first (unless forceRefresh)
+        if (!forceRefresh) {
+          final cachedUsers = HiveCacheService.getAllCachedUsers(
+            ttl: const Duration(minutes: 5),
+          );
+          if (cachedUsers != null && cachedUsers.isNotEmpty) {
+            DebugLogger.info('Using cached users (${cachedUsers.length})');
+            if (mounted) {
+              setState(() {
+                _cachedUserData = cachedUsers;
+                _hasMore = false; // Cache has all users
+                _isLoading = false;
+              });
+            }
+            return;
+          }
+        }
+
+        // Fetch first page from Firestore
         final snapshot = await FirebaseFirestore.instance
             .collection('users')
-            // You can uncomment this if you are SURE all users have createdAt
-            // .orderBy('createdAt', descending: true)
+            .orderBy('createdAt', descending: true)
+            .limit(_pageSize)
             .get();
 
-        loadedDocs = snapshot.docs;
-      }
+        if (mounted) {
+          setState(() {
+            _users = snapshot.docs;
+            _lastDocument = snapshot.docs.isNotEmpty
+                ? snapshot.docs.last
+                : null;
+            _hasMore = snapshot.docs.length == _pageSize;
+            _isLoading = false;
+          });
+        }
 
-      if (mounted) {
-        setState(() {
-          _users = loadedDocs;
-          _isLoading = false;
-        });
+        // Cache results if we loaded all users (less than page size)
+        if (snapshot.docs.length < _pageSize) {
+          final usersToCache = snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {'id': doc.id, ...data};
+          }).toList();
+          await HiveCacheService.cacheAllUsers(usersToCache);
+        }
       }
     } catch (e) {
-      print('Error loading users: $e');
+      DebugLogger.error('Error loading users', e);
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  List<DocumentSnapshot> _getFilteredUsers() {
-    return _users.where((doc) {
-      final data = doc.data() as Map<String, dynamic>;
+  // Load more users (pagination)
+  Future<void> _loadMore() async {
+    if (_lastDocument == null || !_hasMore || _isLoadingMore) return;
+    if (_currentUserRole != 'admin') return; // Only admin uses pagination
+
+    setState(() => _isLoadingMore = true);
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .orderBy('createdAt', descending: true)
+          .startAfterDocument(_lastDocument!)
+          .limit(_pageSize)
+          .get();
+
+      if (mounted) {
+        setState(() {
+          _users.addAll(snapshot.docs);
+          _lastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+          _hasMore = snapshot.docs.length == _pageSize;
+          _isLoadingMore = false;
+        });
+      }
+    } catch (e) {
+      DebugLogger.error('Error loading more users', e);
+      if (mounted) setState(() => _isLoadingMore = false);
+    }
+  }
+
+  /// Get filtered users - works with both cached and live Firestore data
+  List<Map<String, dynamic>> _getFilteredUsers() {
+    // Use cached data if available, otherwise extract from DocumentSnapshots
+    final List<Map<String, dynamic>> allUsers =
+        _cachedUserData ??
+        _users.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return {'id': doc.id, ...data};
+        }).toList();
+
+    return allUsers.where((data) {
       final name = (data['name'] ?? '').toString().toLowerCase();
       final email = (data['email'] ?? '').toString().toLowerCase();
       final role = data['role'] ?? 'client';
@@ -406,9 +505,9 @@ class _UsersTabState extends State<UsersTab> {
 
   Future<void> _showChangeRoleDialog(
     BuildContext context,
-    DocumentSnapshot doc,
+    Map<String, dynamic> data,
+    String docId,
   ) async {
-    final data = doc.data() as Map<String, dynamic>;
     String currentRole = data['role'] ?? 'client';
     final result = await showDialog<String>(
       context: context,
@@ -431,19 +530,16 @@ class _UsersTabState extends State<UsersTab> {
       ),
     );
     if (result != null && result != currentRole) {
-      await FirebaseService.updateUserRole(doc.id, result);
+      await FirebaseService.updateUserRole(docId, result);
       if (result == 'sales')
-        await FirebaseFirestore.instance.collection('users').doc(doc.id).update(
-          {'assignedUsers': []},
-        );
-      if (mounted) _loadUsers();
+        await FirebaseFirestore.instance.collection('users').doc(docId).update({
+          'assignedUsers': [],
+        });
+      if (mounted) _loadUsers(forceRefresh: true);
     }
   }
 
-  Future<void> _confirmDelete(
-    BuildContext context,
-    DocumentSnapshot doc,
-  ) async {
+  Future<void> _confirmDelete(BuildContext context, String docId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -463,9 +559,12 @@ class _UsersTabState extends State<UsersTab> {
       ),
     );
     if (confirmed == true) {
-      await doc.reference.delete();
+      await FirebaseFirestore.instance.collection('users').doc(docId).delete();
+      // Invalidate cache after deletion
+      await HiveCacheService.invalidateUserCache();
       setState(() {
-        _users.removeWhere((u) => u.id == doc.id);
+        _users.removeWhere((u) => u.id == docId);
+        _cachedUserData?.removeWhere((u) => u['id'] == docId);
       });
     }
   }
@@ -569,169 +668,194 @@ class _UsersTabState extends State<UsersTab> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(8.r),
-                    itemCount: filteredUsers.length,
-                    itemBuilder: (context, index) {
-                      final doc = filteredUsers[index];
-                      final data = doc.data() as Map<String, dynamic>;
-
-                      return Card(
-                        color: AppColors.secondaryColor.withOpacity(0.2),
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: AppColors.primaryColor,
-                            child: AppText(
-                              title: (data['name'] ?? 'U')[0].toUpperCase(),
+                : RefreshIndicator(
+                    onRefresh: () => _loadUsers(forceRefresh: true),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.all(8.r),
+                      itemCount:
+                          filteredUsers.length +
+                          (_hasMore && !_isLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        // Show loading indicator at the end
+                        if (index >= filteredUsers.length) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.r),
+                              child: _isLoadingMore
+                                  ? const CircularProgressIndicator()
+                                  : const SizedBox.shrink(),
                             ),
-                          ),
-                          title: AppText(
-                            title: data['name'] ?? 'مستخدم',
-                            fontWeight: FontWeight.bold,
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(title: '📧 ${data['email'] ?? '-'}'),
-                              AppText(title: '📱 ${data['phone'] ?? '-'}'),
-                              if (isAdmin)
-                                AppText(
-                                  title: '🏷️ ${_getRoleLabel(data['role'])}',
-                                ),
-                              AppText(title: '⭐ نقاط: ${data['points'] ?? 0}'),
-                            ],
-                          ),
-                          trailing: PopupMenuButton(
-                            color: AppColors.secondaryColor.withOpacity(0.9),
-                            iconColor: AppColors.textColor,
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 'info',
-                                child: AppText(title: 'معلومات كاملة'),
+                          );
+                        }
+
+                        final data = filteredUsers[index];
+                        final docId = data['id'] as String? ?? '';
+
+                        return Card(
+                          color: AppColors.secondaryColor.withOpacity(0.2),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: AppColors.primaryColor,
+                              child: AppText(
+                                title: (data['name'] ?? 'U')[0].toUpperCase(),
                               ),
-                              if (isAdmin && data['role'] == 'sales')
-                                const PopupMenuItem(
-                                  value: 'manage-clients',
-                                  child: AppText(title: 'إدارة العملاء'),
-                                ),
-                              if (isAdmin && data['role'] != 'sales')
-                                const PopupMenuItem(
-                                  value: 'assign-sales',
-                                  child: AppText(title: 'تعيين لمندوب'),
-                                ),
-                              const PopupMenuItem(
-                                value: 'contracts',
-                                child: AppText(title: 'العقود'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'add-contract',
-                                child: AppText(title: 'إضافة عقد'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'points',
-                                child: AppText(title: 'إدارة النقاط'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'history',
-                                child: AppText(title: 'سجل النقاط'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'packages',
-                                child: AppText(title: 'الباقات'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'add-package',
-                                child: AppText(title: 'إضافة باقة'),
-                              ),
-                              if (isAdmin) ...[
-                                const PopupMenuItem(
-                                  value: 'role',
-                                  child: AppText(title: 'تغيير الدور'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: AppText(
-                                    title: 'حذف',
-                                    color: Colors.red,
+                            ),
+                            title: AppText(
+                              title: data['name'] ?? 'مستخدم',
+                              fontWeight: FontWeight.bold,
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(title: '📧 ${data['email'] ?? '-'}'),
+                                AppText(title: '📱 ${data['phone'] ?? '-'}'),
+                                if (isAdmin)
+                                  AppText(
+                                    title: '🏷️ ${_getRoleLabel(data['role'])}',
                                   ),
+                                AppText(
+                                  title: '⭐ نقاط: ${data['points'] ?? 0}',
                                 ),
                               ],
-                            ],
-                            onSelected: (value) {
-                              if (value == 'info')
-                                showUserInfoDialog(
-                                  context,
-                                  doc,
-                                  isAdmin: isAdmin,
-                                  currentUserId: _currentUserId ?? '',
-                                );
-                              if (value == 'manage-clients') {
-                                List<String> current = List<String>.from(
-                                  data['assignedUsers'] ?? [],
-                                );
-                                _showManageAssignedClientsDialog(
-                                  context,
-                                  doc.id,
-                                  current,
-                                );
-                              }
-                              if (value == 'assign-sales')
-                                _showAssignToSalesDialog(
-                                  context,
-                                  doc.id,
-                                  data['name'] ?? '',
-                                );
-                              if (value == 'contracts')
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => UserContractsScreen(
-                                      userId: doc.id,
-                                      userName: data['name'] ?? '',
-                                      isAdmin: isAdmin || isSales,
+                            ),
+                            trailing: PopupMenuButton(
+                              color: AppColors.secondaryColor.withOpacity(0.9),
+                              iconColor: AppColors.textColor,
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'info',
+                                  child: AppText(title: 'معلومات كاملة'),
+                                ),
+                                if (isAdmin && data['role'] == 'sales')
+                                  const PopupMenuItem(
+                                    value: 'manage-clients',
+                                    child: AppText(title: 'إدارة العملاء'),
+                                  ),
+                                if (isAdmin && data['role'] != 'sales')
+                                  const PopupMenuItem(
+                                    value: 'assign-sales',
+                                    child: AppText(title: 'تعيين لمندوب'),
+                                  ),
+                                const PopupMenuItem(
+                                  value: 'contracts',
+                                  child: AppText(title: 'العقود'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'add-contract',
+                                  child: AppText(title: 'إضافة عقد'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'points',
+                                  child: AppText(title: 'إدارة النقاط'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'history',
+                                  child: AppText(title: 'سجل النقاط'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'packages',
+                                  child: AppText(title: 'الباقات'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'add-package',
+                                  child: AppText(title: 'إضافة باقة'),
+                                ),
+                                if (isAdmin) ...[
+                                  const PopupMenuItem(
+                                    value: 'role',
+                                    child: AppText(title: 'تغيير الدور'),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 'delete',
+                                    child: AppText(
+                                      title: 'حذف',
+                                      color: Colors.red,
                                     ),
                                   ),
-                                );
-                              if (value == 'add-contract')
-                                showAddContractDialog(
-                                  context,
-                                  userId: doc.id,
-                                  userName: data['name'] ?? '',
-                                  currentAdminId: _currentUserId ?? '',
-                                );
-                              if (value == 'points')
-                                _showPointsDialog(context, doc.id);
-                              if (value == 'history')
-                                showPointsHistoryDialog(context, doc.id);
-                              if (value == 'packages')
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => UserPackagesScreen(
-                                      userId: doc.id,
-                                      userName: data['name'] ?? '',
-                                      isAdmin: isAdmin || isSales,
+                                ],
+                              ],
+                              onSelected: (value) {
+                                if (value == 'info') {
+                                  // Use docId from data map for user info
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UserContractsScreen(
+                                        userId: docId,
+                                        userName: data['name'] ?? 'مستخدم',
+                                        isAdmin: isAdmin || isSales,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              if (value == 'add-package')
-                                showAddPackageDialog(
-                                  context,
-                                  userId: doc.id,
-                                  userName: data['name'] ?? '',
-                                  currentAdminId: _currentUserId ?? '',
-                                );
-                              if (value == 'role')
-                                _showChangeRoleDialog(context, doc);
-                              if (value == 'delete')
-                                _confirmDelete(context, doc);
-                            },
+                                  );
+                                }
+                                if (value == 'manage-clients') {
+                                  List<String> current = List<String>.from(
+                                    data['assignedUsers'] ?? [],
+                                  );
+                                  _showManageAssignedClientsDialog(
+                                    context,
+                                    docId,
+                                    current,
+                                  );
+                                }
+                                if (value == 'assign-sales')
+                                  _showAssignToSalesDialog(
+                                    context,
+                                    docId,
+                                    data['name'] ?? '',
+                                  );
+                                if (value == 'contracts')
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UserContractsScreen(
+                                        userId: docId,
+                                        userName: data['name'] ?? '',
+                                        isAdmin: isAdmin || isSales,
+                                      ),
+                                    ),
+                                  );
+                                if (value == 'add-contract')
+                                  showAddContractDialog(
+                                    context,
+                                    userId: docId,
+                                    userName: data['name'] ?? '',
+                                    currentAdminId: _currentUserId ?? '',
+                                  );
+                                if (value == 'points')
+                                  _showPointsDialog(context, docId);
+                                if (value == 'history')
+                                  showPointsHistoryDialog(context, docId);
+                                if (value == 'packages')
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UserPackagesScreen(
+                                        userId: docId,
+                                        userName: data['name'] ?? '',
+                                        isAdmin: isAdmin || isSales,
+                                      ),
+                                    ),
+                                  );
+                                if (value == 'add-package')
+                                  showAddPackageDialog(
+                                    context,
+                                    userId: docId,
+                                    userName: data['name'] ?? '',
+                                    currentAdminId: _currentUserId ?? '',
+                                  );
+                                if (value == 'role')
+                                  _showChangeRoleDialog(context, data, docId);
+                                if (value == 'delete')
+                                  _confirmDelete(context, docId);
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:daad_app/core/utils/network_utils/secure_config_service.dart';
 import 'package:daad_app/core/utils/notification_utils/notification_utils.dart';
 import 'package:daad_app/core/utils/services/deep_link_handler.dart';
 import 'package:daad_app/core/utils/services/debug_logger.dart';
+import 'package:daad_app/core/utils/caching_utils/hive_cache_service.dart';
 import 'package:daad_app/features/services/remote_config_service.dart';
 import 'package:daad_app/lifecycle_watcher.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +33,7 @@ Future<void> _initializeServicesInBackground() async {
       _initializeSecureConfig(),
       _initializeNotifications(),
       _initializeRemoteConfig(),
+      _initializeHiveCache(),
     ]);
     DebugLogger.success('All background services initialized');
   } catch (e) {
@@ -82,6 +84,15 @@ Future<void> _initializeRemoteConfig() async {
     DebugLogger.success('RemoteConfig initialized');
   } catch (e) {
     DebugLogger.warning('RemoteConfig initialization failed: $e');
+  }
+}
+
+Future<void> _initializeHiveCache() async {
+  try {
+    await HiveCacheService.initialize();
+    DebugLogger.success('HiveCache initialized');
+  } catch (e) {
+    DebugLogger.warning('HiveCache initialization failed: $e');
   }
 }
 

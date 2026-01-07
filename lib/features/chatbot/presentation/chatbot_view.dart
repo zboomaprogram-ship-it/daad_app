@@ -28,10 +28,10 @@
 //   bool _isLoading = true;
 //   bool _isFirstTimeUser = true;
 //   bool _hasIntroduced = false;
-  
+
 //   List<Map<String, dynamic>> _servicesData = [];
 //   bool _servicesLoaded = false;
-  
+
 //   ChatBotPersona? _persona;
 
 //   @override
@@ -54,7 +54,7 @@
 //     } catch (e) {
 //       print('❌ Error loading persona: $e');
 //     }
-    
+
 //     await _loadServicesData();
 //     await _cleanupOldMessages();
 //     await _loadMessages();
@@ -115,8 +115,8 @@
 //       const batchSize = 450;
 //       for (var i = 0; i < oldSnap.docs.length; i += batchSize) {
 //         final batch = FirebaseFirestore.instance.batch();
-//         final end = (i + batchSize < oldSnap.docs.length) 
-//             ? i + batchSize 
+//         final end = (i + batchSize < oldSnap.docs.length)
+//             ? i + batchSize
 //             : oldSnap.docs.length;
 
 //         for (var j = i; j < end; j++) {
@@ -165,7 +165,7 @@
 
 //         _isFirstTimeUser = _messages.isEmpty;
 //         _hasIntroduced = _messages.any((m) => !m.isUser);
-        
+
 //         _isLoading = false;
 //       });
 
@@ -173,11 +173,11 @@
 //       WidgetsBinding.instance.addPostFrameCallback((_) {
 //         _scrollToBottom();
 //       });
-      
-//       print(_isFirstTimeUser 
-//           ? '👋 First time user detected' 
+
+//       print(_isFirstTimeUser
+//           ? '👋 First time user detected'
 //           : '🔄 Returning user detected (${_messages.length} messages)');
-          
+
 //     } catch (e) {
 //       print('❌ Error loading messages: $e');
 //       setState(() => _isLoading = false);
@@ -189,9 +189,9 @@
 
 //     if (_messages.isNotEmpty) {
 //       final lastMessage = _messages.last;
-//       final hoursSinceLastMessage = 
+//       final hoursSinceLastMessage =
 //           DateTime.now().difference(lastMessage.timestamp).inHours;
-      
+
 //       if (hoursSinceLastMessage < 1) {
 //         print('⏭️ Skipping welcome (last message was ${hoursSinceLastMessage}h ago)');
 //         return;
@@ -202,7 +202,7 @@
 
 //     try {
 //       String welcomeMessage;
-      
+
 //       if (_isFirstTimeUser) {
 //         welcomeMessage = await _getAIWelcomeMessage(isFirstTime: true);
 //       } else {
@@ -220,11 +220,10 @@
 //         _isTyping = false;
 //         _hasIntroduced = true;
 //       });
-      
 
 //       await _saveMessage(welcomeMessage, false);
 //       _scrollToBottom();
-      
+
 //     } catch (e) {
 //       print('❌ Error sending welcome message: $e');
 //       setState(() => _isTyping = false);
@@ -237,7 +236,7 @@
 
 //     if (_persona != null) {
 //       final customWelcome = _persona!.getFinalWelcome(isFirstTime);
-      
+
 //       if (!customWelcome.contains('أنت') && customWelcome.length < 500) {
 //         return customWelcome;
 //       }
@@ -292,7 +291,7 @@
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         final text = data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
-        
+
 //         if (text != null && text.isNotEmpty) {
 //           return text.trim();
 //         }
@@ -401,14 +400,14 @@
 //       servicesText.writeln("▪️ ${service['title']}");
 //       servicesText.writeln("   الوصف: ${service['desc']}");
 //       servicesText.writeln("   التصنيف: ${service['category']}");
-      
+
 //       if (service['priceTiers'] != null && service['priceTiers'].isNotEmpty) {
 //         servicesText.writeln("   الباقات المتاحة:");
 //         for (var tier in service['priceTiers']) {
 //           final name = tier['name'] ?? 'غير محدد';
 //           final price = tier['price'] ?? 0;
 //           final features = tier['features'] ?? [];
-          
+
 //           servicesText.writeln("      - $name: ${price > 0 ? '$price ريال' : 'مجاني'}");
 //           if (features.isNotEmpty) {
 //             servicesText.writeln("        المميزات: ${features.join(', ')}");
@@ -430,7 +429,7 @@
 //     }
 
 //     String systemPrompt = _persona?.getFinalSystemPrompt() ?? _getDefaultSystemPrompt();
-    
+
 //     systemPrompt += '\n\n${_buildServicesContext()}';
 //     systemPrompt += '\n\nحالة التعريف: ${_hasIntroduced ? "تم التعريف سابقاً - لا تعيد التعريف" : "أول رد - عرّف بنفسك"}';
 
@@ -488,7 +487,7 @@
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         final text = data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
-        
+
 //         if (text != null && text.isNotEmpty) {
 //           return text;
 //         } else {
@@ -588,7 +587,7 @@
 //                                 color: Colors.white,
 //                               ),
 //                     SizedBox(width: 40.w),
-                
+
 //                   ],
 //                 ),
 //               ),
@@ -604,7 +603,7 @@
 
 //               // Typing Indicator
 //               if (_isTyping) _buildTypingIndicator(),
-              
+
 //               // Input Field
 //               _buildInputField(),
 //             ],
@@ -929,7 +928,7 @@
 //                   fontSize: 12,
 //                   color: Colors.white.withOpacity(0.5),
 //                 ),
-               
+
 //               ],
 //             ),
 //           ),
@@ -1001,7 +1000,6 @@
 //   });
 // }
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/constants.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
@@ -1018,7 +1016,6 @@ import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({super.key});
   @override
@@ -1034,10 +1031,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   bool _isLoading = true;
   bool _isFirstTimeUser = true;
   bool _hasIntroduced = false;
-  
+
   List<Map<String, dynamic>> _servicesData = [];
   bool _servicesLoaded = false;
-  
+
   ChatBotPersona? _persona;
 
   @override
@@ -1065,6 +1062,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     await _loadMessages();
     await _checkAndSendWelcomeMessage();
   }
+
   Future<void> _loadServicesData() async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -1118,8 +1116,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       const batchSize = 450;
       for (var i = 0; i < oldSnap.docs.length; i += batchSize) {
         final batch = FirebaseFirestore.instance.batch();
-        final end = (i + batchSize < oldSnap.docs.length) 
-            ? i + batchSize 
+        final end = (i + batchSize < oldSnap.docs.length)
+            ? i + batchSize
             : oldSnap.docs.length;
 
         for (var j = i; j < end; j++) {
@@ -1159,7 +1157,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
             ChatMessage(
               text: data['text'] ?? '',
               isUser: data['isUser'] ?? false,
-              timestamp: (data['timestamp'] as Timestamp?)?.toDate() ??
+              timestamp:
+                  (data['timestamp'] as Timestamp?)?.toDate() ??
                   (data['clientTimestamp'] as Timestamp?)?.toDate() ??
                   DateTime.now(),
             ),
@@ -1168,18 +1167,19 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
         _isFirstTimeUser = _messages.isEmpty;
         _hasIntroduced = _messages.any((m) => !m.isUser);
-        
+
         _isLoading = false;
       });
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
-      
-      print(_isFirstTimeUser 
-          ? '👋 First time user detected' 
-          : '🔄 Returning user detected (${_messages.length} messages)');
-          
+
+      print(
+        _isFirstTimeUser
+            ? '👋 First time user detected'
+            : '🔄 Returning user detected (${_messages.length} messages)',
+      );
     } catch (e) {
       print('❌ Error loading messages: $e');
       setState(() => _isLoading = false);
@@ -1191,11 +1191,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
     if (_messages.isNotEmpty) {
       final lastMessage = _messages.last;
-      final hoursSinceLastMessage = 
-          DateTime.now().difference(lastMessage.timestamp).inHours;
-      
+      final hoursSinceLastMessage = DateTime.now()
+          .difference(lastMessage.timestamp)
+          .inHours;
+
       if (hoursSinceLastMessage < 1) {
-        print('⏭️ Skipping welcome (last message was ${hoursSinceLastMessage}h ago)');
+        print(
+          '⏭️ Skipping welcome (last message was ${hoursSinceLastMessage}h ago)',
+        );
         return;
       }
     }
@@ -1204,7 +1207,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
     try {
       String welcomeMessage;
-      
+
       if (_isFirstTimeUser) {
         welcomeMessage = await _getAIWelcomeMessage(isFirstTime: true);
       } else {
@@ -1222,10 +1225,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         _isTyping = false;
         _hasIntroduced = true;
       });
-      
+
       await _saveMessage(welcomeMessage, false);
       _scrollToBottom();
-      
     } catch (e) {
       print('❌ Error sending welcome message: $e');
       setState(() => _isTyping = false);
@@ -1239,7 +1241,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     // Check if persona has custom welcome message
     if (_persona != null) {
       final customWelcome = _persona!.getFinalWelcome(isFirstTime);
-      
+
       // If custom welcome is direct text (not a prompt), use it
       if (!customWelcome.contains('أنت') && customWelcome.length < 500) {
         return customWelcome;
@@ -1248,13 +1250,15 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
     // Build prompt from persona or use default
     final prompt = isFirstTime
-        ? _persona?.getFinalWelcome(true) ?? '''عرّف بنفسك كمساعد ضاد في جملتين فقط.'''
-        : _persona?.getFinalWelcome(false) ?? '''رحب بالمستخدم العائد في جملة واحدة.''';
+        ? _persona?.getFinalWelcome(true) ??
+              '''عرّف بنفسك كمساعد ضاد في جملتين فقط.'''
+        : _persona?.getFinalWelcome(false) ??
+              '''رحب بالمستخدم العائد في جملة واحدة.''';
 
     final requestBody = {
       "model": model,
       "messages": [
-        {"role": "user", "content": prompt}
+        {"role": "user", "content": prompt},
       ],
       "temperature": 0.9,
       "max_tokens": 100, // Reduced from 150
@@ -1263,19 +1267,21 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     try {
       final url = Uri.parse("https://api.groq.com/openai/v1/chat/completions");
 
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $apiKey",
-        },
-        body: json.encode(requestBody),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            url,
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer $apiKey",
+            },
+            body: json.encode(requestBody),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final content = data["choices"]?[0]?["message"]?["content"];
-        
+
         if (content != null && content.isNotEmpty) {
           return content.trim();
         }
@@ -1305,11 +1311,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           .doc(user.uid)
           .collection('chatMessages')
           .add({
-        'text': text,
-        'isUser': isUser,
-        'timestamp': FieldValue.serverTimestamp(),
-        'clientTimestamp': Timestamp.fromDate(DateTime.now()),
-      });
+            'text': text,
+            'isUser': isUser,
+            'timestamp': FieldValue.serverTimestamp(),
+            'clientTimestamp': Timestamp.fromDate(DateTime.now()),
+          });
     } catch (e) {
       print('❌ Error saving message: $e');
     }
@@ -1354,7 +1360,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         isUser: false,
         timestamp: DateTime.now(),
       );
-
       setState(() {
         _messages.add(botMessage);
         _isTyping = false;
@@ -1387,7 +1392,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   //   for (var service in _servicesData) {
   //     servicesText.write("▪️ ${service['title']}");
-      
+
   //     // Add price if available
   //     if (service['priceTiers'] != null && service['priceTiers'].isNotEmpty) {
   //       final firstTier = service['priceTiers'][0];
@@ -1404,24 +1409,26 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   String _buildCompactSystemPrompt() {
     // Use persona system prompt if available
-    String basePrompt = _persona?.getFinalSystemPrompt() ?? '''أنت "${_persona?.botName ?? 'مساعد ضاد'}" - مستشار تسويق.
+    String basePrompt =
+        _persona?.getFinalSystemPrompt() ??
+        '''أنت "${_persona?.botName ?? 'مساعد ضاد'}" - مستشار تسويق.
 - ردود قصيرة جداً (2-3 جمل فقط)
 - مباشر ومختصر
 - لا تكرر التعريف''';
 
     // Only add services if user might ask about them
     // Don't add by default to save tokens
-    
+
     // Add introduction status
-    String introStatus = _hasIntroduced 
-        ? "\nملاحظة: لا تعيد التعريف." 
+    String introStatus = _hasIntroduced
+        ? "\nملاحظة: لا تعيد التعريف."
         : "\nملاحظة: عرّف بنفسك بجملة واحدة.";
-    
+
     return '$basePrompt$introStatus';
   }
 
   Future<String> _sendToGroqAPI(String message, {int retryCount = 0}) async {
-       final apiKey = SecureConfigService.llamaApiKey;
+    final apiKey = SecureConfigService.llamaApiKey;
     final model = SecureConfigService.chatModel;
     const maxRetries = 2;
 
@@ -1440,20 +1447,17 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
     // Build conversation history
     List<Map<String, String>> conversationHistory = [
-      {"role": "system", "content": systemPrompt}
+      {"role": "system", "content": systemPrompt},
     ];
 
     for (var msg in recentMessages) {
       conversationHistory.add({
         "role": msg.isUser ? "user" : "assistant",
-        "content": msg.text
+        "content": msg.text,
       });
     }
 
-    conversationHistory.add({
-      "role": "user",
-      "content": message
-    });
+    conversationHistory.add({"role": "user", "content": message});
 
     final requestBody = {
       "model": model,
@@ -1466,19 +1470,21 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     try {
       final url = Uri.parse("https://api.groq.com/openai/v1/chat/completions");
 
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $apiKey",
-        },
-        body: json.encode(requestBody),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            url,
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer $apiKey",
+            },
+            body: json.encode(requestBody),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final content = data["choices"]?[0]?["message"]?["content"];
-        
+
         if (content != null && content.isNotEmpty) {
           return content.trim();
         } else {
@@ -1488,22 +1494,30 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         // Rate limit error
         final data = json.decode(response.body);
         final errorMessage = data["error"]?["message"] ?? "";
-        
+
         // Extract wait time from error message (e.g., "Please try again in 3.51s")
-        final waitTimeMatch = RegExp(r'try again in ([\d.]+)s').firstMatch(errorMessage);
+        final waitTimeMatch = RegExp(
+          r'try again in ([\d.]+)s',
+        ).firstMatch(errorMessage);
         double waitSeconds = 4.0; // Default wait time
-        
+
         if (waitTimeMatch != null) {
           waitSeconds = double.tryParse(waitTimeMatch.group(1) ?? '4') ?? 4.0;
           waitSeconds += 0.5; // Add buffer
         }
-        
-        print('⏳ Rate limit hit. Waiting ${waitSeconds.toStringAsFixed(1)}s before retry...');
-        
+
+        print(
+          '⏳ Rate limit hit. Waiting ${waitSeconds.toStringAsFixed(1)}s before retry...',
+        );
+
         // Retry if we haven't exceeded max retries
         if (retryCount < maxRetries) {
-          await Future.delayed(Duration(milliseconds: (waitSeconds * 1000).toInt()));
-          print('🔄 Retrying request (attempt ${retryCount + 2}/${maxRetries + 1})...');
+          await Future.delayed(
+            Duration(milliseconds: (waitSeconds * 1000).toInt()),
+          );
+          print(
+            '🔄 Retrying request (attempt ${retryCount + 2}/${maxRetries + 1})...',
+          );
           return await _sendToGroqAPI(message, retryCount: retryCount + 1);
         } else {
           return "عذراً، الخدمة مزدحمة حالياً. يرجى الانتظار قليلاً والمحاولة مرة أخرى.";
@@ -1586,13 +1600,13 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 child: _isLoading
                     ? _buildShimmerLoading()
                     : _messages.isEmpty && !_isTyping
-                        ? _buildEmptyChat()
-                        : _buildMessagesList(),
+                    ? _buildEmptyChat()
+                    : _buildMessagesList(),
               ),
 
               // Typing Indicator
               if (_isTyping) _buildTypingIndicator(),
-              
+
               // Input Field
               _buildInputField(),
             ],
@@ -1611,8 +1625,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         return Padding(
           padding: EdgeInsets.only(bottom: 16.h),
           child: Row(
-            mainAxisAlignment:
-                isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isUser
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             children: [
               if (!isUser) ...[
                 Shimmer.fromColors(
@@ -1695,7 +1710,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -1780,7 +1798,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 textAlign: TextAlign.right,
                 style: TextStyle(color: Colors.white, fontSize: 14.sp),
                 decoration: InputDecoration(
-                  hintText: 'اسأل ${_persona?.botName ?? "مساعد ضاد"} عن أي شيء...',
+                  hintText:
+                      'اسأل ${_persona?.botName ?? "مساعد ضاد"} عن أي شيء...',
                   hintStyle: TextStyle(
                     color: Colors.white.withOpacity(0.4),
                     fontSize: 14.sp,
@@ -1834,8 +1853,9 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!message.isUser) ...[
