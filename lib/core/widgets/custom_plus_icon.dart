@@ -1,7 +1,7 @@
- import 'package:daad_app/core/utils/app_colors/app_colors.dart';
+import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
- 
+
 class CustomPlusIcon extends StatelessWidget {
   const CustomPlusIcon({super.key, this.onTap});
 
@@ -12,11 +12,9 @@ class CustomPlusIcon extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 25.w
-.w,
-        height: 25.h
-.h,
-        decoration: BoxDecoration(
+        width: 25.w.w,
+        height: 25.h.h,
+        decoration: const BoxDecoration(
           color: AppColors.primaryColor,
           shape: BoxShape.circle,
         ),

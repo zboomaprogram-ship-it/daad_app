@@ -1,7 +1,6 @@
 import 'package:daad_app/features/auth/presentation/email_verification_screen.dart';
 import 'package:daad_app/features/onboarding/presentation/onboarding_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:daad_app/features/auth/presentation/sign_in_screen.dart';
 import 'package:daad_app/features/home/home_nav_bar.dart';
 import 'package:flutter/material.dart';
 

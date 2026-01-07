@@ -44,18 +44,20 @@ class _DaadAppState extends State<DaadApp> {
   // ✅ Handle force logout
   Future<void> _handleForceLogout() async {
     await AuthService.signOut(logoutAllDevices: false);
-    
+
     if (mounted) {
       // Show message
-      ScaffoldMessenger.of(RouteUtils.navigatorKey.currentContext!).showSnackBar(
-        SnackBar(
-          content: const Text('تم تسجيل خروجك من هذا الجهاز'),
+      ScaffoldMessenger.of(
+        RouteUtils.navigatorKey.currentContext!,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text('تم تسجيل خروجك من هذا الجهاز'),
           backgroundColor: Colors.orange,
-          duration: const Duration(seconds: 3),
+          duration: Duration(seconds: 3),
           behavior: SnackBarBehavior.floating,
         ),
       );
-      
+
       // Navigate to login
       RouteUtils.pushAndPopAll(const LoginScreen());
     }

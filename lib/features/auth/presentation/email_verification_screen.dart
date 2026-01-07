@@ -44,16 +44,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       if (AuthService.isEmailVerified()) {
         timer.cancel();
         setState(() => _isVerified = true);
-        
+
         // ✅ Update Firestore emailVerified status
         final uid = AuthService.getCurrentUser()?.uid;
         if (uid != null) {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(uid)
-              .update({'emailVerified': true});
+          await FirebaseFirestore.instance.collection('users').doc(uid).update({
+            'emailVerified': true,
+          });
         }
-        
+
         _navigateToProfile();
       }
     });
@@ -107,11 +106,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         RouteUtils.pushReplacement(const HomeNavigationBar());
       } else {
         // Go to CompleteProfileScreen first
-        RouteUtils.pushReplacement(
-          CompleteProfileScreen(
-            userId: uid,
-          ),
-        );
+        RouteUtils.pushReplacement(CompleteProfileScreen(userId: uid));
       }
     }
   }
@@ -240,18 +235,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   ),
                   SizedBox(height: 16.h),
                   AppText(
-                    title: 'لم تستلم البريد؟ تحقق من مجلد البريد المزعج (Spam)'  ,
+                    title: 'لم تستلم البريد؟ تحقق من مجلد البريد المزعج (Spam)',
                     textAlign: TextAlign.center,
                     color: Colors.white.withOpacity(0.7),
                     fontSize: 14,
                   ),
-                   SizedBox(height: 16.h),
+                  SizedBox(height: 16.h),
                   GestureDetector(
                     onTap: () => RouteUtils.push(SignUpScreen()),
-                    child: AppText(
+                    child: const AppText(
                       title: 'العوده الي إنشاء الحساب',
                       textDecoration: TextDecoration.underline,
-                      
+
                       textAlign: TextAlign.center,
                       color: AppColors.secondaryTextColor,
                       fontSize: 14,

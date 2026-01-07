@@ -73,7 +73,7 @@ Future<void> showPortfolioForm(
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: Colors.white12),
@@ -129,9 +129,9 @@ Future<void> showPortfolioForm(
                     );
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: AppText(title: 'خطأ: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: AppText(title: 'خطأ: $e')));
                 }
               }
             },
@@ -213,7 +213,7 @@ Future<void> showPortfolioForm(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText(
+                            const AppText(
                               title: 'جاري رفع الملف...',
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -330,15 +330,15 @@ Future<void> showPortfolioForm(
                           // Upload with progress callback
                           final uploadedPdfUrl =
                               await WordPressMediaService.uploadPdf(
-                            file,
-                            onProgress: (progress) {
-                              if (context.mounted) {
-                                setModalState(() {
-                                  pdfUploadProgress = progress;
-                                });
-                              }
-                            },
-                          );
+                                file,
+                                onProgress: (progress) {
+                                  if (context.mounted) {
+                                    setModalState(() {
+                                      pdfUploadProgress = progress;
+                                    });
+                                  }
+                                },
+                              );
 
                           if (!context.mounted) return;
 
@@ -428,7 +428,9 @@ Future<void> showPortfolioForm(
                         pdfUrl!.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('يرجى ملء جميع الحقول وإضافة صور وملف PDF'),
+                          content: Text(
+                            'يرجى ملء جميع الحقول وإضافة صور وملف PDF',
+                          ),
                         ),
                       );
                       return;
@@ -444,13 +446,14 @@ Future<void> showPortfolioForm(
                       'updatedAt': FieldValue.serverTimestamp(),
                     };
 
-                    final col =
-                        FirebaseFirestore.instance.collection('portfolio');
+                    final col = FirebaseFirestore.instance.collection(
+                      'portfolio',
+                    );
 
                     try {
                       if (isEdit) {
                         await col
-                            .doc(doc!.id)
+                            .doc(doc.id)
                             .set(body, SetOptions(merge: true));
                       } else {
                         body['createdAt'] = FieldValue.serverTimestamp();
@@ -461,7 +464,7 @@ Future<void> showPortfolioForm(
                             title: '🎨 عمل جديد',
                             body:
                                 '${titleCtrl.text.trim()} - $selectedIndustry',
-                                deepLink: DeepLinkHandler.contractLink(pdfUrl!),
+                            deepLink: DeepLinkHandler.contractLink(pdfUrl!),
                           );
                         }
                       }

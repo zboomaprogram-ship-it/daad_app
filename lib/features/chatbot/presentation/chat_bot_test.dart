@@ -179,12 +179,12 @@ class _QuickGeminiTestState extends State<QuickGeminiTest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '💡 ملاحظات مهمة:',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8.h),
-                    Text(
+                    const Text(
                       '• يستخدم gemini-1.5-flash (أسرع وأحدث)\n'
                       '• يعمل مع v1beta API\n'
                       '• مجاني 100%\n'

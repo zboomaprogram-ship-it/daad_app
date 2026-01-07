@@ -3,6 +3,8 @@ import 'package:daad_app/features/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomBackButton extends StatelessWidget {
+  const CustomBackButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -11,7 +13,9 @@ class CustomBackButton extends StatelessWidget {
         if (Navigator.of(context).canPop()) {
           Navigator.of(context).pop(); // الرجوع إلى الصفحة السابقة
         } else {
-          RouteUtils.push(const HomeScreen()); // العودة إلى الصفحة الرئيسية إذا لم يكن هناك صفحات سابقة
+          RouteUtils.push(
+            const HomeScreen(),
+          ); // العودة إلى الصفحة الرئيسية إذا لم يكن هناك صفحات سابقة
         }
       },
     );

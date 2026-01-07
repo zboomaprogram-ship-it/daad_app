@@ -4,21 +4,23 @@ import 'dart:io';
 import 'package:daad_app/core/utils/network_utils/secure_config_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 
 class WordPressMediaService {
   // Replace with your WordPress site details
   static String get wordPressUrl => SecureConfigService.wordPressUrl;
   static String get username => SecureConfigService.wordPressUsername;
-  static String get applicationPassword => SecureConfigService.wordPressAppPassword;
+  static String get applicationPassword =>
+      SecureConfigService.wordPressAppPassword;
   static String get fileBirdApiKey => SecureConfigService.fileBirdApiKey;
 
   static const Duration uploadTimeout = Duration(minutes: 10);
   static const Duration connectionTimeout = Duration(seconds: 30);
 
   static String _getAuthHeader() {
-    final credentials = base64Encode(utf8.encode('$username:$applicationPassword'));
+    final credentials = base64Encode(
+      utf8.encode('$username:$applicationPassword'),
+    );
     return 'Basic $credentials';
   }
 
@@ -26,6 +28,7 @@ class WordPressMediaService {
   static File xFileToFile(dynamic xFile) {
     return File(xFile.path);
   }
+
   // Helper: Convert List<XFile> to List<File>
   static List<File> xFilesToFiles(List<dynamic> xFiles) {
     return xFiles.map((xFile) => File(xFile.path)).toList();
@@ -70,7 +73,7 @@ class WordPressMediaService {
   }) async {
     try {
       final ioFile = toFile(file);
-      
+
       final url = Uri.parse(
         '$wordPressUrl/wp-json/filebird-api/v2/upload?api_key=$fileBirdApiKey&folder=$folderId',
       );
@@ -81,7 +84,8 @@ class WordPressMediaService {
       final streamedResponse = await request.send().timeout(uploadTimeout);
 
       int bytesReceived = 0;
-      final contentLength = streamedResponse.contentLength ?? await ioFile.length();
+      final contentLength =
+          streamedResponse.contentLength ?? await ioFile.length();
       final responseBytes = <int>[];
 
       await for (var chunk in streamedResponse.stream) {
@@ -100,7 +104,9 @@ class WordPressMediaService {
         final jsonData = jsonDecode(responseBody);
         return jsonData['url'];
       } else {
-        print("FileBird Upload Failed: ${streamedResponse.statusCode} - $responseBody");
+        print(
+          "FileBird Upload Failed: ${streamedResponse.statusCode} - $responseBody",
+        );
         return null;
       }
     } catch (e) {
@@ -119,7 +125,7 @@ class WordPressMediaService {
     Function(int current, int total)? onImageProgress,
   }) async {
     List<String> uploadedUrls = [];
-    
+
     for (int i = 0; i < images.length; i++) {
       try {
         if (onImageProgress != null) {
@@ -147,17 +153,14 @@ class WordPressMediaService {
   }) async {
     try {
       final file = toFile(image);
-      
+
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('$wordPressUrl/wp-json/wp/v2/media'),
       );
       request.headers['Authorization'] = _getAuthHeader();
 
-      request.files.add(await http.MultipartFile.fromPath(
-        'file',
-        file.path,
-      ));
+      request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
       final streamedResponse = await request.send();
       final responseBytes = await streamedResponse.stream.toBytes();
@@ -167,7 +170,9 @@ class WordPressMediaService {
         final jsonData = json.decode(responseBody);
         return jsonData['source_url'];
       } else {
-        throw Exception('Upload failed: ${streamedResponse.statusCode} - $responseBody');
+        throw Exception(
+          'Upload failed: ${streamedResponse.statusCode} - $responseBody',
+        );
       }
     } catch (e) {
       print('❌ Error uploading image: $e');
@@ -186,7 +191,9 @@ class WordPressMediaService {
       final fileSize = await file.length();
 
       final fileSizeMB = fileSize / (1024 * 1024);
-      print('📄 Starting PDF upload: $fileName (${fileSizeMB.toStringAsFixed(2)} MB)');
+      print(
+        '📄 Starting PDF upload: $fileName (${fileSizeMB.toStringAsFixed(2)} MB)',
+      );
 
       final url = Uri.parse('$wordPressUrl/wp-json/wp/v2/media');
       var request = http.MultipartRequest('POST', url);
@@ -194,7 +201,13 @@ class WordPressMediaService {
       request.headers['Content-Type'] = 'multipart/form-data';
       request.headers['Accept'] = 'application/json';
 
-      request.files.add(await http.MultipartFile.fromPath('file', file.path, filename: fileName));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          file.path,
+          filename: fileName,
+        ),
+      );
 
       final streamedResponse = await request.send().timeout(uploadTimeout);
       int bytesReceived = 0;
@@ -219,7 +232,9 @@ class WordPressMediaService {
         print('✅ PDF uploaded successfully! URL: $pdfUrl');
         return pdfUrl;
       } else {
-        throw Exception('Upload failed: ${streamedResponse.statusCode} - $responseBody');
+        throw Exception(
+          'Upload failed: ${streamedResponse.statusCode} - $responseBody',
+        );
       }
     } catch (e) {
       print('❌ Error uploading PDF: $e');
@@ -248,8 +263,12 @@ class WordPressMediaService {
   /// Delete media
   static Future<bool> deleteMedia(int mediaId) async {
     try {
-      final url = Uri.parse('$wordPressUrl/wp-json/wp/v2/media/$mediaId?force=true');
-      final response = await http.delete(url, headers: {'Authorization': _getAuthHeader()}).timeout(connectionTimeout);
+      final url = Uri.parse(
+        '$wordPressUrl/wp-json/wp/v2/media/$mediaId?force=true',
+      );
+      final response = await http
+          .delete(url, headers: {'Authorization': _getAuthHeader()})
+          .timeout(connectionTimeout);
       return response.statusCode == 200;
     } catch (e) {
       print('Error deleting media: $e');
@@ -261,7 +280,9 @@ class WordPressMediaService {
   static Future<bool> testAuthentication() async {
     try {
       final url = Uri.parse('$wordPressUrl/wp-json/wp/v2/users/me');
-      final response = await http.get(url, headers: {'Authorization': _getAuthHeader()}).timeout(connectionTimeout);
+      final response = await http
+          .get(url, headers: {'Authorization': _getAuthHeader()})
+          .timeout(connectionTimeout);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -293,37 +314,43 @@ class WordPressMediaService {
     }
     return {};
   }
-static Future<String?> uploadAudio(File audioFile) async {
+
+  static Future<String?> uploadAudio(File audioFile) async {
     try {
       // 1. Change extension from .m4a to .mp4 to bypass WordPress security
       // WordPress accepts .mp4 (video) by default, but blocks .m4a (audio) sometimes.
       final fileName = 'voice_${DateTime.now().millisecondsSinceEpoch}.mp4';
-      
+
       final fileSize = await audioFile.length();
       print('🎙️ Starting Audio upload: $fileName');
       print('📏 Size: $fileSize bytes');
 
       final url = Uri.parse('$wordPressUrl/wp-json/wp/v2/media');
-      
+
       var request = http.MultipartRequest('POST', url);
-      
+
       request.headers['Authorization'] = _getAuthHeader();
       request.headers['Accept'] = 'application/json';
 
       // 2. Upload with 'video/mp4' content type
-      request.files.add(await http.MultipartFile.fromPath(
-        'file', 
-        audioFile.path, 
-        filename: fileName,
-        contentType: MediaType('video', 'mp4'), // Trick server into thinking it's video
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          audioFile.path,
+          filename: fileName,
+          contentType: MediaType(
+            'video',
+            'mp4',
+          ), // Trick server into thinking it's video
+        ),
+      );
 
       final streamedResponse = await request.send().timeout(uploadTimeout);
       final responseBytes = await streamedResponse.stream.toBytes();
       final responseBody = utf8.decode(responseBytes);
 
       print('📡 Status Code: ${streamedResponse.statusCode}');
-      
+
       if (streamedResponse.statusCode == 201) {
         final jsonData = json.decode(responseBody);
         print('✅ Upload Success: ${jsonData['source_url']}');

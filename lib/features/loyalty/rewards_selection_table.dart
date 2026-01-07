@@ -12,11 +12,11 @@ class RewardsSelectionTable extends StatefulWidget {
   final Function(List<Map<String, dynamic>>) onSelectionChanged;
 
   const RewardsSelectionTable({
-    Key? key,
+    super.key,
     required this.userPoints,
     required this.rewards,
     required this.onSelectionChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<RewardsSelectionTable> createState() => _RewardsSelectionTableState();
@@ -38,7 +38,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
       } else {
         _selectedIndexes.add(index);
       }
-      
+
       _temporaryDeductedPoints = 0;
       for (var idx in _selectedIndexes) {
         final reward = widget.rewards[idx];
@@ -53,8 +53,10 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
         }
         _temporaryDeductedPoints += required;
       }
-      
-      final selectedRewards = _selectedIndexes.map((idx) => widget.rewards[idx]).toList();
+
+      final selectedRewards = _selectedIndexes
+          .map((idx) => widget.rewards[idx])
+          .toList();
       widget.onSelectionChanged(selectedRewards);
     });
   }
@@ -62,7 +64,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
   @override
   Widget build(BuildContext context) {
     final availablePoints = widget.userPoints - _temporaryDeductedPoints;
-    
+
     return _GlassPanel(
       child: Column(
         children: [
@@ -89,14 +91,9 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Text(
-                        widget.rewards.isEmpty 
-                            ? '0%' 
-                            : '${_calculateAvailabilityPercent(
-                                (widget.rewards.first['requiredPoints'] ?? 100) is num 
-                                    ? (widget.rewards.first['requiredPoints'] ?? 100).toInt()
-                                    : int.tryParse(widget.rewards.first['requiredPoints'].toString()) ?? 100,
-                                availablePoints
-                              )}%',
+                        widget.rewards.isEmpty
+                            ? '0%'
+                            : '${_calculateAvailabilityPercent((widget.rewards.first['requiredPoints'] ?? 100) is num ? (widget.rewards.first['requiredPoints'] ?? 100).toInt() : int.tryParse(widget.rewards.first['requiredPoints'].toString()) ?? 100, availablePoints)}%',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -107,11 +104,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                   ),
                 ),
                 // Divider
-                Container(
-                  height: 40.h,
-                  width: 1.5.w,
-                  color: Colors.white24,
-                ),
+                Container(height: 40.h, width: 1.5.w, color: Colors.white24),
                 // Right: Title
                 Expanded(
                   child: Center(
@@ -128,7 +121,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
               ],
             ),
           ),
-          
+
           // Compact Rewards list
           ...List.generate(widget.rewards.length, (index) {
             final reward = widget.rewards[index];
@@ -142,7 +135,10 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
               required = 0;
             }
 
-            final percent = _calculateAvailabilityPercent(required, availablePoints);
+            final percent = _calculateAvailabilityPercent(
+              required,
+              availablePoints,
+            );
             final title = reward['title'] ?? reward['name'] ?? 'مكافأة';
             final isSelected = _selectedIndexes.contains(index);
             final canAfford = availablePoints >= required;
@@ -187,15 +183,17 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                                     child: Container(
                                       height: 24.h,
                                       decoration: BoxDecoration(
-                                        gradient: LinearGradient(
+                                        gradient: const LinearGradient(
                                           begin: Alignment.centerRight,
                                           end: Alignment.centerLeft,
                                           colors: [
                                             AppColors.secondaryTextColor,
-                                            AppColors.primaryColor
+                                            AppColors.primaryColor,
                                           ],
                                         ),
-                                        borderRadius: BorderRadius.circular(12.r),
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -206,20 +204,31 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                                 child: LayoutBuilder(
                                   builder: (context, c) {
                                     const pillW = 40.0;
-                                    final maxRight = (c.maxWidth - pillW).clamp(0.0, double.infinity);
-                                    final rightPos = (maxRight * (percent / 100)).clamp(0.0, maxRight);
+                                    final maxRight = (c.maxWidth - pillW).clamp(
+                                      0.0,
+                                      double.infinity,
+                                    );
+                                    final rightPos =
+                                        (maxRight * (percent / 100)).clamp(
+                                          0.0,
+                                          maxRight,
+                                        );
 
                                     return Align(
                                       alignment: Alignment.centerRight,
                                       child: Padding(
-                                        padding: EdgeInsets.only(right: rightPos),
+                                        padding: EdgeInsets.only(
+                                          right: rightPos,
+                                        ),
                                         child: SizedBox(
                                           width: pillW,
                                           child: Text(
                                             '$percent%',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              color: percent > 40 ? Colors.white : Colors.black87,
+                                              color: percent > 40
+                                                  ? Colors.white
+                                                  : Colors.black87,
                                               fontSize: 9.sp,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -246,11 +255,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                     ),
                   ),
                   // Divider
-                  Container(
-                    height: 60.h,
-                    width: 1.5.w,
-                    color: Colors.white24,
-                  ),
+                  Container(height: 60.h, width: 1.5.w, color: Colors.white24),
                   // Right: Compact Title + Checkbox
                   Expanded(
                     child: Padding(
@@ -262,17 +267,20 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
                         children: [
                           // Title
                           Directionality(
-                            
                             textDirection: TextDirection.rtl,
                             child: Expanded(
                               child: Text(
                                 title,
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
-                                  color: canAfford ? Colors.white : Colors.white38,
+                                  color: canAfford
+                                      ? Colors.white
+                                      : Colors.white38,
                                   fontSize: 10.sp,
                                   height: 1.3,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -311,7 +319,7 @@ class _RewardsSelectionTableState extends State<RewardsSelectionTable> {
               ),
             );
           }),
-          
+
           // Compact Footer
           if (_temporaryDeductedPoints > 0) ...[
             Container(

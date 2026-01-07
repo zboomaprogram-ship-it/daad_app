@@ -95,7 +95,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(kBackgroundImage),
             fit: BoxFit.fill,
@@ -106,7 +106,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
               .collection('notifications')
               .orderBy('createdAt', descending: true)
               // Increased limit to ensure we fetch enough data for both views
-              .limit(50) 
+              .limit(50)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -131,7 +131,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
             // Filter Logic
             final filteredDocs = allDocs.where((doc) {
               final data = doc.data() as Map<String, dynamic>;
-              
+
               // 1. User Check
               final targetUserId = data['userId'];
               if (targetUserId != null && targetUserId != currentUserId) {
@@ -141,7 +141,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
               // 2. Read Status & Date Check
               final readBy = List<String>.from(data['readBy'] ?? []);
               final isRead = readBy.contains(currentUserId);
-              
+
               final timestamp = data['createdAt'] as Timestamp?;
               final createdAt = timestamp?.toDate() ?? DateTime.now();
 
@@ -160,14 +160,16 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      _showHistory ? Icons.history_toggle_off : Icons.notifications_off_outlined,
+                      _showHistory
+                          ? Icons.history_toggle_off
+                          : Icons.notifications_off_outlined,
                       size: 80,
                       color: Colors.white.withOpacity(0.3),
                     ),
                     SizedBox(height: 16.h),
                     AppText(
-                      title: _showHistory 
-                          ? 'لا يوجد إشعارات قديمة' 
+                      title: _showHistory
+                          ? 'لا يوجد إشعارات قديمة'
                           : 'لا توجد إشعارات جديدة',
                       fontSize: 18,
                       color: Colors.white.withOpacity(0.7),
@@ -191,7 +193,8 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
 
                 final imagePath = _getImageForNotification(data);
                 final color = _getColorForNotification(data);
-                final hasDeepLink = data['deepLink'] != null &&
+                final hasDeepLink =
+                    data['deepLink'] != null &&
                     data['deepLink'].toString().isNotEmpty;
 
                 return _buildNotificationCard(
@@ -319,14 +322,19 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
     final title = (data['title'] ?? '').toString();
     final body = (data['body'] ?? '').toString();
 
-    if (title.contains('عقد') || body.contains('عقد') ||
-        title.contains('باقه') || body.contains('باقه')) {
+    if (title.contains('عقد') ||
+        body.contains('عقد') ||
+        title.contains('باقه') ||
+        body.contains('باقه')) {
       return 'assets/icons/contract_agreement.png';
     } else if (title.contains('مقال') || body.contains('مقال')) {
       return 'assets/icons/artcal_no.png';
-    } else if (title.contains('دعم') || body.contains('دعم') ||
-        body.contains('رفض') || body.contains('قبول') ||
-        title.contains('قبول') || title.contains('رفض')) {
+    } else if (title.contains('دعم') ||
+        body.contains('دعم') ||
+        body.contains('رفض') ||
+        body.contains('قبول') ||
+        title.contains('قبول') ||
+        title.contains('رفض')) {
       return 'assets/icons/support_no.png';
     } else if (title.contains('خدمة') || body.contains('خدمة')) {
       return 'assets/icons/servises_no.png';
@@ -355,7 +363,10 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _showNotificationDetails(BuildContext context, Map<String, dynamic> data) {
+  void _showNotificationDetails(
+    BuildContext context,
+    Map<String, dynamic> data,
+  ) {
     final imagePath = _getImageForNotification(data);
     final color = _getColorForNotification(data);
 
@@ -406,10 +417,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
                 color: Colors.white,
               ),
               SizedBox(height: 8.h),
-              AppText(
-                title: data['body'] ?? '',
-                color: Colors.white70,
-              ),
+              AppText(title: data['body'] ?? '', color: Colors.white70),
               if (data['deepLink'] != null) ...[
                 SizedBox(height: 16.h),
                 const AppText(
@@ -440,10 +448,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
             ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const AppText(
-              title: 'إغلاق',
-              color: Colors.white,
-            ),
+            child: const AppText(title: 'إغلاق', color: Colors.white),
           ),
         ],
       ),

@@ -8,6 +8,7 @@ class GlassIconButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const GlassIconButton({
+    super.key,
     required this.icon,
     required this.onPressed,
   });
@@ -15,15 +16,12 @@ class GlassIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12.r)
-,
+      borderRadius: BorderRadius.circular(12.r),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          width: 44.w
-,
-          height: 44.h
-,
+          width: 44.w,
+          height: 44.h,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -33,12 +31,10 @@ class GlassIconButton extends StatelessWidget {
                 Colors.white.withOpacity(0.15),
               ],
             ),
-            borderRadius: BorderRadius.circular(12.r)
-,
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1.w
-,
+              width: 1.w,
             ),
             boxShadow: [
               BoxShadow(
@@ -52,13 +48,8 @@ class GlassIconButton extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
-              borderRadius: BorderRadius.circular(12.r)
-,
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 20,
-              ),
+              borderRadius: BorderRadius.circular(12.r),
+              child: Icon(icon, color: Colors.white, size: 20),
             ),
           ),
         ),

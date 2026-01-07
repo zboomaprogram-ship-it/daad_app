@@ -9,17 +9,21 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const AppText(title:'من نحن'),leading: CustomBackButton(),),
+      appBar: AppBar(
+        title: const AppText(title: 'من نحن'),
+        leading: CustomBackButton(),
+      ),
       body: Directionality(
         textDirection: TextDirection.rtl,
         child: ListView(
-          padding:   EdgeInsets.all(16.r),
-          children:   [
-            DaadImage(null, height: 160.h
-),
-            SizedBox(height: 12.h
-),
-            AppText(title:'شركة ضاد للتسويق — نبني لك حلولًا تسويقية متخصصة عبر المنطقة...'),
+          padding: EdgeInsets.all(16.r),
+          children: [
+            DaadImage(null, height: 160.h),
+            SizedBox(height: 12.h),
+            const AppText(
+              title:
+                  'شركة ضاد للتسويق — نبني لك حلولًا تسويقية متخصصة عبر المنطقة...',
+            ),
           ],
         ),
       ),

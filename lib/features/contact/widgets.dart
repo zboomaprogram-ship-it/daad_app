@@ -11,7 +11,7 @@ class GlassBackButton extends StatelessWidget {
   final IconData? icon;
   final VoidCallback? onPressed;
 
-  const GlassBackButton({this.icon, this.onPressed});
+  const GlassBackButton({super.key, this.icon, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class GlassBackButton extends StatelessWidget {
     } else {
       // If no previous screen (came from deep link), go to home
       print('📱 No previous screen - navigating to home');
-      RouteUtils.pushAndPopAll(  HomeNavigationBar());
+      RouteUtils.pushAndPopAll(const HomeNavigationBar());
     }
   }
 }
@@ -45,7 +45,11 @@ class GlassIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const GlassIconButton({required this.icon, required this.onPressed});
+  const GlassIconButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +90,7 @@ class GlassImageButton extends StatelessWidget {
   final bool white;
 
   const GlassImageButton({
+    super.key,
     required this.imagePath,
     required this.onPressed,
     this.white = false,
@@ -151,6 +156,7 @@ class GlassContainer extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const GlassContainer({
+    super.key,
     required this.child,
     this.width,
     this.height,
@@ -168,7 +174,7 @@ class GlassContainer extends StatelessWidget {
           height: height,
           padding: padding,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Color(0xff922D4E), Color(0xff480118)],
             ),
             borderRadius: BorderRadius.circular(10.r),
@@ -228,7 +234,7 @@ class GlassTextField extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(9.78.r),
               child: Container(
-                height: kIsWeb ? 55: 50.sp,
+                height: kIsWeb ? 55 : 50.sp,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -250,18 +256,21 @@ class GlassTextField extends StatelessWidget {
                   maxLines: finalMaxLines,
                   keyboardType: keyboardType,
                   onChanged: (v) => state.didChange(v),
-                  style: TextStyle(color: Colors.white, fontSize: kIsWeb ? 15: 15.sp),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: kIsWeb ? 15 : 15.sp,
+                  ),
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
                     labelText: label,
                     labelStyle: TextStyle(
                       color: Colors.white.withOpacity(0.8),
-                      fontSize: kIsWeb ? 12: 12.sp,
+                      fontSize: kIsWeb ? 12 : 12.sp,
                     ),
                     prefixIcon: Icon(
                       icon,
                       color: Colors.white.withOpacity(0.8),
-                      size: kIsWeb ? 20: 20.sp,
+                      size: kIsWeb ? 20 : 20.sp,
                     ),
                     suffixIcon: suffixIcon,
                     border: InputBorder.none,
@@ -296,13 +305,13 @@ class GlassTextField extends StatelessWidget {
   }
 }
 
-
 class ContactGlassButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget child;
   final bool isOutlined;
 
   const ContactGlassButton({
+    super.key,
     required this.onPressed,
     required this.child,
     this.isOutlined = false,
@@ -356,6 +365,7 @@ class ProfileInfoCard extends StatelessWidget {
   final String value;
 
   const ProfileInfoCard({
+    super.key,
     required this.icon,
     required this.title,
     required this.value,
@@ -400,7 +410,7 @@ class PlanCard extends StatelessWidget {
   final String serviceName;
   final String date;
 
-  const PlanCard({required this.serviceName, required this.date});
+  const PlanCard({super.key, required this.serviceName, required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -448,6 +458,7 @@ class MessageCard extends StatelessWidget {
   final String adminResponse;
 
   const MessageCard({
+    super.key,
     required this.message,
     required this.date,
     required this.status,
@@ -465,7 +476,10 @@ class MessageCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: isPending
                       ? Colors.orange.withOpacity(0.3)
@@ -496,7 +510,7 @@ class MessageCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText(
+                  const AppText(
                     title: 'رد المسؤول:',
 
                     fontSize: 12,
@@ -521,6 +535,7 @@ class PortfolioCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PortfolioCard({
+    super.key,
     required this.title,
     required this.industry,
     required this.imageUrl,
@@ -597,7 +612,7 @@ class PortfolioCard extends StatelessWidget {
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
                               ),
@@ -651,7 +666,7 @@ class PortfolioCard extends StatelessWidget {
                               size: 16,
                             ),
                             SizedBox(width: 4.w),
-                            AppText(
+                            const AppText(
                               title: 'عرض التفاصيل',
 
                               fontSize: 11,

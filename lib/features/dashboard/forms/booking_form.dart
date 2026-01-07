@@ -10,10 +10,10 @@ Future<void> showBookingForm(
 }) async {
   final isEdit = doc != null;
   final data = (doc?.data() as Map<String, dynamic>?) ?? {};
-  
+
   final userIdCtrl = TextEditingController(text: data['userId'] ?? '');
   final notesCtrl = TextEditingController(text: data['notes'] ?? '');
-  
+
   String type = (data['type'] ?? 'strategy_call') as String;
   String status = (data['status'] ?? 'pending') as String;
   DateTime? datetime = (data['datetime'] is Timestamp)
@@ -42,11 +42,10 @@ Future<void> showBookingForm(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               LabeledField(label: 'معرف المستخدم', controller: userIdCtrl),
               DropdownButtonFormField<String>(
-                value: type,
+                initialValue: type,
                 decoration: const InputDecoration(
                   labelText: 'نوع الحجز',
                   border: OutlineInputBorder(),
@@ -54,33 +53,44 @@ Future<void> showBookingForm(
                 items: const [
                   DropdownMenuItem(
                     value: 'strategy_call',
-                    child: AppText(title:'استشارة استراتيجية'),
+                    child: AppText(title: 'استشارة استراتيجية'),
                   ),
                   DropdownMenuItem(
                     value: 'consultation',
-                    child: AppText(title:'استشارة عامة'),
+                    child: AppText(title: 'استشارة عامة'),
                   ),
                 ],
-                onChanged: (v) => setModalState(() => type = v ?? 'strategy_call'),
+                onChanged: (v) =>
+                    setModalState(() => type = v ?? 'strategy_call'),
               ),
-              SizedBox(height: 8.h
-),
+              SizedBox(height: 8.h),
               DropdownButtonFormField<String>(
-                value: status,
+                initialValue: status,
                 decoration: const InputDecoration(
                   labelText: 'الحالة',
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'pending', child: AppText(title:'معلق')),
-                  DropdownMenuItem(value: 'confirmed', child: AppText(title:'مؤكد')),
-                  DropdownMenuItem(value: 'completed', child: AppText(title:'مكتمل')),
-                  DropdownMenuItem(value: 'cancelled', child: AppText(title:'ملغي')),
+                  DropdownMenuItem(
+                    value: 'pending',
+                    child: AppText(title: 'معلق'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'confirmed',
+                    child: AppText(title: 'مؤكد'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'completed',
+                    child: AppText(title: 'مكتمل'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'cancelled',
+                    child: AppText(title: 'ملغي'),
+                  ),
                 ],
                 onChanged: (v) => setModalState(() => status = v ?? 'pending'),
               ),
-              SizedBox(height: 8.h
-),
+              SizedBox(height: 8.h),
               OutlinedButton.icon(
                 icon: const Icon(Icons.calendar_today),
                 label: Text(
@@ -98,7 +108,9 @@ Future<void> showBookingForm(
                   if (date != null) {
                     final time = await showTimePicker(
                       context: context,
-                      initialTime: TimeOfDay.fromDateTime(datetime ?? DateTime.now()),
+                      initialTime: TimeOfDay.fromDateTime(
+                        datetime ?? DateTime.now(),
+                      ),
                     );
                     if (time != null) {
                       setModalState(() {
@@ -119,16 +131,15 @@ Future<void> showBookingForm(
                 controller: notesCtrl,
                 maxLines: 3,
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {
                     'userId': userIdCtrl.text.trim(),
                     'type': type,
                     'status': status,
-                    'datetime': datetime != null 
-                        ? Timestamp.fromDate(datetime!) 
+                    'datetime': datetime != null
+                        ? Timestamp.fromDate(datetime!)
                         : FieldValue.serverTimestamp(),
                     'notes': notesCtrl.text.trim(),
                     'updatedAt': FieldValue.serverTimestamp(),
@@ -145,7 +156,9 @@ Future<void> showBookingForm(
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(isEdit ? 'تم التحديث' : 'تم الإضافة')),
+                      SnackBar(
+                        content: Text(isEdit ? 'تم التحديث' : 'تم الإضافة'),
+                      ),
                     );
                   }
                 },

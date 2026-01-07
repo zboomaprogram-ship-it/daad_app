@@ -72,7 +72,7 @@ Future<void> openLearnForm(
 
                       // CRITICAL: Capture the ScaffoldMessenger before async gap
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
-                      
+
                       // Show uploading message
                       scaffoldMessenger.showSnackBar(
                         const SnackBar(
@@ -84,8 +84,8 @@ Future<void> openLearnForm(
                       try {
                         final wordPressUrls =
                             await WordPressMediaService.uploadMultipleImages(
-                          images,
-                        );
+                              images,
+                            );
 
                         // Check if widget is still mounted before updating state
                         if (!context.mounted) return;
@@ -94,7 +94,7 @@ Future<void> openLearnForm(
                           setModalState(() {
                             uploadedImages.addAll(wordPressUrls);
                           });
-                          
+
                           scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: AppText(
@@ -187,7 +187,7 @@ Future<void> openLearnForm(
                 subtitle: const AppText(
                   title: 'إعلام المستخدمين بالمقال الجديد/المحدّث',
                 ),
-                activeColor: Colors.greenAccent,
+                activeThumbColor: Colors.greenAccent,
                 value: sendNotification,
                 onChanged: (v) => setModalState(() => sendNotification = v),
               ),
@@ -201,9 +201,7 @@ Future<void> openLearnForm(
                       bodyAr.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: AppText(
-                          title: 'يرجى إدخال العنوان و الملخص',
-                        ),
+                        content: AppText(title: 'يرجى إدخال العنوان و الملخص'),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -265,9 +263,9 @@ Future<void> openLearnForm(
                           title: isEdit ? '📣 تعلم محدّث' : '📚 تعلم جديد',
                           body:
                               '${titleAr.text.trim()} ${person.text.trim().isNotEmpty ? "بواسطة ${person.text.trim()}" : ""}',
-                              deepLink:DeepLinkHandler.learnLink(doc!.id),
+                          deepLink: DeepLinkHandler.learnLink(doc!.id),
                         );
-                        
+
                         scaffoldMessenger.showSnackBar(
                           SnackBar(
                             content: AppText(

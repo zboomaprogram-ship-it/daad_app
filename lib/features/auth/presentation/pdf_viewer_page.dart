@@ -98,7 +98,11 @@ class _PdfContractPageState extends State<PdfContractPage> {
     return Scaffold(
       appBar: AppBar(
         leading: const GlassBackButton(),
-        title: AppText(title: widget.title ?? 'عرض العقد',fontSize: 20,fontWeight: FontWeight.bold,),
+        title: AppText(
+          title: widget.title ?? 'عرض العقد',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
         backgroundColor: AppColors.primaryColor,
         actions: [
           if (totalPages > 0)
@@ -116,8 +120,8 @@ class _PdfContractPageState extends State<PdfContractPage> {
       body: isLoading
           ? _buildShimmerLoading()
           : errorMessage != null
-              ? _buildErrorState()
-              : _buildPdfView(),
+          ? _buildErrorState()
+          : _buildPdfView(),
     );
   }
 
@@ -288,9 +292,13 @@ class _PdfContractPageState extends State<PdfContractPage> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                  const Icon(
+                    Icons.info_outline,
+                    color: Colors.orange,
+                    size: 20,
+                  ),
                   SizedBox(width: 8.w),
-                  Expanded(
+                  const Expanded(
                     child: AppText(
                       title: 'يرجى التمرير إلى نهاية العقد قبل الموافقة',
                       fontSize: 12,
@@ -302,8 +310,7 @@ class _PdfContractPageState extends State<PdfContractPage> {
             ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  hasScrolledToEnd ? Colors.green : Colors.grey,
+              backgroundColor: hasScrolledToEnd ? Colors.green : Colors.grey,
               minimumSize: Size(double.infinity, 50.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
@@ -319,7 +326,9 @@ class _PdfContractPageState extends State<PdfContractPage> {
                 ),
                 SizedBox(width: 8.w),
                 AppText(
-                  title: hasScrolledToEnd ? 'أوافق على العقد' : 'اقرأ العقد أولاً',
+                  title: hasScrolledToEnd
+                      ? 'أوافق على العقد'
+                      : 'اقرأ العقد أولاً',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -370,9 +379,10 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       duration: const Duration(milliseconds: 1500),
     )..repeat();
 
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

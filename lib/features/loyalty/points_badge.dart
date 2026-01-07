@@ -17,16 +17,13 @@ class PointsBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.r)
-,
-          border: Border.all(color: AppColors.secondaryColor, width: 1.w
-),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: AppColors.secondaryColor, width: 1.w),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.r)
-,
+          borderRadius: BorderRadius.circular(20.r),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
@@ -41,17 +38,16 @@ class PointsBadge extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(8.0.r),
                 child: GestureDetector(
-                  onTap: () => RouteUtils.push(LoyaltyIntroScreen()),
+                  onTap: () => RouteUtils.push(const LoyaltyIntroScreen()),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppText(
                         title: UserManager().points.toString(),
-                  
+
                         fontWeight: FontWeight.bold,
                       ),
-                        SizedBox(width: 6.w
-),
+                      SizedBox(width: 6.w),
                       const Icon(Icons.stars, size: 20),
                     ],
                   ),

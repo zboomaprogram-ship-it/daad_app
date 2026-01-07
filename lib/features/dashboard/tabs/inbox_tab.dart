@@ -120,7 +120,7 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
 
       // Firestore 'whereIn' is limited to 10 items.
       // We must split the array into chunks of 10.
-      final int batchSize = 10;
+      const int batchSize = 10;
       List<DocumentSnapshot> allChats = [];
 
       for (int i = 0; i < _assignedUserIds.length; i += batchSize) {
@@ -338,7 +338,7 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
             child: _chats.isEmpty && !_isLoadingMore
                 ? const Center(child: CircularProgressIndicator())
                 : filteredChats.isEmpty
-                ? Center(
+                ? const Center(
                     child: AppText(
                       title: "لا توجد محادثات",
                       color: Colors.white60,
@@ -353,10 +353,11 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
                           filteredChats.length +
                           (_hasMore && _searchQuery.isEmpty && isAdmin ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (index >= filteredChats.length)
+                        if (index >= filteredChats.length) {
                           return _isLoadingMore
                               ? const Center(child: CircularProgressIndicator())
                               : const SizedBox.shrink();
+                        }
 
                         final chat = filteredChats[index];
                         final data = chat.data() as Map<String, dynamic>;
@@ -489,21 +490,19 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
                                       color: Colors.white70,
                                     ),
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: 'assign',
-                                        child: const AppText(
-                                          title: 'تعيين لمندوب',
-                                        ),
+                                        child: AppText(title: 'تعيين لمندوب'),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: 'open',
-                                        child: const AppText(title: 'فتح'),
+                                        child: AppText(title: 'فتح'),
                                       ),
                                     ],
                                     onSelected: (value) {
-                                      if (value == 'assign')
+                                      if (value == 'assign') {
                                         _assignToSales(chat.id, userId);
-                                      else if (value == 'open')
+                                      } else if (value == 'open')
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -695,8 +694,9 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
       setState(() => _isUploadingMedia = true);
       final audioUrl = await WordPressMediaService.uploadAudio(File(path));
       setState(() => _isUploadingMedia = false);
-      if (audioUrl != null)
+      if (audioUrl != null) {
         await _sendMessage(audioUrl: audioUrl, messageType: 'audio');
+      }
     }
   }
 
@@ -715,8 +715,12 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
     String? messageType,
   }) async {
     final text = _messageController.text.trim();
-    if (text.isEmpty && imageUrl == null && fileUrl == null && audioUrl == null)
+    if (text.isEmpty &&
+        imageUrl == null &&
+        fileUrl == null &&
+        audioUrl == null) {
       return;
+    }
     if (_userId == null) return;
 
     _messageController.clear();
@@ -863,17 +867,19 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
                     .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(color: Colors.white),
                     );
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return const Center(
                       child: Text(
                         'لا توجد رسائل',
                         style: TextStyle(color: Colors.white60),
                       ),
                     );
+                  }
 
                   final docs = snapshot.data!.docs;
                   return ListView.builder(
@@ -911,7 +917,7 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "الرد على رسالة",
                             style: TextStyle(
                               color: AppColors.secondaryColor,
@@ -1056,10 +1062,11 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
                             color: Colors.blue,
                           ),
                           onPressed: () {
-                            if (_messageController.text.trim().isNotEmpty)
+                            if (_messageController.text.trim().isNotEmpty) {
                               _sendMessage();
-                            else
+                            } else {
                               _startRecording();
+                            }
                           },
                         ),
                       ],
@@ -1178,7 +1185,7 @@ class _MessageBubble extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.black26,
                     border: Border(
                       right: BorderSide(color: Colors.orange, width: 3),
@@ -1205,14 +1212,11 @@ class _MessageBubble extends StatelessWidget {
               if (type == 'file')
                 GestureDetector(
                   onTap: () => _openFile(context, url),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(Icons.file_present, color: Colors.white),
-                      const SizedBox(width: 8),
-                      const Text(
-                        "ملف مرفق",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      Icon(Icons.file_present, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text("ملف مرفق", style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),

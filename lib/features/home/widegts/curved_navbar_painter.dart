@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CurvedNavBarPainter extends CustomPainter {
@@ -13,9 +12,19 @@ class CurvedNavBarPainter extends CustomPainter {
 
     Path path = Path()
       ..moveTo(0, height * 0.35) // بداية الانحناء
-      ..quadraticBezierTo(width * 0.10, height * 0.10, width * 0.30, height * 0.20)
+      ..quadraticBezierTo(
+        width * 0.10,
+        height * 0.10,
+        width * 0.30,
+        height * 0.20,
+      )
       ..quadraticBezierTo(width * 0.50, height * 0.35, width * 0.50, 0)
-      ..quadraticBezierTo(width * 0.50, height * 0.35, width * 0.70, height * 0.20)
+      ..quadraticBezierTo(
+        width * 0.50,
+        height * 0.35,
+        width * 0.70,
+        height * 0.20,
+      )
       ..quadraticBezierTo(width * 0.90, height * 0.10, width, height * 0.35)
       ..lineTo(width, height)
       ..lineTo(0, height)

@@ -26,7 +26,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
   @override
   void initState() {
     super.initState();
-    // ⚠️ CHANGED: Removed setAudioContext from here. 
+    // ⚠️ CHANGED: Removed setAudioContext from here.
     // It was conflicting with the microphone.
     _audioPlayer.onPlayerStateChanged.listen((state) {
       if (mounted) {
@@ -62,26 +62,30 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       setState(() => _isLoading = true);
       try {
         // ⚠️ NEW: Only set audio settings when user clicks PLAY
-        await _audioPlayer.setAudioContext( AudioContext(
-          iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playAndRecord,
-            options: {AVAudioSessionOptions.defaultToSpeaker},
+        await _audioPlayer.setAudioContext(
+          AudioContext(
+            iOS: AudioContextIOS(
+              category: AVAudioSessionCategory.playAndRecord,
+              options: const {AVAudioSessionOptions.defaultToSpeaker},
+            ),
+            android: const AudioContextAndroid(
+              isSpeakerphoneOn: true,
+              stayAwake: true,
+              contentType: AndroidContentType.music,
+              usageType: AndroidUsageType.media,
+              audioFocus: AndroidAudioFocus.gain,
+            ),
           ),
-          android: AudioContextAndroid(
-            isSpeakerphoneOn: true,
-            stayAwake: true,
-            contentType: AndroidContentType.music,
-            usageType: AndroidUsageType.media,
-            audioFocus: AndroidAudioFocus.gain,
-          ),
-        ));
-        
+        );
+
         await _audioPlayer.setVolume(1.0);
         await _audioPlayer.play(UrlSource(widget.audioUrl));
       } catch (e) {
         print("❌ Error playing audio: $e");
-        if(mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error: $e")));
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);
@@ -99,8 +103,8 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
-      // ... keep your existing build method code ...
-      return Container(
+    // ... keep your existing build method code ...
+    return Container(
       width: 230.w,
       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
@@ -112,8 +116,8 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
               padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: widget.isSender 
-                    ? Colors.white.withOpacity(0.2) 
+                color: widget.isSender
+                    ? Colors.white.withOpacity(0.2)
                     : Colors.white.withOpacity(0.1),
               ),
               child: _isLoading
@@ -121,12 +125,14 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                       width: 24.w,
                       height: 24.h,
                       child: const CircularProgressIndicator(
-                        color: Colors.white, 
-                        strokeWidth: 2
+                        color: Colors.white,
+                        strokeWidth: 2,
                       ),
                     )
                   : Icon(
-                      _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isPlaying
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       color: Colors.white,
                       size: 24.sp,
                     ),
@@ -144,19 +150,21 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                     inactiveTrackColor: Colors.white.withOpacity(0.3),
                     thumbColor: Colors.white,
                     overlayColor: Colors.white.withOpacity(0.1),
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 6.0,
+                    ),
                     trackHeight: 2.0,
                   ),
                   child: Slider(
                     min: 0,
-                    max: _duration.inSeconds.toDouble() > 0 
-                        ? _duration.inSeconds.toDouble() 
+                    max: _duration.inSeconds.toDouble() > 0
+                        ? _duration.inSeconds.toDouble()
                         : 1.0,
                     value: _position.inSeconds.toDouble().clamp(
-                        0, 
-                        _duration.inSeconds.toDouble() > 0 
-                            ? _duration.inSeconds.toDouble() 
-                            : 1.0
+                      0,
+                      _duration.inSeconds.toDouble() > 0
+                          ? _duration.inSeconds.toDouble()
+                          : 1.0,
                     ),
                     onChanged: (value) async {
                       final position = Duration(seconds: value.toInt());
@@ -171,11 +179,17 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                     children: [
                       Text(
                         _formatDuration(_position),
-                        style: TextStyle(color: Colors.white70, fontSize: 10.sp),
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10.sp,
+                        ),
                       ),
                       Text(
                         _formatDuration(_duration),
-                        style: TextStyle(color: Colors.white70, fontSize: 10.sp),
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10.sp,
+                        ),
                       ),
                     ],
                   ),

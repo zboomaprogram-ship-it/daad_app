@@ -10,7 +10,7 @@ Future<void> showNotificationForm(BuildContext context) async {
   final titleCtrl = TextEditingController();
   final bodyCtrl = TextEditingController();
   final deepLinkCtrl = TextEditingController();
-  
+
   String? selectedUserId;
   String selectedUserDisplay = 'الجميع 📢';
 
@@ -25,7 +25,7 @@ Future<void> showNotificationForm(BuildContext context) async {
         children: [
           LabeledField(label: 'العنوان', controller: titleCtrl),
           LabeledField(label: 'المحتوى', controller: bodyCtrl, maxLines: 3),
-          
+
           // User Selection Dropdown
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,20 +55,19 @@ Future<void> showNotificationForm(BuildContext context) async {
                   },
                 ),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                    ),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        selectedUserId == null 
-                          ? Icons.people 
-                          : Icons.person,
+                        selectedUserId == null ? Icons.people : Icons.person,
                         color: Colors.white70,
                         size: 20,
                       ),
@@ -88,8 +87,8 @@ Future<void> showNotificationForm(BuildContext context) async {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.all(4),
-                            child: Icon(
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
                               Icons.clear,
                               color: Colors.red,
                               size: 18,
@@ -97,7 +96,7 @@ Future<void> showNotificationForm(BuildContext context) async {
                           ),
                         )
                       else
-                        Icon(
+                        const Icon(
                           Icons.arrow_drop_down,
                           color: Colors.white70,
                         ),
@@ -107,17 +106,17 @@ Future<void> showNotificationForm(BuildContext context) async {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16.h),
-          
+
           LabeledField(
             label: 'رابط التطبيق (اختياري)',
             controller: deepLinkCtrl,
           ),
-          
+
           // Info Box
           Container(
-            margin: EdgeInsets.only(top: 12),
+            margin: const EdgeInsets.only(top: 12),
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: Colors.blue.withOpacity(0.1),
@@ -126,9 +125,9 @@ Future<void> showNotificationForm(BuildContext context) async {
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                const Icon(Icons.info_outline, color: Colors.blue, size: 20),
                 SizedBox(width: 8.w),
-                Expanded(
+                const Expanded(
                   child: Text(
                     'ملاحظة: الإشعارات قد لا تظهر على المحاكي. اختبر على جهاز حقيقي.',
                     style: TextStyle(fontSize: 12, color: Colors.blue),
@@ -137,12 +136,13 @@ Future<void> showNotificationForm(BuildContext context) async {
               ],
             ),
           ),
-          
+
           SizedBox(height: 16.h),
-          
+
           GlassButton(
             onPressed: () async {
-              if (titleCtrl.text.trim().isEmpty || bodyCtrl.text.trim().isEmpty) {
+              if (titleCtrl.text.trim().isEmpty ||
+                  bodyCtrl.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: AppText(title: 'يرجى ملء الحقول المطلوبة'),
@@ -167,9 +167,9 @@ Future<void> showNotificationForm(BuildContext context) async {
                   title: titleCtrl.text.trim(),
                   body: bodyCtrl.text.trim(),
                   userId: selectedUserId,
-                  deepLink: deepLinkCtrl.text.trim().isEmpty 
-                    ? null 
-                    : deepLinkCtrl.text.trim(),
+                  deepLink: deepLinkCtrl.text.trim().isEmpty
+                      ? null
+                      : deepLinkCtrl.text.trim(),
                 );
               } catch (e) {
                 print('Error sending notification: $e');
@@ -179,10 +179,10 @@ Future<void> showNotificationForm(BuildContext context) async {
               if (context.mounted) {
                 // Close loading
                 Navigator.pop(context);
-                
+
                 // Close form
                 Navigator.pop(context);
-                
+
                 // Show result
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -195,9 +195,9 @@ Future<void> showNotificationForm(BuildContext context) async {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
-                            success 
-                              ? 'تم إرسال الإشعار بنجاح ✓\n(قد يستغرق ثوانٍ للوصول)' 
-                              : 'فشل إرسال الإشعار ✗\nتحقق من مفتاح API',
+                            success
+                                ? 'تم إرسال الإشعار بنجاح ✓\n(قد يستغرق ثوانٍ للوصول)'
+                                : 'فشل إرسال الإشعار ✗\nتحقق من مفتاح API',
                           ),
                         ),
                       ],
@@ -211,9 +211,9 @@ Future<void> showNotificationForm(BuildContext context) async {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.send, size: 20),
+                const Icon(Icons.send, size: 20),
                 SizedBox(width: 8.w),
-                AppText(title: 'إرسال الإشعار'),
+                const AppText(title: 'إرسال الإشعار'),
               ],
             ),
           ),
@@ -249,8 +249,8 @@ Future<void> _showUserSelectionDialog(
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'بحث عن مستخدم...',
-                hintStyle: TextStyle(color: Colors.white60),
-                prefixIcon: Icon(Icons.search, color: Colors.white60),
+                hintStyle: const TextStyle(color: Colors.white60),
+                prefixIcon: const Icon(Icons.search, color: Colors.white60),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.1),
                 border: OutlineInputBorder(
@@ -273,7 +273,7 @@ Future<void> _showUserSelectionDialog(
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.green.withOpacity(0.3),
-                  child: Icon(Icons.people, color: Colors.green),
+                  child: const Icon(Icons.people, color: Colors.green),
                 ),
                 title: const AppText(
                   title: 'إرسال للجميع 📢',
@@ -289,8 +289,8 @@ Future<void> _showUserSelectionDialog(
                   Navigator.pop(context);
                 },
               ),
-              Divider(color: Colors.white24),
-              
+              const Divider(color: Colors.white24),
+
               // Users List
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
@@ -321,13 +321,19 @@ Future<void> _showUserSelectionDialog(
                     if (searchQuery.isNotEmpty) {
                       users = users.where((doc) {
                         final data = doc.data() as Map<String, dynamic>;
-                        final name = (data['name'] ?? '').toString().toLowerCase();
-                        final email = (data['email'] ?? '').toString().toLowerCase();
-                        final phone = (data['phone'] ?? '').toString().toLowerCase();
-                        
+                        final name = (data['name'] ?? '')
+                            .toString()
+                            .toLowerCase();
+                        final email = (data['email'] ?? '')
+                            .toString()
+                            .toLowerCase();
+                        final phone = (data['phone'] ?? '')
+                            .toString()
+                            .toLowerCase();
+
                         return name.contains(searchQuery) ||
-                               email.contains(searchQuery) ||
-                               phone.contains(searchQuery);
+                            email.contains(searchQuery) ||
+                            phone.contains(searchQuery);
                       }).toList();
                     }
 
@@ -336,7 +342,7 @@ Future<void> _showUserSelectionDialog(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.person_off,
                               size: 48,
                               color: Colors.white38,
@@ -365,13 +371,13 @@ Future<void> _showUserSelectionDialog(
 
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: role == 'admin' 
-                              ? Colors.orange.withOpacity(0.3)
-                              : Colors.blue.withOpacity(0.3),
+                            backgroundColor: role == 'admin'
+                                ? Colors.orange.withOpacity(0.3)
+                                : Colors.blue.withOpacity(0.3),
                             child: AppText(
-                              title: name.isNotEmpty 
-                                ? name[0].toUpperCase() 
-                                : 'U',
+                              title: name.isNotEmpty
+                                  ? name[0].toUpperCase()
+                                  : 'U',
                               fontWeight: FontWeight.bold,
                             ),
                           ),

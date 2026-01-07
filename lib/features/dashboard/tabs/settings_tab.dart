@@ -69,12 +69,9 @@ class SettingsTab extends StatelessWidget {
           backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
           child: Icon(icon, color: Theme.of(context).primaryColor),
         ),
-        title: AppText(title:
-          title,
-          fontWeight: FontWeight.bold, fontSize: 16,
-        ),
-        subtitle: AppText(title:subtitle,  fontSize: 12),
-        trailing:   Icon(Icons.arrow_forward_ios, size: 20),
+        title: AppText(title: title, fontWeight: FontWeight.bold, fontSize: 16),
+        subtitle: AppText(title: subtitle, fontSize: 12),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 20),
         onTap: onTap,
       ),
     );
@@ -93,22 +90,23 @@ class SettingsTab extends StatelessWidget {
               children: [
                 Icon(Icons.info_outline, color: Colors.blue.shade700),
                 SizedBox(width: 8.w),
-               AppText(title:
-                  'ملاحظات مهمة',
-                
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14 ,
-                    color: Colors.blue.shade900,
-           
+                AppText(
+                  title: 'ملاحظات مهمة',
+
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.blue.shade900,
                 ),
               ],
             ),
             SizedBox(height: 8.h),
-         AppText(title:
-              '• المفاتيح السرية محفوظة في Firebase Remote Config\n'
-              '• يتم تحديث إعدادات البوت فوراً في جميع الأجهزة\n'
-              '• التغييرات آمنة ولا تحتاج إعادة نشر التطبيق',
-             fontSize: 12.sp, color: Colors.blue.shade800,
+            AppText(
+              title:
+                  '• المفاتيح السرية محفوظة في Firebase Remote Config\n'
+                  '• يتم تحديث إعدادات البوت فوراً في جميع الأجهزة\n'
+                  '• التغييرات آمنة ولا تحتاج إعادة نشر التطبيق',
+              fontSize: 12.sp,
+              color: Colors.blue.shade800,
             ),
           ],
         ),
@@ -145,18 +143,19 @@ class SettingsTab extends StatelessWidget {
             builder: (context, setSheet) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppText(title:
-                  'إعدادات التطبيق',
-                fontSize: 18, fontWeight: FontWeight.bold,
+                const AppText(
+                  title: 'إعدادات التطبيق',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
                 SizedBox(height: 12.h),
                 SwitchListTile(
-                  title:  const AppText(title:'إظهار عجلة العروض'),
+                  title: const AppText(title: 'إظهار عجلة العروض'),
                   value: showDeals,
                   onChanged: (v) => setSheet(() => showDeals = v),
                 ),
                 SwitchListTile(
-                  title: const AppText(title:'إظهار بانر الصفحة الرئيسية'),
+                  title: const AppText(title: 'إظهار بانر الصفحة الرئيسية'),
                   value: showBanner,
                   onChanged: (v) => setSheet(() => showBanner = v),
                 ),
@@ -193,9 +192,7 @@ class SettingsTab extends StatelessWidget {
   void _openChatBotPersonaEditor(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const ChatBotPersonaEditor(),
-      ),
+      MaterialPageRoute(builder: (_) => const ChatBotPersonaEditor()),
     );
   }
 
@@ -204,7 +201,7 @@ class SettingsTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const AppText(title:'حالة المفاتيح السرية'),
+        title: const AppText(title: 'حالة المفاتيح السرية'),
         content: FutureBuilder<Map<String, String>>(
           future: _getConfigStatus(),
           builder: (context, snapshot) {
@@ -213,7 +210,7 @@ class SettingsTab extends StatelessWidget {
             }
 
             if (snapshot.hasError) {
-              return AppText(title:'خطأ: ${snapshot.error}');
+              return AppText(title: 'خطأ: ${snapshot.error}');
             }
 
             final status = snapshot.data ?? {};
@@ -225,19 +222,10 @@ class SettingsTab extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 4.h),
                   child: Row(
                     children: [
-                      AppText(title:
-                        e.value,
-                       
-                    
-                          fontWeight: FontWeight.bold,
-                     
-                      ),
+                      AppText(title: e.value, fontWeight: FontWeight.bold),
                       SizedBox(width: 8.w),
                       Expanded(
-                        child:AppText(title:
-                          e.key,
-                           fontSize: 12.sp,
-                        ),
+                        child: AppText(title: e.key, fontSize: 12.sp),
                       ),
                     ],
                   ),
@@ -249,7 +237,7 @@ class SettingsTab extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const AppText(title:'إغلاق'),
+            child: const AppText(title: 'إغلاق'),
           ),
         ],
       ),

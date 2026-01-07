@@ -22,29 +22,46 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
   bool _processing = false;
 
   Future<Map<String, dynamic>?> _getUser(String uid) async {
-    final u = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final u = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     if (!u.exists) return null;
     return u.data() as Map<String, dynamic>;
   }
 
-  Future<void> _addHistory(String uid, int points, String type, String note) async {
+  Future<void> _addHistory(
+    String uid,
+    int points,
+    String type,
+    String note,
+  ) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('points_history')
         .add({
-      "points": points,
-      "type": type,
-      "note": note,
-      "date": FieldValue.serverTimestamp(),
-    });
+          "points": points,
+          "type": type,
+          "note": note,
+          "date": FieldValue.serverTimestamp(),
+        });
   }
 
-  Future<void> _approve(String activityId, String userId, int points, String type) async {
+  Future<void> _approve(
+    String activityId,
+    String userId,
+    int points,
+    String type,
+  ) async {
     setState(() => _processing = true);
     try {
-      final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-      final activityRef = FirebaseFirestore.instance.collection('points_activity').doc(activityId);
+      final userRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId);
+      final activityRef = FirebaseFirestore.instance
+          .collection('points_activity')
+          .doc(activityId);
 
       await FirebaseFirestore.instance.runTransaction((trx) async {
         final userSnap = await trx.get(userRef);
@@ -70,25 +87,43 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: AppText(title:'✅ تمت الموافقة وإضافة النقاط وإرسال الإشعار')),
+        const SnackBar(
+          content: AppText(
+            title: '✅ تمت الموافقة وإضافة النقاط وإرسال الإشعار',
+          ),
+        ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: AppText(title:'خطأ: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: AppText(title: 'خطأ: $e')));
     } finally {
       if (mounted) setState(() => _processing = false);
     }
   }
 
-  Future<void> _reject(String activityId, String userId, int points, String type) async {
+  Future<void> _reject(
+    String activityId,
+    String userId,
+    int points,
+    String type,
+  ) async {
     setState(() => _processing = true);
     try {
-      final activityRef = FirebaseFirestore.instance.collection('points_activity').doc(activityId);
+      final activityRef = FirebaseFirestore.instance
+          .collection('points_activity')
+          .doc(activityId);
       await activityRef.update({
         "status": "rejected",
         "reviewedAt": FieldValue.serverTimestamp(),
       });
 
-      await _addHistory(userId, 0, "rejected", "تم رفض نشاط: $type بقيمة $points نقطة");
+      await _addHistory(
+        userId,
+        0,
+        "rejected",
+        "تم رفض نشاط: $type بقيمة $points نقطة",
+      );
 
       // Send notification to user
       await NotificationService.sendNotification(
@@ -100,10 +135,16 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: AppText(title:'❌ تم الرفض وتسجيله في التاريخ وإرسال الإشعار')),
+        const SnackBar(
+          content: AppText(
+            title: '❌ تم الرفض وتسجيله في التاريخ وإرسال الإشعار',
+          ),
+        ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: AppText(title:'خطأ: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: AppText(title: 'خطأ: $e')));
     } finally {
       if (mounted) setState(() => _processing = false);
     }
@@ -118,21 +159,19 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12.r)
-,
+              borderRadius: BorderRadius.circular(12.r),
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.contain,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return Container(
-                    height: 300.h
-,
+                  return SizedBox(
+                    height: 300.h,
                     child: Center(
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
                             ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
+                                  loadingProgress.expectedTotalBytes!
                             : null,
                       ),
                     ),
@@ -140,25 +179,23 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                 },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    height: 300.h
-,
+                    height: 300.h,
                     color: Colors.grey[300],
-                    child: Center(
+                    child: const Center(
                       child: Icon(Icons.error, size: 48, color: Colors.red),
                     ),
                   );
                 },
               ),
             ),
-            SizedBox(height: 16.h
-),
+            SizedBox(height: 16.h),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx),
-              child: AppText(title: 'إغلاق'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
               ),
+              child: AppText(title: 'إغلاق'),
             ),
           ],
         ),
@@ -173,9 +210,13 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
         StreamBuilder<QuerySnapshot>(
           stream: service.pendingActivitiesStream(),
           builder: (ctx, snap) {
-            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+            if (!snap.hasData)
+              return const Center(child: CircularProgressIndicator());
             final docs = snap.data!.docs;
-            if (docs.isEmpty) return const Center(child: AppText(title: 'لا توجد طلبات قيد المراجعة'));
+            if (docs.isEmpty)
+              return const Center(
+                child: AppText(title: 'لا توجد طلبات قيد المراجعة'),
+              );
 
             return ListView.builder(
               padding: EdgeInsets.all(12.r),
@@ -193,7 +234,10 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                 return FutureBuilder<Map<String, dynamic>?>(
                   future: _getUser(userId!),
                   builder: (context, snap) {
-                    if (!snap.hasData) return const ListTile(title: AppText(title: "جاري جلب المستخدم..."));
+                    if (!snap.hasData)
+                      return const ListTile(
+                        title: AppText(title: "جاري جلب المستخدم..."),
+                      );
                     final user = snap.data!;
                     final name = user['name'] ?? 'مستخدم';
                     final phone = user['phone'] ?? 'غير متوفر';
@@ -202,7 +246,7 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                     return Card(
                       color: AppColors.secondaryColor.withOpacity(0.2),
                       elevation: 2,
-                      margin: EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: 12),
                       child: Padding(
                         padding: EdgeInsets.all(12.0.r),
                         child: Column(
@@ -214,19 +258,21 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(height: 8.h
-),
+                            SizedBox(height: 8.h),
                             AppText(title: 'الهاتف: $phone', fontSize: 13),
-                            AppText(title: 'رصيد المستخدم الحالي: $currentPoints', fontSize: 13),
+                            AppText(
+                              title: 'رصيد المستخدم الحالي: $currentPoints',
+                              fontSize: 13,
+                            ),
                             AppText(title: 'نوع النشاط: $type', fontSize: 13),
                             if (date != null)
                               AppText(
-                                title: 'تاريخ: ${DateFormat.yMd().add_Hm().format(date)}',
+                                title:
+                                    'تاريخ: ${DateFormat.yMd().add_Hm().format(date)}',
                                 fontSize: 13,
                               ),
-                            
-                            SizedBox(height: 12.h
-),
+
+                            SizedBox(height: 12.h),
 
                             // Link
                             if (link != null && link.isNotEmpty)
@@ -234,22 +280,29 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                                 padding: EdgeInsets.all(8.r),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8.r)
-,
+                                  borderRadius: BorderRadius.circular(8.r),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.link, size: 16, color: Colors.blue),
-                                    SizedBox(width: 8.w
-),
+                                    const Icon(
+                                      Icons.link,
+                                      size: 16,
+                                      color: Colors.blue,
+                                    ),
+                                    SizedBox(width: 8.w),
                                     Expanded(
                                       child: GestureDetector(
-                                        onTap: () => UrlLauncherUtils.openExternalUrl(context, link),
+                                        onTap: () =>
+                                            UrlLauncherUtils.openExternalUrl(
+                                              context,
+                                              link,
+                                            ),
                                         child: AppText(
                                           title: link,
                                           fontSize: 12,
                                           color: Colors.blue,
-                                          textDecoration: TextDecoration.underline,
+                                          textDecoration:
+                                              TextDecoration.underline,
                                         ),
                                       ),
                                     ),
@@ -259,66 +312,79 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
 
                             // Image Preview
                             if (imageUrl != null && imageUrl.isNotEmpty) ...[
-                              SizedBox(height: 12.h
-),
+                              SizedBox(height: 12.h),
                               GestureDetector(
-                                onTap: () => _showImageDialog(context, imageUrl),
+                                onTap: () =>
+                                    _showImageDialog(context, imageUrl),
                                 child: Container(
-                                  height: 150.h
-,
+                                  height: 150.h,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.r)
-,
+                                    borderRadius: BorderRadius.circular(8.r),
                                     border: Border.all(
                                       color: Colors.white.withOpacity(0.3),
-                                      width: 2.w
-,
+                                      width: 2.w,
                                     ),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.r)
-,
+                                    borderRadius: BorderRadius.circular(8.r),
                                     child: Stack(
                                       children: [
                                         Image.network(
                                           imageUrl,
                                           width: double.infinity,
-                                          height: 150.h
-,
+                                          height: 150.h,
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
+                                            if (loadingProgress == null)
+                                              return child;
                                             return Center(
                                               child: CircularProgressIndicator(
-                                                value: loadingProgress.expectedTotalBytes != null
-                                                    ? loadingProgress.cumulativeBytesLoaded /
-                                                        loadingProgress.expectedTotalBytes!
+                                                value:
+                                                    loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
                                           },
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Center(
-                                              child: Icon(Icons.error, color: Colors.red),
-                                            );
-                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return const Center(
+                                                  child: Icon(
+                                                    Icons.error,
+                                                    color: Colors.red,
+                                                  ),
+                                                );
+                                              },
                                         ),
                                         Positioned(
                                           bottom: 8,
                                           right: 8,
                                           child: Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(0.6),
-                                              borderRadius: BorderRadius.circular(4.r)
-,
+                                              color: Colors.black.withOpacity(
+                                                0.6,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4.r),
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(Icons.zoom_in, size: 16, color: Colors.white),
-                                                SizedBox(width: 4.w
-),
-                                                AppText(
+                                                const Icon(
+                                                  Icons.zoom_in,
+                                                  size: 16,
+                                                  color: Colors.white,
+                                                ),
+                                                SizedBox(width: 4.w),
+                                                const AppText(
                                                   title: 'انقر للتكبير',
                                                   fontSize: 11,
                                                   color: Colors.white,
@@ -334,28 +400,40 @@ class _PointsReviewTabState extends State<PointsReviewTab> {
                               ),
                             ],
 
-                            SizedBox(height: 12.h
-),
+                            SizedBox(height: 12.h),
 
                             // Action Buttons
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 ElevatedButton.icon(
-                                  onPressed: _processing ? null : () => _reject(d.id, userId, points, type ?? ""),
-                                  icon: Icon(Icons.close, size: 18),
-                                  label: AppText(title: 'رفض'),
+                                  onPressed: _processing
+                                      ? null
+                                      : () => _reject(
+                                          d.id,
+                                          userId,
+                                          points,
+                                          type ?? "",
+                                        ),
+                                  icon: const Icon(Icons.close, size: 18),
+                                  label: const AppText(title: 'رفض'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
                                   ),
                                 ),
-                                SizedBox(width: 8.w
-),
+                                SizedBox(width: 8.w),
                                 ElevatedButton.icon(
-                                  onPressed: _processing ? null : () => _approve(d.id, userId, points, type ?? ""),
-                                  icon: Icon(Icons.check, size: 18),
-                                  label: AppText(title: 'قبول'),
+                                  onPressed: _processing
+                                      ? null
+                                      : () => _approve(
+                                          d.id,
+                                          userId,
+                                          points,
+                                          type ?? "",
+                                        ),
+                                  icon: const Icon(Icons.check, size: 18),
+                                  label: const AppText(title: 'قبول'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,

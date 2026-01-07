@@ -27,6 +27,7 @@ class ProfileForm extends StatelessWidget {
   final Function() onSave;
 
   const ProfileForm({
+    super.key,
     required this.nameController,
     required this.phoneController,
     required this.cityController,
@@ -54,8 +55,7 @@ class ProfileForm extends StatelessWidget {
           label: 'الاسم الكامل',
           icon: Icons.person_outline_rounded,
         ),
-          SizedBox(height: 16.h
-),
+        SizedBox(height: 16.h),
 
         // Phone Field
         GlassTextField(
@@ -64,8 +64,7 @@ class ProfileForm extends StatelessWidget {
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
         ),
-          SizedBox(height: 16.h
-),
+        SizedBox(height: 16.h),
 
         // City Field
         GlassTextField(
@@ -73,8 +72,7 @@ class ProfileForm extends StatelessWidget {
           label: 'اسم المدينة',
           icon: Icons.location_city_outlined,
         ),
-          SizedBox(height: 16.h
-),
+        SizedBox(height: 16.h),
 
         // Address Field
         GlassTextField(
@@ -82,8 +80,7 @@ class ProfileForm extends StatelessWidget {
           label: 'عنوان السكن',
           icon: Icons.home_outlined,
         ),
-          SizedBox(height: 16.h
-),
+        SizedBox(height: 16.h),
 
         // Bio Field
         GlassTextField(
@@ -92,14 +89,13 @@ class ProfileForm extends StatelessWidget {
           icon: Icons.link,
           maxLines: 3,
         ),
-          SizedBox(height: 24.h
-),
+        SizedBox(height: 24.h),
 
         // Social Media Section
         Align(
           alignment: Alignment.centerRight,
           child: Padding(
-            padding: EdgeInsets.only(right: 8, bottom: 12),
+            padding: const EdgeInsets.only(right: 8, bottom: 12),
             child: Text(
               'روابط التواصل الاجتماعي',
               style: TextStyle(
@@ -116,27 +112,46 @@ class ProfileForm extends StatelessWidget {
             SocialIconButton(
               icon: FontAwesomeIcons.facebook,
               isActive: facebookUrl != null && facebookUrl!.isNotEmpty,
-              onPressed: () => _showSocialLinkDialog(context, 'Facebook', facebookUrl, onFacebookChanged),
+              onPressed: () => _showSocialLinkDialog(
+                context,
+                'Facebook',
+                facebookUrl,
+                onFacebookChanged,
+              ),
             ),
             SocialIconButton(
               icon: FontAwesomeIcons.tiktok,
               isActive: tiktokUrl != null && tiktokUrl!.isNotEmpty,
-              onPressed: () => _showSocialLinkDialog(context, 'TikTok', tiktokUrl, onTiktokChanged),
+              onPressed: () => _showSocialLinkDialog(
+                context,
+                'TikTok',
+                tiktokUrl,
+                onTiktokChanged,
+              ),
             ),
             SocialIconButton(
               icon: FontAwesomeIcons.snapchat,
               isActive: snapchatUrl != null && snapchatUrl!.isNotEmpty,
-              onPressed: () => _showSocialLinkDialog(context, 'Snapchat', snapchatUrl, onSnapchatChanged),
+              onPressed: () => _showSocialLinkDialog(
+                context,
+                'Snapchat',
+                snapchatUrl,
+                onSnapchatChanged,
+              ),
             ),
             SocialIconButton(
               icon: FontAwesomeIcons.instagram,
               isActive: instagramUrl != null && instagramUrl!.isNotEmpty,
-              onPressed: () => _showSocialLinkDialog(context, 'Instagram', instagramUrl, onInstagramChanged),
+              onPressed: () => _showSocialLinkDialog(
+                context,
+                'Instagram',
+                instagramUrl,
+                onInstagramChanged,
+              ),
             ),
           ],
         ),
-          SizedBox(height: 32.h
-),
+        SizedBox(height: 32.h),
 
         // Save Button
         AppButton(
@@ -148,11 +163,16 @@ class ProfileForm extends StatelessWidget {
     );
   }
 
-  void _showSocialLinkDialog(BuildContext context, String platform, String? currentUrl, Function(String) onSave) {
+  void _showSocialLinkDialog(
+    BuildContext context,
+    String platform,
+    String? currentUrl,
+    Function(String) onSave,
+  ) {
     final controller = TextEditingController(text: currentUrl ?? '');
-    
+
     showDialog(
-      context: context,  // Use the context passed here
+      context: context, // Use the context passed here
       builder: (context) => AlertDialog(
         backgroundColor: Colors.transparent,
         content: GlassContainer(
@@ -164,8 +184,7 @@ class ProfileForm extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
-                SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               TextField(
                 controller: controller,
                 style: const TextStyle(color: Colors.white),
@@ -173,25 +192,25 @@ class ProfileForm extends StatelessWidget {
                   hintText: 'أدخل الرابط',
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                    borderSide: BorderSide(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
                   ),
                   focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
-                SizedBox(height: 24.h
-),
+              SizedBox(height: 24.h),
               Row(
                 children: [
                   Expanded(
                     child: TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const AppText(title:'إلغاء',),
+                      child: const AppText(title: 'إلغاء'),
                     ),
                   ),
-                    SizedBox(width: 8.w
-),
+                  SizedBox(width: 8.w),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -201,7 +220,7 @@ class ProfileForm extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                       ),
-                      child: const AppText(title:'حفظ'),
+                      child: const AppText(title: 'حفظ'),
                     ),
                   ),
                 ],
@@ -231,29 +250,21 @@ class SocialIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 60.w
-,
-        height: 60.h
-,
+        width: 60.w,
+        height: 60.h,
         decoration: BoxDecoration(
-          color: isActive 
+          color: isActive
               ? Colors.white.withOpacity(0.3)
               : Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12.r)
-,
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isActive 
+            color: isActive
                 ? Colors.white.withOpacity(0.6)
                 : Colors.white.withOpacity(0.2),
-            width: 1.w
-,
+            width: 1.w,
           ),
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }

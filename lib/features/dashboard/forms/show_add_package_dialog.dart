@@ -8,14 +8,13 @@ import 'package:daad_app/features/dashboard/services/package_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 
 Future<void> showAddPackageDialog(
   BuildContext context, {
   required String userId,
   required String userName,
   required String currentAdminId,
-})async {
+}) async {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   File? selectedFile;
@@ -104,7 +103,9 @@ Future<void> showAddPackageDialog(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.white),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               filled: true,
@@ -130,7 +131,9 @@ Future<void> showAddPackageDialog(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.white),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               filled: true,
@@ -192,7 +195,11 @@ Future<void> showAddPackageDialog(
                             onTap: () async {
                               final picked = await showDatePicker(
                                 context: context,
-                                initialDate: endDate ?? DateTime.now().add(const Duration(days: 30)),
+                                initialDate:
+                                    endDate ??
+                                    DateTime.now().add(
+                                      const Duration(days: 30),
+                                    ),
                                 firstDate: startDate ?? DateTime.now(),
                                 lastDate: DateTime(2030),
                                 builder: (context, child) {
@@ -243,7 +250,9 @@ Future<void> showAddPackageDialog(
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                ),
                               ),
                               child: Column(
                                 children: [
@@ -251,12 +260,16 @@ Future<void> showAddPackageDialog(
                                     children: [
                                       const CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                       SizedBox(width: 12.w),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             const AppText(
                                               title: 'جاري رفع الملف...',
@@ -278,8 +291,13 @@ Future<void> showAddPackageDialog(
                                   SizedBox(height: 12.h),
                                   LinearProgressIndicator(
                                     value: uploadProgress,
-                                    backgroundColor: Colors.white.withOpacity(0.2),
-                                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                                    backgroundColor: Colors.white.withOpacity(
+                                      0.2,
+                                    ),
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                          Colors.green,
+                                        ),
                                   ),
                                   SizedBox(height: 4.h),
                                   AppText(
@@ -296,15 +314,22 @@ Future<void> showAddPackageDialog(
                               decoration: BoxDecoration(
                                 color: Colors.green.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                                border: Border.all(
+                                  color: Colors.green.withOpacity(0.3),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.check_circle, color: Colors.green, size: 24.sp),
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 24.sp,
+                                  ),
                                   SizedBox(width: 12.w),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const AppText(
                                           title: 'تم اختيار الملف',
@@ -322,7 +347,10 @@ Future<void> showAddPackageDialog(
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.close, color: Colors.red),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Colors.red,
+                                    ),
                                     onPressed: () {
                                       setState(() {
                                         selectedFile = null;
@@ -336,11 +364,14 @@ Future<void> showAddPackageDialog(
                           else
                             InkWell(
                               onTap: () async {
-                                final file = await WordPressMediaService.pickPdfFile();
+                                final file =
+                                    await WordPressMediaService.pickPdfFile();
                                 if (file != null) {
                                   setState(() {
                                     selectedFile = file;
-                                    selectedFileName = file.path.split('/').last;
+                                    selectedFileName = file.path
+                                        .split('/')
+                                        .last;
                                   });
                                 }
                               },
@@ -356,7 +387,10 @@ Future<void> showAddPackageDialog(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.upload_file, color: Colors.white),
+                                    const Icon(
+                                      Icons.upload_file,
+                                      color: Colors.white,
+                                    ),
                                     SizedBox(width: 12.w),
                                     const AppText(
                                       title: 'اختر ملف PDF للباقة *',
@@ -373,7 +407,9 @@ Future<void> showAddPackageDialog(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                onPressed: isUploading ? null : () => Navigator.pop(context),
+                                onPressed: isUploading
+                                    ? null
+                                    : () => Navigator.pop(context),
                                 child: const AppText(title: 'إلغاء'),
                               ),
                               SizedBox(width: 8.w),
@@ -382,7 +418,8 @@ Future<void> showAddPackageDialog(
                                   backgroundColor: Colors.white,
                                   foregroundColor: const Color(0xFF7A4458),
                                 ),
-                                onPressed: selectedFile == null ||
+                                onPressed:
+                                    selectedFile == null ||
                                         titleController.text.isEmpty ||
                                         isUploading
                                     ? null
@@ -395,7 +432,9 @@ Future<void> showAddPackageDialog(
                                         try {
                                           // Simulate progress
                                           for (int i = 0; i <= 100; i += 10) {
-                                            await Future.delayed(const Duration(milliseconds: 150));
+                                            await Future.delayed(
+                                              const Duration(milliseconds: 150),
+                                            );
                                             if (context.mounted) {
                                               setState(() {
                                                 uploadProgress = i / 100;
@@ -404,7 +443,10 @@ Future<void> showAddPackageDialog(
                                           }
 
                                           // Upload to Cloudinary
-                                          final pdfUrl = await WordPressMediaService.uploadPdf(selectedFile!);
+                                          final pdfUrl =
+                                              await WordPressMediaService.uploadPdf(
+                                                selectedFile!,
+                                              );
 
                                           if (!context.mounted) return;
 
@@ -413,7 +455,8 @@ Future<void> showAddPackageDialog(
                                             await PackageService.addPackageToUser(
                                               userId: userId,
                                               title: titleController.text,
-                                              description: descriptionController.text,
+                                              description:
+                                                  descriptionController.text,
                                               pdfUrl: pdfUrl,
                                               uploadedBy: currentAdminId,
                                               startDate: startDate,
@@ -423,18 +466,25 @@ Future<void> showAddPackageDialog(
                                             // Send notification to user
                                             await NotificationService.sendNotification(
                                               title: '🎁 باقة جديدة متاحة',
-                                              body: 'تم إضافة باقة جديدة: ${titleController.text}',
+                                              body:
+                                                  'تم إضافة باقة جديدة: ${titleController.text}',
                                               userId: userId,
-                                              deepLink:DeepLinkHandler.contractLink(pdfUrl),
-                                          
+                                              deepLink:
+                                                  DeepLinkHandler.contractLink(
+                                                    pdfUrl,
+                                                  ),
                                             );
 
                                             if (context.mounted) {
                                               Navigator.pop(context);
-                                              ScaffoldMessenger.of(context).showSnackBar(
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
                                                 const SnackBar(
                                                   content: AppText(
-                                                      title: 'تم إضافة الباقة وإرسال الإشعار بنجاح'),
+                                                    title:
+                                                        'تم إضافة الباقة وإرسال الإشعار بنجاح',
+                                                  ),
                                                   backgroundColor: Colors.green,
                                                 ),
                                               );
@@ -444,9 +494,13 @@ Future<void> showAddPackageDialog(
                                           }
                                         } catch (e) {
                                           if (context.mounted) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
                                               SnackBar(
-                                                content: AppText(title: 'خطأ: $e'),
+                                                content: AppText(
+                                                  title: 'خطأ: $e',
+                                                ),
                                                 backgroundColor: Colors.red,
                                               ),
                                             );
@@ -458,7 +512,9 @@ Future<void> showAddPackageDialog(
                                         }
                                       },
                                 child: AppText(
-                                  title: isUploading ? 'جاري الرفع...' : 'إضافة',
+                                  title: isUploading
+                                      ? 'جاري الرفع...'
+                                      : 'إضافة',
                                   color: const Color(0xFF7A4458),
                                 ),
                               ),

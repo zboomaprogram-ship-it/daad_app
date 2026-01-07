@@ -13,13 +13,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeAppBar extends StatelessWidget {
   final DocumentSnapshot? cachedUserData;
-  
-    HomeAppBar({
-    super.key,
-    this.cachedUserData,
-  });
 
-  final TextEditingController _searchController =   TextEditingController();
+  HomeAppBar({super.key, this.cachedUserData});
+
+  final TextEditingController _searchController = TextEditingController();
 
   Stream<int> _getUnreadNotificationsCount() {
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -50,7 +47,7 @@ class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    
+
     // ✅ Use cached data if available, otherwise show loading
     final userData = cachedUserData?.data() as Map<String, dynamic>?;
     final userName = userData?['name'] ?? 'مستخدم';
@@ -75,7 +72,7 @@ class HomeAppBar extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
+                      builder: (context) => const ProfileScreen(),
                     ),
                   ),
                   child: Row(
@@ -83,9 +80,7 @@ class HomeAppBar extends StatelessWidget {
                       Container(
                         width: 50.w,
                         height: 50.h,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
+                        decoration: const BoxDecoration(shape: BoxShape.circle),
                         child: ClipOval(
                           child: user?.photoURL != null
                               ? Image.network(
@@ -100,7 +95,7 @@ class HomeAppBar extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 )
-                              :  Icon(
+                              : Icon(
                                   Icons.person,
                                   size: 28.sp,
                                   color: Colors.white,
@@ -184,7 +179,7 @@ class HomeAppBar extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => UnifiedSearchScreen(),
+                        builder: (_) => const UnifiedSearchScreen(),
                       ),
                     );
                   },
@@ -238,7 +233,9 @@ class HomeAppBar extends StatelessWidget {
                             ),
                             child: Center(
                               child: AppText(
-                                title: unreadCount > 99 ? '99+' : unreadCount.toString(),
+                                title: unreadCount > 99
+                                    ? '99+'
+                                    : unreadCount.toString(),
                                 fontSize: 10,
                               ),
                             ),
@@ -329,9 +326,7 @@ class GlassSearchField extends StatelessWidget {
                 minHeight: 30.h,
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 10.h,
-              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 10.h),
             ),
           ),
         ),

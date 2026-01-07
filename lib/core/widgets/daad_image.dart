@@ -2,12 +2,9 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:daad_app/core/widgets/shimmer_loadfing.dart';
-import 'package:daad_app/features/auth/presentation/pdf_viewer_page.dart' hide ShimmerLoading;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../constants.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
- 
 
 class DaadImage extends StatelessWidget {
   final dynamic url; // Can be a string or an array of strings

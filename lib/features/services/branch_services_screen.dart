@@ -290,7 +290,7 @@ class _ServiceCard extends StatelessWidget {
 
   Future<void> _sendWhatsAppMessage(BuildContext context, String title) async {
     final message = 'مرحباً، أود الاستفسار عن خدمة: $title';
-    final phone = "+966564639466";
+    const phone = "+966564639466";
     final url = "https://wa.me/$phone?text=${Uri.encodeComponent(message)}";
 
     try {
@@ -394,7 +394,7 @@ class _ServiceCard extends StatelessWidget {
                   ),
 
                   // const Spacer(),
-                    SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

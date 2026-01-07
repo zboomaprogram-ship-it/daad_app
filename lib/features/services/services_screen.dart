@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/constants.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
@@ -120,24 +119,21 @@ class _ServicesScreenState extends State<ServicesScreen>
                       : SliverGrid(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.6,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, i) {
-                              final doc = _cachedServices![i];
-                              final data = doc.data() as Map<String, dynamic>;
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.6,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                          delegate: SliverChildBuilderDelegate((context, i) {
+                            final doc = _cachedServices![i];
+                            final data = doc.data() as Map<String, dynamic>;
 
-                              return _ServiceCard(
-                                data: data,
-                                serviceId: doc.id,
-                                onTap: () => _viewServiceDetails(context, doc.id),
-                              );
-                            },
-                            childCount: _cachedServices!.length,
-                          ),
+                            return _ServiceCard(
+                              data: data,
+                              serviceId: doc.id,
+                              onTap: () => _viewServiceDetails(context, doc.id),
+                            );
+                          }, childCount: _cachedServices!.length),
                         ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 80.h)),
@@ -272,10 +268,7 @@ class _ServiceCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _ActionButton(
-                            text: "التفاصيل",
-                            onTap: onTap,
-                          ),
+                          child: _ActionButton(text: "التفاصيل", onTap: onTap),
                         ),
                         SizedBox(width: 8.w),
                         Expanded(
@@ -284,20 +277,19 @@ class _ServiceCard extends StatelessWidget {
                             isPrimary: false,
                             onTap: onTap,
                           ),
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
 
 class _ActionButton extends StatelessWidget {
   final String text;
@@ -315,23 +307,19 @@ class _ActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:   EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
         decoration: BoxDecoration(
-          color: isPrimary
-              ? AppColors.primaryColor
-              : AppColors.textColor,
+          color: isPrimary ? AppColors.primaryColor : AppColors.textColor,
           borderRadius: BorderRadius.circular(8.r),
           // border: isPrimary
-              // ? null
-              // : Border.all(color: Colors.white.withOpacity(0.3)),
+          // ? null
+          // : Border.all(color: Colors.white.withOpacity(0.3)),
         ),
         child: AppText(
           title: text,
           fontSize: 10,
           fontWeight: FontWeight.w900,
-          color: isPrimary
-              ? AppColors.textColor
-              : AppColors.primaryColor,
+          color: isPrimary ? AppColors.textColor : AppColors.primaryColor,
           textAlign: TextAlign.center,
           maxLines: 1,
         ),

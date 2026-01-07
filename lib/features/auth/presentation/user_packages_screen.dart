@@ -13,7 +13,7 @@ class UserPackagesScreen extends StatelessWidget {
   final String userId;
   final String userName;
   final bool isAdmin;
-  
+
   const UserPackagesScreen({
     super.key,
     required this.userId,
@@ -67,7 +67,7 @@ class UserPackagesScreen extends StatelessWidget {
                         color: Colors.white70,
                       ),
                       SizedBox(height: 16.h),
-                      AppText(
+                      const AppText(
                         title: 'خطأ في تحميل الباقات',
                         color: Colors.white,
                       ),
@@ -87,7 +87,7 @@ class UserPackagesScreen extends StatelessWidget {
                         color: Colors.white.withOpacity(0.3),
                       ),
                       SizedBox(height: 16.h),
-                      AppText(
+                      const AppText(
                         title: 'لا توجد باقات حالياً',
                         fontSize: 18,
                         color: Colors.white70,
@@ -130,7 +130,7 @@ class UserPackagesScreen extends StatelessWidget {
         endDate != null && endDate.toDate().isBefore(DateTime.now());
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -168,7 +168,7 @@ class UserPackagesScreen extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       width: 60.w,
                       height: 60.h,
                       decoration: BoxDecoration(
@@ -196,8 +196,8 @@ class UserPackagesScreen extends StatelessWidget {
                           ),
                           if (isExpired)
                             Container(
-                              margin: EdgeInsets.only(top: 4),
-                              padding: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 2,
                               ),
@@ -217,8 +217,8 @@ class UserPackagesScreen extends StatelessWidget {
                             )
                           else if (isActive)
                             Container(
-                              margin: EdgeInsets.only(top: 4),
-                              padding: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 2,
                               ),
@@ -249,9 +249,9 @@ class UserPackagesScreen extends StatelessWidget {
                             value: 'toggle',
                             child: Row(
                               children: [
-                                Icon(Icons.toggle_on),
+                                const Icon(Icons.toggle_on),
                                 SizedBox(width: 8.w),
-                                AppText(title: 'تغيير الحالة'),
+                                const AppText(title: 'تغيير الحالة'),
                               ],
                             ),
                           ),
@@ -259,9 +259,9 @@ class UserPackagesScreen extends StatelessWidget {
                             value: 'delete',
                             child: Row(
                               children: [
-                                Icon(Icons.delete, color: Colors.red),
+                                const Icon(Icons.delete, color: Colors.red),
                                 SizedBox(width: 8.w),
-                                AppText(title: 'حذف'),
+                                const AppText(title: 'حذف'),
                               ],
                             ),
                           ),
@@ -350,7 +350,7 @@ class UserPackagesScreen extends StatelessWidget {
                             size: 18,
                           ),
                           SizedBox(width: 8.w),
-                          AppText(
+                          const AppText(
                             title: 'عرض تفاصيل الباقة',
                             fontSize: 16,
                             fontWeight: FontWeight.w900,

@@ -24,9 +24,9 @@ class _ArticlesScreenState extends State<ArticlesScreen>
     with AutomaticKeepAliveClientMixin {
   DocumentSnapshot? _cachedUserData;
   bool _isInitialized = false;
-  List<DocumentSnapshot> _cachedArticles = [];
+  final List<DocumentSnapshot> _cachedArticles = [];
   dynamic _error;
-  
+
   // Pagination
   static const int _pageSize = 5;
   bool _isLoadingMore = false;
@@ -85,7 +85,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>
           .doc(user.uid)
           .get()
           .timeout(const Duration(seconds: 10));
-      
+
       _cachedUserData = userDoc;
 
       // Load first page of articles
@@ -127,12 +127,12 @@ class _ArticlesScreenState extends State<ArticlesScreen>
           if (snapshot.docs.length < _pageSize) {
             _hasMore = false;
           }
-          
+
           if (snapshot.docs.isNotEmpty) {
             _lastDocument = snapshot.docs.last;
             _cachedArticles.addAll(snapshot.docs);
           }
-          
+
           _isLoadingMore = false;
         });
       }
@@ -183,9 +183,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>
             fit: BoxFit.cover,
           ),
         ),
-        child: SafeArea(
-          child: _buildBody(),
-        ),
+        child: SafeArea(child: _buildBody()),
       ),
     );
   }
@@ -196,10 +194,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>
     }
 
     if (_error != null && _cachedArticles.isEmpty) {
-      return ErrorView(
-        error: _error!,
-        onRetry: _initializeData,
-      );
+      return ErrorView(error: _error!, onRetry: _initializeData);
     }
 
     return Padding(
@@ -226,56 +221,53 @@ class _ArticlesScreenState extends State<ArticlesScreen>
           SliverToBoxAdapter(child: SizedBox(height: 16.h)),
 
           _cachedArticles.isEmpty
-              ? SliverToBoxAdapter(
+              ? const SliverToBoxAdapter(
                   child: EmptyStateView(
                     message: 'لا توجد مقالات بعد',
                     icon: Icons.article_outlined,
                   ),
                 )
               : SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == _cachedArticles.length) {
-                        return _isLoadingMore
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20.h),
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : SizedBox(height: 100.h);
-                      }
-
-                      final doc = _cachedArticles[index];
-                      final data = doc.data() as Map<String, dynamic>;
-
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 16.h),
-                        child: _ArticleCard(
-                          docId: doc.id,
-                          data: data,
-                          onTap: () async {
-                            // Navigate and refresh on return
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ArticleDetailsScreen(
-                                  doc: data,
-                                  docId: doc.id,
-                                  onChanged: () => _refreshItem(doc.id),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == _cachedArticles.length) {
+                      return _isLoadingMore
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.h),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
                                 ),
                               ),
-                            );
-                            // Refresh after return
-                            _refreshItem(doc.id);
-                          },
-                        ),
-                      );
-                    },
-                    childCount: _cachedArticles.length + 1,
-                  ),
+                            )
+                          : SizedBox(height: 100.h);
+                    }
+
+                    final doc = _cachedArticles[index];
+                    final data = doc.data() as Map<String, dynamic>;
+
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: _ArticleCard(
+                        docId: doc.id,
+                        data: data,
+                        onTap: () async {
+                          // Navigate and refresh on return
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ArticleDetailsScreen(
+                                doc: data,
+                                docId: doc.id,
+                                onChanged: () => _refreshItem(doc.id),
+                              ),
+                            ),
+                          );
+                          // Refresh after return
+                          _refreshItem(doc.id);
+                        },
+                      ),
+                    );
+                  }, childCount: _cachedArticles.length + 1),
                 ),
         ],
       ),
@@ -289,7 +281,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>
         physics: const NeverScrollableScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(child: SizedBox(height: 60.h)),
-          
+
           // App bar shimmer
           SliverToBoxAdapter(
             child: Row(
@@ -301,18 +293,18 @@ class _ArticlesScreenState extends State<ArticlesScreen>
               ],
             ),
           ),
-          
+
           SliverToBoxAdapter(child: SizedBox(height: 20.h)),
-          
+
           SliverToBoxAdapter(
             child: Align(
               alignment: Alignment.centerRight,
               child: ShimmerBox(width: 100.w, height: 20.h),
             ),
           ),
-          
+
           SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-          
+
           // List shimmer
           SliverList(
             delegate: SliverChildBuilderDelegate(
@@ -372,7 +364,7 @@ class _ArticleCardState extends State<_ArticleCard> {
 
   Future<void> _toggleLike() async {
     if (_isUpdating) return;
-    
+
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
@@ -411,7 +403,7 @@ class _ArticleCardState extends State<_ArticleCard> {
 
   Future<void> _toggleBookmark() async {
     if (_isUpdating) return;
-    
+
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
@@ -448,6 +440,7 @@ class _ArticleCardState extends State<_ArticleCard> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     final title = widget.data['title'] ?? "";
     final body = widget.data['body'] ?? "";
@@ -470,7 +463,9 @@ class _ArticleCardState extends State<_ArticleCard> {
           children: [
             // IMAGE
             ClipRRect(
-              borderRadius: BorderRadius.horizontal(right: Radius.circular(24.r)),
+              borderRadius: BorderRadius.horizontal(
+                right: Radius.circular(24.r),
+              ),
               child: SizedBox(
                 width: 120.w,
                 child: DaadImage(images, fit: BoxFit.cover),
@@ -518,24 +513,28 @@ class _ArticleCardState extends State<_ArticleCard> {
                         ),
                         SizedBox(width: 14.w),
                         _MiniStat(
-                          icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                          icon: isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           count: _likedBy.length,
                           active: isLiked,
                           onTap: _toggleLike,
                         ),
                         SizedBox(width: 14.w),
                         _MiniStat(
-                          icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                          icon: isBookmarked
+                              ? Icons.bookmark
+                              : Icons.bookmark_border,
                           count: _bookmarkedBy.length,
                           active: isBookmarked,
                           onTap: _toggleBookmark,
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -558,7 +557,7 @@ class _MiniStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.secondaryTextColor;
+    const color = AppColors.secondaryTextColor;
 
     return InkWell(
       onTap: onTap,
@@ -607,10 +606,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   }
 
   Future<void> _initializeArticle() async {
-    await Future.wait([
-      _increaseViewsOnce(),
-      _loadArticleAndTrack(),
-    ]);
+    await Future.wait([_increaseViewsOnce(), _loadArticleAndTrack()]);
   }
 
   Future<void> _loadArticleAndTrack() async {
@@ -622,7 +618,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
 
       if (doc.exists) {
         final data = doc.data()!;
-        
+
         if (mounted) {
           setState(() => _cachedArticle = data);
         }
@@ -753,10 +749,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              kBackgroundImage,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(kBackgroundImage, fit: BoxFit.cover),
           ),
 
           Positioned.fill(
@@ -779,7 +772,8 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                   .doc(widget.docId)
                   .snapshots(),
               builder: (context, snapshot) {
-                final doc = snapshot.data?.data() as Map<String, dynamic>? ??
+                final doc =
+                    snapshot.data?.data() as Map<String, dynamic>? ??
                     _cachedArticle ??
                     widget.doc;
 
@@ -789,7 +783,9 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
 
                 final views = (doc['viewedBy'] as List?)?.length ?? 0;
                 final likedBy = List<String>.from(doc['likedBy'] ?? []);
-                final bookmarkedBy = List<String>.from(doc['bookmarkedBy'] ?? []);
+                final bookmarkedBy = List<String>.from(
+                  doc['bookmarkedBy'] ?? [],
+                );
 
                 final isLiked = likedBy.contains(userId);
                 final isBookmarked = bookmarkedBy.contains(userId);

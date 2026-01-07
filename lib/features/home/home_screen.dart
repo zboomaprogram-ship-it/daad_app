@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/constants.dart';
 import 'package:daad_app/core/route_utils/route_utils.dart';
@@ -85,9 +84,7 @@ class _HomeScreenState extends State<HomeScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: AppText(
-            title: ErrorHandler.getErrorMessage(
-              ErrorHandler.getErrorType(e),
-            ),
+            title: ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e)),
           ),
           backgroundColor: Colors.red,
         ),
@@ -180,9 +177,7 @@ class _HomeScreenState extends State<HomeScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: AppText(
-            title: ErrorHandler.getErrorMessage(
-              ErrorHandler.getErrorType(e),
-            ),
+            title: ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e)),
           ),
           backgroundColor: Colors.red,
         ),
@@ -210,122 +205,123 @@ class _HomeScreenState extends State<HomeScreen>
         child: !_isInitialized
             ? _buildShimmerLoading()
             : (_initError != null
-                ? ErrorView(
-                    error: _initError,
-                    onRetry: () {
-                      setState(() {
-                        _isInitialized = false;
-                        _initError = null;
-                      });
-                      _initializeData();
-                    },
-                  )
-                : RefreshIndicator(
-                    onRefresh: _refreshData,
-                    color: AppColors.primaryColor,
-                    backgroundColor: AppColors.textColor,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30.w),
-                      child: CustomScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        slivers: [
-                          HomeAppBar(cachedUserData: _cachedUserData),
+                  ? ErrorView(
+                      error: _initError,
+                      onRetry: () {
+                        setState(() {
+                          _isInitialized = false;
+                          _initError = null;
+                        });
+                        _initializeData();
+                      },
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _refreshData,
+                      color: AppColors.primaryColor,
+                      backgroundColor: AppColors.textColor,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30.w),
+                        child: CustomScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          slivers: [
+                            HomeAppBar(cachedUserData: _cachedUserData),
 
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: _RecentlyViewedPanel(
-                                stream: _recentlyViewedService
-                                    .getRecentlyViewed(limit: 7),
-                                onItemTap: _handleRecentlyViewedItemTap,
-                                subtitleBuilder: _collectionSubtitleAr,
-                              ),
-                            ),
-                          ),
-
-                          SliverToBoxAdapter(child: SizedBox(height: 18.h)),
-
-                          if (rc.showHomeBanner)
                             SliverToBoxAdapter(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20.r),
-                                child: DaadImage(
-                                  rc.homeBannerImage.isEmpty
-                                      ? null
-                                      : rc.homeBannerImage,
-                                  height: 170.h,
-                                  width: double.infinity,
-                                  fit: BoxFit.fill,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.h),
+                                child: _RecentlyViewedPanel(
+                                  stream: _recentlyViewedService
+                                      .getRecentlyViewed(limit: 7),
+                                  onItemTap: _handleRecentlyViewedItemTap,
+                                  subtitleBuilder: _collectionSubtitleAr,
                                 ),
                               ),
                             ),
 
-                          SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+                            SliverToBoxAdapter(child: SizedBox(height: 18.h)),
 
-                          SliverGrid(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio: 1.5,
-                            ),
-                            delegate: SliverChildListDelegate([
-                              _MainNavCard(
-                                titleAr: 'أعمالنا',
-                                image: 'assets/icons/employment.png',
-                                onTap: () =>
-                                    RouteUtils.push(const PortfolioScreen()),
-                              ),
-                              _MainNavCard(
-                                titleAr: 'تعلم مع ضاد',
-                                image: 'assets/icons/reading-book.png',
-                                onTap: () =>
-                                    RouteUtils.push(const LearnDaadScreen()),
-                              ),
-                              _MainNavCard(
-                                titleAr: 'تواصل معنا',
-                                image: 'assets/icons/customer-service.png',
-                                onTap: () =>
-                                    RouteUtils.push(const ContactScreen()),
-                              ),
-                              _MainNavCard(
-                                titleAr: 'نظام الولاء',
-                                image: 'assets/icons/shines.png',
-                                onTap: () =>
-                                    RouteUtils.push(const LoyaltyIntroScreen()),
-                              ),
-                              _MainNavCard(
-                                titleAr: 'خدمات فروع ضاد',
-                                image: 'assets/icons/settings.png',
-                                onTap: () => RouteUtils.push(
-                                  const ServicesBranchesScreen(),
+                            if (rc.showHomeBanner)
+                              SliverToBoxAdapter(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  child: DaadImage(
+                                    rc.homeBannerImage.isEmpty
+                                        ? null
+                                        : rc.homeBannerImage,
+                                    height: 170.h,
+                                    width: double.infinity,
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
-                              _MainNavCard(
-                                titleAr: 'العقود والاتفاقيات',
-                                image: 'assets/icons/contract.png',
-                                onTap: () {
-                                  final userId = user?.uid ?? '';
-                                  final userName =
-                                      (_cachedUserData?.get('name') ?? '')
-                                          .toString();
-                                  RouteUtils.push(
-                                    UserContractsScreen(
-                                      userId: userId,
-                                      userName: userName,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ]),
-                          ),
 
-                          SliverToBoxAdapter(child: SizedBox(height: 120.h)),
-                        ],
+                            SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+
+                            SliverGrid(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childAspectRatio: 1.5,
+                                  ),
+                              delegate: SliverChildListDelegate([
+                                _MainNavCard(
+                                  titleAr: 'أعمالنا',
+                                  image: 'assets/icons/employment.png',
+                                  onTap: () =>
+                                      RouteUtils.push(const PortfolioScreen()),
+                                ),
+                                _MainNavCard(
+                                  titleAr: 'تعلم مع ضاد',
+                                  image: 'assets/icons/reading-book.png',
+                                  onTap: () =>
+                                      RouteUtils.push(const LearnDaadScreen()),
+                                ),
+                                _MainNavCard(
+                                  titleAr: 'تواصل معنا',
+                                  image: 'assets/icons/customer-service.png',
+                                  onTap: () =>
+                                      RouteUtils.push(const ContactScreen()),
+                                ),
+                                _MainNavCard(
+                                  titleAr: 'نظام الولاء',
+                                  image: 'assets/icons/shines.png',
+                                  onTap: () => RouteUtils.push(
+                                    const LoyaltyIntroScreen(),
+                                  ),
+                                ),
+                                _MainNavCard(
+                                  titleAr: 'خدمات فروع ضاد',
+                                  image: 'assets/icons/settings.png',
+                                  onTap: () => RouteUtils.push(
+                                    const ServicesBranchesScreen(),
+                                  ),
+                                ),
+                                _MainNavCard(
+                                  titleAr: 'العقود والاتفاقيات',
+                                  image: 'assets/icons/contract.png',
+                                  onTap: () {
+                                    final userId = user?.uid ?? '';
+                                    final userName =
+                                        (_cachedUserData?.get('name') ?? '')
+                                            .toString();
+                                    RouteUtils.push(
+                                      UserContractsScreen(
+                                        userId: userId,
+                                        userName: userName,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ]),
+                            ),
+
+                            SliverToBoxAdapter(child: SizedBox(height: 120.h)),
+                          ],
+                        ),
                       ),
-                    ),
-                  )),
+                    )),
       ),
     );
   }
@@ -412,9 +408,10 @@ class _ShimmerBoxState extends State<_ShimmerBox>
       duration: const Duration(milliseconds: 1500),
     )..repeat();
 
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -499,10 +496,7 @@ class _MainNavCard extends StatelessWidget {
                   color: Color(0xFF4A1A2C),
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(
-                  image,
-                  color: Colors.white,
-                ),
+                child: Image.asset(image, color: Colors.white),
               ),
               SizedBox(height: 14.h),
               AppText(
@@ -556,7 +550,7 @@ class _RecentlyViewedPanelState extends State<_RecentlyViewedPanel> {
       final cardWidth = 150.w + 10.w; // card width + separator
       final scrollOffset = _scrollController.offset;
       final newPage = (scrollOffset / cardWidth).round();
-      
+
       if (newPage != _currentPage && newPage >= 0 && newPage < _totalPages) {
         setState(() {
           _currentPage = newPage;
@@ -577,10 +571,7 @@ class _RecentlyViewedPanelState extends State<_RecentlyViewedPanel> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
           color: Colors.white.withOpacity(0.06),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.10),
-            width: 1.w,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.10), width: 1.w),
         ),
         child: Column(
           children: [
@@ -649,14 +640,17 @@ class _RecentlyViewedPanelState extends State<_RecentlyViewedPanel> {
                           separatorBuilder: (_, __) => SizedBox(width: 10.w),
                           itemBuilder: (_, i) {
                             final data = docs[i].data() as Map<String, dynamic>;
-                            final title = (data['titleAr'] as String?)
+                            final title =
+                                (data['titleAr'] as String?)
                                         ?.trim()
                                         .isNotEmpty ==
                                     true
                                 ? (data['titleAr'] as String)
                                 : (data['title'] ?? '').toString();
-                            final collection = (data['collection'] ?? '').toString();
-                            final imageUrl = (data['imageUrl'] ?? '').toString();
+                            final collection = (data['collection'] ?? '')
+                                .toString();
+                            final imageUrl = (data['imageUrl'] ?? '')
+                                .toString();
                             return _RecentlyViewedCard(
                               title: title,
                               subtitle: widget.subtitleBuilder(collection),
@@ -690,10 +684,8 @@ class _RecentlyViewedPanelState extends State<_RecentlyViewedPanel> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 3,
       separatorBuilder: (_, __) => SizedBox(width: 10.w),
-      itemBuilder: (_, __) => _ShimmerBox(
-        width: 150.w,
-        height: double.infinity,
-      ),
+      itemBuilder: (_, __) =>
+          _ShimmerBox(width: 150.w, height: double.infinity),
     );
   }
 }
@@ -702,10 +694,7 @@ class _DotIndicator extends StatelessWidget {
   final int itemCount;
   final int currentIndex;
 
-  const _DotIndicator({
-    required this.itemCount,
-    required this.currentIndex,
-  });
+  const _DotIndicator({required this.itemCount, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -780,9 +769,7 @@ class _RecentlyViewedCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(7.r),
                   child: imageUrl.isNotEmpty
                       ? DaadImage(imageUrl, fit: BoxFit.fill)
-                      : Container(
-                          color: Colors.white.withOpacity(0.08),
-                        ),
+                      : Container(color: Colors.white.withOpacity(0.08)),
                 ),
               ),
               SizedBox(height: 16.h),

@@ -1,5 +1,4 @@
 import 'package:daad_app/core/constants.dart';
-import 'package:daad_app/core/route_utils/route_utils.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/core/widgets/custom_button.dart';
@@ -106,13 +105,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                   if (!_emailSent) ...[
                     AppText(
-                        title: 
-                      'أدخل بريدك الإلكتروني المسجل لديك لنتمكن من إرسال رابط لتعيين كلمة مرور جديدة',
+                      title:
+                          'أدخل بريدك الإلكتروني المسجل لديك لنتمكن من إرسال رابط لتعيين كلمة مرور جديدة',
                       textAlign: TextAlign.center,
-                     
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 16,
-                  
+
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 16,
                     ),
 
                     SizedBox(height: 16.h),
@@ -159,7 +157,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       isLoading: _isLoading,
                       onTap: _isLoading ? null : _sendResetEmail,
                       width: 150.w,
-                      
                     ),
                   ] else ...[
                     // Success Message
@@ -173,22 +170,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           SizedBox(height: 16.h),
                           const AppText(
-                        title: 
-                            'تم إرسال البريد بنجاح!',
-                        
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                          
+                            title: 'تم إرسال البريد بنجاح!',
+
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                           SizedBox(height: 8.h),
-                         AppText(
-                        title: 
-                            'تحقق من بريدك الإلكتروني واتبع التعليمات لإعادة تعيين كلمة المرور',
+                          AppText(
+                            title:
+                                'تحقق من بريدك الإلكتروني واتبع التعليمات لإعادة تعيين كلمة المرور',
                             textAlign: TextAlign.center,
-                           
-                              color: Colors.white.withOpacity(0.8),
-                              fontSize: 16,
-                          
+
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 16,
                           ),
                         ],
                       ),
@@ -206,12 +200,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           const Icon(Icons.arrow_back, size: 20),
                           SizedBox(width: 8.w),
                           const AppText(
-                        title: 
-                            'العودة لتسجيل الدخول',
-                           
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                         
+                            title: 'العودة لتسجيل الدخول',
+
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ],
                       ),
@@ -225,13 +217,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         setState(() => _emailSent = false);
                       },
                       child: AppText(
-                        title: 
-                        'لم تستلم البريد؟ إعادة الإرسال',
-                         
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 14,
-                          textDecoration: TextDecoration.underline,
-                    
+                        title: 'لم تستلم البريد؟ إعادة الإرسال',
+
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                        textDecoration: TextDecoration.underline,
                       ),
                     ),
                   ],

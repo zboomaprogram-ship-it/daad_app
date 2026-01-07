@@ -118,8 +118,10 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
   }
 
   Future<Map<String, dynamic>> _getUserInfo(String uid) async {
-    final snap =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     final data = snap.data() ?? {};
     return {
       "name": data['name'] ?? "مستخدم غير معروف",
@@ -139,11 +141,11 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
         .doc(uid)
         .collection('points_history')
         .add({
-      "points": points,
-      "type": type,
-      "note": note,
-      "date": FieldValue.serverTimestamp()
-    });
+          "points": points,
+          "type": type,
+          "note": note,
+          "date": FieldValue.serverTimestamp(),
+        });
   }
 
   /// ✅ FIXED: Only update status to approved, DON'T deduct points
@@ -153,8 +155,9 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
     int requiredPoints,
     String reward,
   ) async {
-    final requestRef =
-        FirebaseFirestore.instance.collection('redeem_requests').doc(requestId);
+    final requestRef = FirebaseFirestore.instance
+        .collection('redeem_requests')
+        .doc(requestId);
 
     final requestDoc = await requestRef.get();
     if (!requestDoc.exists) {
@@ -192,8 +195,9 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
     int requiredPoints,
     String reward,
   ) async {
-    final requestRef =
-        FirebaseFirestore.instance.collection('redeem_requests').doc(requestId);
+    final requestRef = FirebaseFirestore.instance
+        .collection('redeem_requests')
+        .doc(requestId);
 
     final requestDoc = await requestRef.get();
     if (!requestDoc.exists) {
@@ -246,7 +250,9 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
     }
 
     if (_requests.isEmpty) {
-      return const Center(child: AppText(title: "لا يوجد طلبات استبدال حالياً"));
+      return const Center(
+        child: AppText(title: "لا يوجد طلبات استبدال حالياً"),
+      );
     }
 
     return RefreshIndicator(
@@ -270,7 +276,8 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
 
           final uid = (data['userId'] ?? '').toString();
           final status = (data['status'] ?? 'pending').toString();
-          final requestType = (data['requestType'] ?? data['type'] ?? 'unknown').toString();
+          final requestType = (data['requestType'] ?? data['type'] ?? 'unknown')
+              .toString();
 
           final selectedRewards = data['selectedRewards'] as List?;
           final totalPoints = (data['totalPointsDeducted'] ?? 0);
@@ -291,52 +298,66 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                 final Color statusColor = status == "approved"
                     ? Colors.green
                     : status == "rejected"
-                        ? Colors.red
-                        : Colors.orange;
+                    ? Colors.red
+                    : Colors.orange;
 
                 // ===== Rewards widget / points handling =====
                 late Widget rewardsWidget;
                 late int pointsToHandle;
 
                 if (selectedRewards != null && selectedRewards.isNotEmpty) {
-                  pointsToHandle = (totalPoints is num) ? totalPoints.toInt() : int.tryParse(totalPoints.toString()) ?? 0;
+                  pointsToHandle = (totalPoints is num)
+                      ? totalPoints.toInt()
+                      : int.tryParse(totalPoints.toString()) ?? 0;
 
                   rewardsWidget = Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const AppText(title: 
-                        'المكافآت المحددة:',
-                      fontWeight: FontWeight.bold, fontSize: 14,
+                      const AppText(
+                        title: 'المكافآت المحددة:',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                       SizedBox(height: 6.h),
                       ...selectedRewards.map((reward) {
-                        final title = (reward is Map ? (reward['title'] ?? 'مكافأة') : 'مكافأة').toString();
-                        final ptsRaw = (reward is Map ? (reward['requiredPoints'] ?? 0) : 0);
-                        final pts = (ptsRaw is num) ? ptsRaw.toInt() : int.tryParse(ptsRaw.toString()) ?? 0;
+                        final title =
+                            (reward is Map
+                                    ? (reward['title'] ?? 'مكافأة')
+                                    : 'مكافأة')
+                                .toString();
+                        final ptsRaw = (reward is Map
+                            ? (reward['requiredPoints'] ?? 0)
+                            : 0);
+                        final pts = (ptsRaw is num)
+                            ? ptsRaw.toInt()
+                            : int.tryParse(ptsRaw.toString()) ?? 0;
 
                         return Padding(
                           padding: const EdgeInsets.only(left: 12, bottom: 4),
                           child: Row(
                             children: [
-                              const Icon(Icons.check_circle, size: 16, color: Colors.green),
+                              const Icon(
+                                Icons.check_circle,
+                                size: 16,
+                                color: Colors.green,
+                              ),
                               SizedBox(width: 6.w),
                               Expanded(
-                                child: AppText(title: 
-                                  '$title ($pts نقطة)',
+                                child: AppText(
+                                  title: '$title ($pts نقطة)',
                                   fontSize: 13,
                                 ),
                               ),
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                       const Divider(),
-                    AppText(title: 
-                        'إجمالي النقاط: $pointsToHandle',
-                      
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-              
+                      AppText(
+                        title: 'إجمالي النقاط: $pointsToHandle',
+
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
                       ),
                     ],
                   );
@@ -345,14 +366,15 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                       ? singleRequiredPoints.toInt()
                       : int.tryParse(singleRequiredPoints.toString()) ?? 0;
 
-                  rewardsWidget = AppText(title: 
-                    'المكافأة: $singleRewardTitle\nالنقاط المطلوبة: $pointsToHandle',
-                   fontSize: 13,
+                  rewardsWidget = AppText(
+                    title:
+                        'المكافأة: $singleRewardTitle\nالنقاط المطلوبة: $pointsToHandle',
+                    fontSize: 13,
                   );
                 } else {
                   pointsToHandle = 0;
-                  rewardsWidget = const AppText(title: 
-                    'لا توجد تفاصيل متاحة',
+                  rewardsWidget = const AppText(
+                    title: 'لا توجد تفاصيل متاحة',
                     color: Colors.grey,
                   );
                 }
@@ -383,29 +405,31 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                     backgroundColor: statusColor.withOpacity(0.2),
                     child: Icon(requestIcon, color: statusColor),
                   ),
-                  title: AppText(title: 
-                    name.isEmpty ? 'مستخدم' : name,
+                  title: AppText(
+                    title: name.isEmpty ? 'مستخدم' : name,
                     fontWeight: FontWeight.bold,
                   ),
                   subtitle: AppText(title: requestTypeText),
                   trailing: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(color: statusColor),
                     ),
-                    child: AppText(title: 
-                      status == "approved"
+                    child: AppText(
+                      title: status == "approved"
                           ? "✅ مقبول"
                           : status == "rejected"
-                              ? "❌ مرفوض"
-                              : "⏳ معلق",
-               
-                        color: statusColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-               
+                          ? "❌ مرفوض"
+                          : "⏳ معلق",
+
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   children: [
@@ -415,7 +439,10 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildInfoRow('الهاتف', phone),
-                          _buildInfoRow('النقاط الحالية', '$currentPoints نقطة'),
+                          _buildInfoRow(
+                            'النقاط الحالية',
+                            '$currentPoints نقطة',
+                          ),
                           const Divider(),
                           rewardsWidget,
                           SizedBox(height: 12.h),
@@ -435,17 +462,25 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                                           'المكافآت المحددة',
                                         );
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           const SnackBar(
-                                            content: AppText(title: "✅ تم قبول الطلب"),
+                                            content: AppText(
+                                              title: "✅ تم قبول الطلب",
+                                            ),
                                             backgroundColor: Colors.green,
                                           ),
                                         );
                                       } catch (e) {
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
-                                            content: Text("❌ خطأ: ${e.toString()}"),
+                                            content: Text(
+                                              "❌ خطأ: ${e.toString()}",
+                                            ),
                                             backgroundColor: Colors.red,
                                           ),
                                         );
@@ -470,17 +505,25 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                                           'المكافآت المحددة',
                                         );
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           const SnackBar(
-                                            content: Text("❌ تم رفض الطلب وإرجاع النقاط"),
+                                            content: Text(
+                                              "❌ تم رفض الطلب وإرجاع النقاط",
+                                            ),
                                             backgroundColor: Colors.orange,
                                           ),
                                         );
                                       } catch (e) {
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
-                                            content: Text("❌ خطأ: ${e.toString()}"),
+                                            content: Text(
+                                              "❌ خطأ: ${e.toString()}",
+                                            ),
                                             backgroundColor: Colors.red,
                                           ),
                                         );
@@ -502,17 +545,22 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                                   context: context,
                                   builder: (ctx) => AlertDialog(
                                     title: const AppText(title: "تأكيد الرفض"),
-                                    content: AppText(title: 
-                                      "هل تريد رفض هذا الطلب المقبول؟ سيتم إرجاع $pointsToHandle نقطة للمستخدم.",
+                                    content: AppText(
+                                      title:
+                                          "هل تريد رفض هذا الطلب المقبول؟ سيتم إرجاع $pointsToHandle نقطة للمستخدم.",
                                     ),
                                     actions: [
                                       TextButton(
-                                        onPressed: () => Navigator.pop(ctx, false),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, false),
                                         child: const AppText(title: "إلغاء"),
                                       ),
                                       ElevatedButton(
-                                        onPressed: () => Navigator.pop(ctx, true),
-                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                        ),
                                         child: const AppText(title: "تأكيد"),
                                       ),
                                     ],
@@ -530,14 +578,18 @@ class _RedeemRequestsTabState extends State<RedeemRequestsTab> {
                                     if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: AppText(title: "❌ تم رفض الطلب وإرجاع النقاط"),
+                                        content: AppText(
+                                          title: "❌ تم رفض الطلب وإرجاع النقاط",
+                                        ),
                                       ),
                                     );
                                   } catch (e) {
                                     if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: AppText(title: "❌ خطأ: ${e.toString()}"),
+                                        content: AppText(
+                                          title: "❌ خطأ: ${e.toString()}",
+                                        ),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -574,20 +626,14 @@ Widget _buildInfoRow(String label, String value) {
       children: [
         SizedBox(
           width: 100.w,
-          child: AppText(title: 
-            '$label:',
-        
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-    
-          ),
-        ),
-        Expanded(
-          child:AppText(title: 
-            value,
+          child: AppText(
+            title: '$label:',
+
+            fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
         ),
+        Expanded(child: AppText(title: value, fontSize: 13)),
       ],
     ),
   );

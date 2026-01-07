@@ -39,7 +39,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
       if (doc.exists) {
         final data = doc.data()!;
-        
+
         if (mounted) {
           setState(() {
             _cachedService = data;
@@ -70,9 +70,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
         title: data['title'] ?? '',
         imageUrl: (data['images'] as List?)?.first ?? '',
         body: data['body'] ?? '',
-        additionalData: {
-          'industry': data['industry'] ?? '',
-        },
+        additionalData: {'industry': data['industry'] ?? ''},
       );
     } catch (e) {
       print('Error tracking view: $e');
@@ -81,7 +79,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
   Future<void> _sendWhatsAppMessage(BuildContext context, String title) async {
     final message = 'مرحباً، أود الاستفسار عن خدمة: $title';
-    final phone = "+966564639466";
+    const phone = "+966564639466";
     final url = "https://wa.me/$phone?text=${Uri.encodeComponent(message)}";
 
     try {
@@ -89,15 +87,15 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("تعذر فتح واتساب")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("تعذر فتح واتساب")));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("حدث خطأ")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("حدث خطأ")));
     }
   }
 
@@ -162,16 +160,13 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 children: [
                   Row(
                     children: [
                       const GlassBackButton(),
-                      SizedBox(width: 5.w,),
+                      SizedBox(width: 5.w),
                       // const Spacer(),
                       AppText(
                         title: title,
@@ -201,10 +196,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30.r),
-                          child: DaadImage(
-                            image,
-                            fit: BoxFit.fill,
-                          ),
+                          child: DaadImage(image, fit: BoxFit.fill),
                         ),
                       ),
                     ),

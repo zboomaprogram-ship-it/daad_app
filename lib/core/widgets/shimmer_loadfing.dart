@@ -35,9 +35,10 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       duration: const Duration(milliseconds: 1500),
     )..repeat();
 
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -108,10 +109,7 @@ class ShimmerComponents {
     );
   }
 
-  static Widget textLine({
-    double width = double.infinity,
-    double height = 16,
-  }) {
+  static Widget textLine({double width = double.infinity, double height = 16}) {
     return Container(
       width: width.w,
       height: height.h,
@@ -133,10 +131,7 @@ class ShimmerComponents {
           ],
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1.w,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.w),
       ),
       child: Row(
         children: [
@@ -215,9 +210,10 @@ class _ShimmerBoxState extends State<ShimmerBox>
       duration: const Duration(milliseconds: 1500),
     )..repeat();
 
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -348,6 +344,7 @@ class ShimmerGridItem extends StatelessWidget {
     );
   }
 }
+
 class LearnDaadShimmerList extends StatelessWidget {
   const LearnDaadShimmerList({super.key});
 
@@ -407,7 +404,11 @@ class _ShimmerLearnCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 16.w),
-              ShimmerBox(width: thumb, height: thumb, borderRadius: BorderRadius.circular(40.r)),
+              ShimmerBox(
+                width: thumb,
+                height: thumb,
+                borderRadius: BorderRadius.circular(40.r),
+              ),
             ],
           ),
         ),
@@ -415,6 +416,7 @@ class _ShimmerLearnCard extends StatelessWidget {
     );
   }
 }
+
 class LearnDetailsShimmer extends StatelessWidget {
   const LearnDetailsShimmer({super.key});
 
@@ -447,13 +449,14 @@ class LearnDetailsShimmer extends StatelessWidget {
     );
   }
 }
+
 class PointsRecordingShimmer extends StatelessWidget {
   const PointsRecordingShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           ...List.generate(2, (_) => _ActivityShimmer()),
@@ -515,6 +518,7 @@ class _RewardsShimmer extends StatelessWidget {
     );
   }
 }
+
 class LoyaltyIntroShimmer extends StatelessWidget {
   const LoyaltyIntroShimmer({super.key});
 

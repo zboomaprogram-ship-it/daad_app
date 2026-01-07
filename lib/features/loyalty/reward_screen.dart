@@ -10,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RewardsScreen extends StatelessWidget {
-  RewardsScreen({Key? key}) : super(key: key);
+  RewardsScreen({super.key});
 
   final service = LoyaltyService();
 
@@ -28,8 +28,7 @@ class RewardsScreen extends StatelessWidget {
         child: Dialog(
           backgroundColor: Colors.transparent,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.r)
-,
+            borderRadius: BorderRadius.circular(20.r),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
@@ -43,48 +42,49 @@ class RewardsScreen extends StatelessWidget {
                       Colors.white.withOpacity(0.1),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(20.r)
-,
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: Colors.white.withOpacity(0.2),
-                    width: 1.5.w
-,
+                    width: 1.5.w,
                   ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.card_giftcard, color: Colors.white, size: 48),
-                    SizedBox(height: 16.h
-),
+                    const Icon(
+                      Icons.card_giftcard,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                    SizedBox(height: 16.h),
                     AppText(
                       title: 'استبدال: $title',
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 16.h
-),
+                    SizedBox(height: 16.h),
                     AppText(
-                      title: 'سيتم خصم $required نقطة من رصيدك فوراً عند إرسال الطلب.',
+                      title:
+                          'سيتم خصم $required نقطة من رصيدك فوراً عند إرسال الطلب.',
                       fontSize: 14,
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 8.h
-),
+                    SizedBox(height: 8.h),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12.r)
-,
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star, color: Colors.amber, size: 20),
-                            SizedBox(width: 8.w
-),
+                          const Icon(Icons.star, color: Colors.amber, size: 20),
+                          SizedBox(width: 8.w),
                           AppText(
                             title: 'النقاط الحالية: $userPoints',
                             fontSize: 14,
@@ -93,15 +93,13 @@ class RewardsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 8.h
-),
+                    SizedBox(height: 8.h),
                     AppText(
                       title: 'الرصيد بعد الاستبدال: ${userPoints - required}',
                       fontSize: 12,
                       color: Colors.white.withOpacity(0.7),
                     ),
-                    SizedBox(height: 24.h
-),
+                    SizedBox(height: 24.h),
                     Row(
                       children: [
                         Expanded(
@@ -111,38 +109,48 @@ class RewardsScreen extends StatelessWidget {
                             isPrimary: false,
                           ),
                         ),
-                         SizedBox(width: 12.w
-),
+                        SizedBox(width: 12.w),
                         Expanded(
                           child: _GlassButton(
                             text: 'تأكيد',
                             onPressed: () async {
-                              final uid = FirebaseAuth.instance.currentUser!.uid;
-                              final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-                              
+                              final uid =
+                                  FirebaseAuth.instance.currentUser!.uid;
+                              final userRef = FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(uid);
+
                               try {
-                                await FirebaseFirestore.instance.runTransaction((trx) async {
-                                  final userSnap = await trx.get(userRef);
-                                  final currentPoints = userSnap.data()?['points'] ?? 0;
+                                await FirebaseFirestore.instance.runTransaction(
+                                  (trx) async {
+                                    final userSnap = await trx.get(userRef);
+                                    final currentPoints =
+                                        userSnap.data()?['points'] ?? 0;
 
-                                  if (currentPoints < required) {
-                                    throw Exception('رصيد النقاط غير كافٍ');
-                                  }
+                                    if (currentPoints < required) {
+                                      throw Exception('رصيد النقاط غير كافٍ');
+                                    }
 
-                                  // Deduct points immediately
-                                  trx.update(userRef, {'points': currentPoints - required});
+                                    // Deduct points immediately
+                                    trx.update(userRef, {
+                                      'points': currentPoints - required,
+                                    });
 
-                                  // Create redeem request
-                                  final requestRef = FirebaseFirestore.instance.collection('redeem_requests').doc();
-                                  trx.set(requestRef, {
-                                    'userId': uid,
-                                    'rewardId': rewardId,
-                                    'rewardTitle': title,
-                                    'requiredPoints': required,
-                                    'status': 'pending',
-                                    'date': FieldValue.serverTimestamp(),
-                                  });
-                                });
+                                    // Create redeem request
+                                    final requestRef = FirebaseFirestore
+                                        .instance
+                                        .collection('redeem_requests')
+                                        .doc();
+                                    trx.set(requestRef, {
+                                      'userId': uid,
+                                      'rewardId': rewardId,
+                                      'rewardTitle': title,
+                                      'requiredPoints': required,
+                                      'status': 'pending',
+                                      'date': FieldValue.serverTimestamp(),
+                                    });
+                                  },
+                                );
 
                                 // Add history
                                 await FirebaseFirestore.instance
@@ -150,25 +158,35 @@ class RewardsScreen extends StatelessWidget {
                                     .doc(uid)
                                     .collection('points_history')
                                     .add({
-                                  'points': -required,
-                                  'type': 'pending_redeem',
-                                  'note': 'طلب استبدال قيد المراجعة: $title',
-                                  'date': FieldValue.serverTimestamp(),
-                                });
+                                      'points': -required,
+                                      'type': 'pending_redeem',
+                                      'note':
+                                          'طلب استبدال قيد المراجعة: $title',
+                                      'date': FieldValue.serverTimestamp(),
+                                    });
 
                                 Navigator.pop(ctx);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: AppText(title: 'تم خصم النقاط وإرسال طلبك للمراجعة'),
-                                    backgroundColor: Colors.green.withOpacity(0.8),
+                                    content: const AppText(
+                                      title:
+                                          'تم خصم النقاط وإرسال طلبك للمراجعة',
+                                    ),
+                                    backgroundColor: Colors.green.withOpacity(
+                                      0.8,
+                                    ),
                                   ),
                                 );
                               } catch (e) {
                                 Navigator.pop(ctx);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: AppText(title: 'خطأ: ${e.toString()}'),
-                                    backgroundColor: Colors.red.withOpacity(0.8),
+                                    content: AppText(
+                                      title: 'خطأ: ${e.toString()}',
+                                    ),
+                                    backgroundColor: Colors.red.withOpacity(
+                                      0.8,
+                                    ),
                                   ),
                                 );
                               }
@@ -205,10 +223,9 @@ class RewardsScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.login, color: Colors.white, size: 48),
-                  SizedBox(height: 16.h
-),
-                  AppText(
+                  const Icon(Icons.login, color: Colors.white, size: 48),
+                  SizedBox(height: 16.h),
+                  const AppText(
                     title: 'تسجيل الدخول مطلوب',
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -240,8 +257,7 @@ class RewardsScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r)
-,
+                        borderRadius: BorderRadius.circular(12.r),
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                           child: Container(
@@ -255,22 +271,22 @@ class RewardsScreen extends StatelessWidget {
                                   Colors.white.withOpacity(0.1),
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(12.r)
-,
+                              borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
                                 color: Colors.white.withOpacity(0.2),
-                                width: 1.5.w
-,
+                                width: 1.5.w,
                               ),
                             ),
-                            child: Icon(Icons.arrow_back, color: Colors.white),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                     SizedBox(width: 16.w
-),
-                    Expanded(
+                    SizedBox(width: 16.w),
+                    const Expanded(
                       child: AppText(
                         title: 'المكافآت',
                         fontSize: 24,
@@ -283,40 +299,36 @@ class RewardsScreen extends StatelessWidget {
 
               // User Points Card
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<DocumentSnapshot>(
                   stream: service.userStream(user.uid),
                   builder: (context, snap) {
                     if (snap.connectionState == ConnectionState.waiting) {
-                      return GlassCard(
+                      return const GlassCard(
                         child: Center(
                           child: CircularProgressIndicator(color: Colors.white),
                         ),
                       );
                     }
-                    final userData = snap.data?.data() as Map<String, dynamic>? ?? {};
-                    final int userPoints = (userData['points'] as num?)?.toInt() ?? 0;
+                    final userData =
+                        snap.data?.data() as Map<String, dynamic>? ?? {};
+                    final int userPoints =
+                        (userData['points'] as num?)?.toInt() ?? 0;
 
                     return GlassCard(
                       child: Column(
                         children: [
-                          Icon(Icons.star, color: Colors.amber, size: 48),
-                          SizedBox(height: 12.h
-),
-                          AppText(
-                            title: 'نقاطك',
-                            fontSize: 14,
-                          ),
-                          SizedBox(height: 4.h
-),
+                          const Icon(Icons.star, color: Colors.amber, size: 48),
+                          SizedBox(height: 12.h),
+                          const AppText(title: 'نقاطك', fontSize: 14),
+                          SizedBox(height: 4.h),
                           AppText(
                             title: '$userPoints',
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(height: 8.h
-),
-                          AppText(
+                          SizedBox(height: 8.h),
+                          const AppText(
                             title: 'استبدل نقاطك بمكافآت رائعة',
                             fontSize: 12,
                           ),
@@ -327,8 +339,7 @@ class RewardsScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
 
               // Rewards List
               StreamBuilder<DocumentSnapshot>(
@@ -341,7 +352,8 @@ class RewardsScreen extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  final userData = userSnap.data!.data() as Map<String, dynamic>? ?? {};
+                  final userData =
+                      userSnap.data!.data() as Map<String, dynamic>? ?? {};
                   final userPoints = (userData['points'] as num?)?.toInt() ?? 0;
 
                   return StreamBuilder<QuerySnapshot>(
@@ -356,7 +368,7 @@ class RewardsScreen extends StatelessWidget {
                       final rewardDocs = rewardsSnap.data!.docs;
 
                       if (rewardDocs.isEmpty) {
-                        return Center(
+                        return const Center(
                           child: AppText(
                             title: "لا توجد مكافآت متاحة الآن",
                             fontSize: 16,
@@ -368,16 +380,18 @@ class RewardsScreen extends StatelessWidget {
                         child: ListView.separated(
                           padding: EdgeInsets.all(12.r),
                           itemCount: rewardDocs.length,
-                          separatorBuilder: (_, __) => SizedBox(height: 12.h
-),
+                          separatorBuilder: (_, __) => SizedBox(height: 12.h),
                           itemBuilder: (ctx, i) {
-                            final r = rewardDocs[i].data() as Map<String, dynamic>;
+                            final r =
+                                rewardDocs[i].data() as Map<String, dynamic>;
                             final rewardId = rewardDocs[i].id;
                             final title = r['title'] ?? "مكافأة";
                             final points = r['points'] ?? "points";
                             final required = (r['points'] as num).toInt();
                             final des = r['description'];
-                            final percent = (userPoints / required * 100).clamp(0, 100).round();
+                            final percent = (userPoints / required * 100)
+                                .clamp(0, 100)
+                                .round();
                             final canRedeem = userPoints >= required;
 
                             return GlassCard(
@@ -386,59 +400,57 @@ class RewardsScreen extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                       SizedBox(width: 12.w
-),
+                                      SizedBox(width: 12.w),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             AppText(
                                               title: title,
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
-                                            AppText(
-                                              title: des,
-                                              fontSize: 14,
-                                            ),
+                                            AppText(title: des, fontSize: 14),
                                             AppText(
                                               title: points.toString(),
                                               fontSize: 14,
                                             ),
                                           ],
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
 
-                                  SizedBox(height: 12.h
-),
+                                  SizedBox(height: 12.h),
 
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.r)
-,
+                                    borderRadius: BorderRadius.circular(8.r),
                                     child: LinearProgressIndicator(
                                       value: percent / 100,
-                                      backgroundColor: Colors.white.withOpacity(0.2),
+                                      backgroundColor: Colors.white.withOpacity(
+                                        0.2,
+                                      ),
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                         canRedeem ? Colors.green : Colors.amber,
                                       ),
-                                      minHeight: 8.h
-,
+                                      minHeight: 8.h,
                                     ),
                                   ),
 
-                                  SizedBox(height: 8.h
-),
+                                  SizedBox(height: 8.h),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       AppText(
                                         title: 'نسبة الإتاحة: $percent%',
                                         fontSize: 12,
                                       ),
                                       _GlassButton(
-                                        text: canRedeem ? 'استبدال' : 'غير متاح',
+                                        text: canRedeem
+                                            ? 'استبدال'
+                                            : 'غير متاح',
                                         onPressed: canRedeem
                                             ? () {
                                                 _showRedeemDialog(
@@ -464,7 +476,7 @@ class RewardsScreen extends StatelessWidget {
                     },
                   );
                 },
-              )
+              ),
             ],
           ),
         ),
@@ -489,8 +501,7 @@ class _GlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12.r)
-,
+      borderRadius: BorderRadius.circular(12.r),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Material(
@@ -512,21 +523,21 @@ class _GlassButton extends StatelessWidget {
                           Colors.white.withOpacity(0.02),
                         ]
                       : isPrimary
-                          ? [
-                              Colors.white.withOpacity(0.3),
-                              Colors.white.withOpacity(0.2),
-                            ]
-                          : [
-                              Colors.white.withOpacity(0.15),
-                              Colors.white.withOpacity(0.05),
-                            ],
+                      ? [
+                          Colors.white.withOpacity(0.3),
+                          Colors.white.withOpacity(0.2),
+                        ]
+                      : [
+                          Colors.white.withOpacity(0.15),
+                          Colors.white.withOpacity(0.05),
+                        ],
                 ),
-                borderRadius: BorderRadius.circular(12.r)
-,
+                borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: Colors.white.withOpacity(onPressed == null ? 0.1 : 0.2),
-                  width: 1.5.w
-,
+                  color: Colors.white.withOpacity(
+                    onPressed == null ? 0.1 : 0.2,
+                  ),
+                  width: 1.5.w,
                 ),
               ),
               child: AppText(

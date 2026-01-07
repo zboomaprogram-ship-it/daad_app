@@ -108,7 +108,7 @@ class _LearnDaadScreenState extends State<LearnDaadScreen> {
             _lastDocument = snapshot.docs.last;
 
             final newArticles = snapshot.docs.map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
+              final data = doc.data();
               return {'id': doc.id, ...data};
             }).toList();
 
@@ -213,186 +213,235 @@ class _LearnDaadScreenState extends State<LearnDaadScreen> {
                           ),
                           itemCount: _cachedArticles.length + 1,
                           separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                         // Replace the itemBuilder section in your ListView.separated with this:
 
-// Replace the itemBuilder section with this complete implementation:
+                          // Replace the itemBuilder section in your ListView.separated with this:
 
-itemBuilder: (_, i) {
-  if (i == _cachedArticles.length) {
-    return _isLoadingMore
-        ? Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.h),
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            ),
-          )
-        : const SizedBox.shrink();
-  }
+                          // Replace the itemBuilder section with this complete implementation:
+                          itemBuilder: (_, i) {
+                            if (i == _cachedArticles.length) {
+                              return _isLoadingMore
+                                  ? Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 20.h,
+                                      ),
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                            }
 
-  final data = _cachedArticles[i];
-  final docId = data['id'] as String;
-  final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+                            final data = _cachedArticles[i];
+                            final docId = data['id'] as String;
+                            final currentUserId =
+                                FirebaseAuth.instance.currentUser?.uid ?? '';
 
-  return _LearnCard(
-    key: ObjectKey(data), // This will change when data object changes
-    docId: docId,
-    data: data,
-    onTap: () async {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => LearnDetails(
-            docId: docId,
-            doc: data,
-          ),
-        ),
-      );
+                            return _LearnCard(
+                              key: ObjectKey(
+                                data,
+                              ), // This will change when data object changes
+                              docId: docId,
+                              data: data,
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        LearnDetails(docId: docId, doc: data),
+                                  ),
+                                );
 
-      if (result == true && mounted) {
-        // Fetch the latest doc from Firestore
-        try {
-          final freshDoc = await FirebaseFirestore.instance
-              .collection('learnWithdaad')
-              .doc(docId)
-              .get();
+                                if (result == true && mounted) {
+                                  // Fetch the latest doc from Firestore
+                                  try {
+                                    final freshDoc = await FirebaseFirestore
+                                        .instance
+                                        .collection('learnWithdaad')
+                                        .doc(docId)
+                                        .get();
 
-          if (freshDoc.exists && mounted) {
-            final freshData = freshDoc.data() as Map<String, dynamic>;
+                                    if (freshDoc.exists && mounted) {
+                                      final freshData =
+                                          freshDoc.data()
+                                              as Map<String, dynamic>;
 
-            // Find and update the item
-            final index = _cachedArticles.indexWhere((e) => e['id'] == docId);
-            if (index != -1) {
-              // Create a completely new list with the updated item
-              final updatedList = List<Map<String, dynamic>>.from(_cachedArticles);
-              updatedList[index] = {'id': docId, ...freshData};
-              
-              setState(() {
-                _cachedArticles = updatedList;
-              });
-              
-              // Force a frame to ensure rebuild
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  setState(() {});
-                }
-              });
-            }
-          }
-        } catch (e) {
-          print('Error refreshing article: $e');
-        }
-      }
-    },
-    onLikeToggle: () async {
-      if (currentUserId.isEmpty) return;
+                                      // Find and update the item
+                                      final index = _cachedArticles.indexWhere(
+                                        (e) => e['id'] == docId,
+                                      );
+                                      if (index != -1) {
+                                        // Create a completely new list with the updated item
+                                        final updatedList =
+                                            List<Map<String, dynamic>>.from(
+                                              _cachedArticles,
+                                            );
+                                        updatedList[index] = {
+                                          'id': docId,
+                                          ...freshData,
+                                        };
 
-      final index = _cachedArticles.indexWhere((e) => e['id'] == docId);
-      if (index == -1) return;
+                                        setState(() {
+                                          _cachedArticles = updatedList;
+                                        });
 
-      // Create new list and new map
-      final updatedList = List<Map<String, dynamic>>.from(_cachedArticles);
-      final currentItem = Map<String, dynamic>.from(updatedList[index]);
-      List<dynamic> likes = List.from(currentItem['likes'] ?? []);
-      
-      if (likes.contains(currentUserId)) {
-        likes.remove(currentUserId);
-      } else {
-        likes.add(currentUserId);
-      }
-      
-      currentItem['likes'] = likes;
-      updatedList[index] = currentItem;
+                                        // Force a frame to ensure rebuild
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                              if (mounted) {
+                                                setState(() {});
+                                              }
+                                            });
+                                      }
+                                    }
+                                  } catch (e) {
+                                    print('Error refreshing article: $e');
+                                  }
+                                }
+                              },
+                              onLikeToggle: () async {
+                                if (currentUserId.isEmpty) return;
 
-      setState(() {
-        _cachedArticles = updatedList;
-      });
+                                final index = _cachedArticles.indexWhere(
+                                  (e) => e['id'] == docId,
+                                );
+                                if (index == -1) return;
 
-      // Update Firestore
-      try {
-        await FirebaseFirestore.instance
-            .collection('learnWithdaad')
-            .doc(docId)
-            .update({'likes': likes});
-      } catch (e) {
-        print('Error updating like: $e');
-        // Revert on error
-        if (mounted) {
-          final revertList = List<Map<String, dynamic>>.from(_cachedArticles);
-          final revertItem = Map<String, dynamic>.from(revertList[index]);
-          List<dynamic> revertLikes = List.from(revertItem['likes'] ?? []);
-          
-          if (revertLikes.contains(currentUserId)) {
-            revertLikes.remove(currentUserId);
-          } else {
-            revertLikes.add(currentUserId);
-          }
-          
-          revertItem['likes'] = revertLikes;
-          revertList[index] = revertItem;
-          
-          setState(() {
-            _cachedArticles = revertList;
-          });
-        }
-      }
-    },
-    onSaveToggle: () async {
-      if (currentUserId.isEmpty) return;
+                                // Create new list and new map
+                                final updatedList =
+                                    List<Map<String, dynamic>>.from(
+                                      _cachedArticles,
+                                    );
+                                final currentItem = Map<String, dynamic>.from(
+                                  updatedList[index],
+                                );
+                                List<dynamic> likes = List.from(
+                                  currentItem['likes'] ?? [],
+                                );
 
-      final index = _cachedArticles.indexWhere((e) => e['id'] == docId);
-      if (index == -1) return;
+                                if (likes.contains(currentUserId)) {
+                                  likes.remove(currentUserId);
+                                } else {
+                                  likes.add(currentUserId);
+                                }
 
-      // Create new list and new map
-      final updatedList = List<Map<String, dynamic>>.from(_cachedArticles);
-      final currentItem = Map<String, dynamic>.from(updatedList[index]);
-      List<dynamic> saves = List.from(currentItem['saves'] ?? []);
-      
-      if (saves.contains(currentUserId)) {
-        saves.remove(currentUserId);
-      } else {
-        saves.add(currentUserId);
-      }
-      
-      currentItem['saves'] = saves;
-      updatedList[index] = currentItem;
+                                currentItem['likes'] = likes;
+                                updatedList[index] = currentItem;
 
-      setState(() {
-        _cachedArticles = updatedList;
-      });
+                                setState(() {
+                                  _cachedArticles = updatedList;
+                                });
 
-      // Update Firestore
-      try {
-        await FirebaseFirestore.instance
-            .collection('learnWithdaad')
-            .doc(docId)
-            .update({'saves': saves});
-      } catch (e) {
-        print('Error updating save: $e');
-        // Revert on error
-        if (mounted) {
-          final revertList = List<Map<String, dynamic>>.from(_cachedArticles);
-          final revertItem = Map<String, dynamic>.from(revertList[index]);
-          List<dynamic> revertSaves = List.from(revertItem['saves'] ?? []);
-          
-          if (revertSaves.contains(currentUserId)) {
-            revertSaves.remove(currentUserId);
-          } else {
-            revertSaves.add(currentUserId);
-          }
-          
-          revertItem['saves'] = revertSaves;
-          revertList[index] = revertItem;
-          
-          setState(() {
-            _cachedArticles = revertList;
-          });
-        }
-      }
-    },
-  );
-},
+                                // Update Firestore
+                                try {
+                                  await FirebaseFirestore.instance
+                                      .collection('learnWithdaad')
+                                      .doc(docId)
+                                      .update({'likes': likes});
+                                } catch (e) {
+                                  print('Error updating like: $e');
+                                  // Revert on error
+                                  if (mounted) {
+                                    final revertList =
+                                        List<Map<String, dynamic>>.from(
+                                          _cachedArticles,
+                                        );
+                                    final revertItem =
+                                        Map<String, dynamic>.from(
+                                          revertList[index],
+                                        );
+                                    List<dynamic> revertLikes = List.from(
+                                      revertItem['likes'] ?? [],
+                                    );
+
+                                    if (revertLikes.contains(currentUserId)) {
+                                      revertLikes.remove(currentUserId);
+                                    } else {
+                                      revertLikes.add(currentUserId);
+                                    }
+
+                                    revertItem['likes'] = revertLikes;
+                                    revertList[index] = revertItem;
+
+                                    setState(() {
+                                      _cachedArticles = revertList;
+                                    });
+                                  }
+                                }
+                              },
+                              onSaveToggle: () async {
+                                if (currentUserId.isEmpty) return;
+
+                                final index = _cachedArticles.indexWhere(
+                                  (e) => e['id'] == docId,
+                                );
+                                if (index == -1) return;
+
+                                // Create new list and new map
+                                final updatedList =
+                                    List<Map<String, dynamic>>.from(
+                                      _cachedArticles,
+                                    );
+                                final currentItem = Map<String, dynamic>.from(
+                                  updatedList[index],
+                                );
+                                List<dynamic> saves = List.from(
+                                  currentItem['saves'] ?? [],
+                                );
+
+                                if (saves.contains(currentUserId)) {
+                                  saves.remove(currentUserId);
+                                } else {
+                                  saves.add(currentUserId);
+                                }
+
+                                currentItem['saves'] = saves;
+                                updatedList[index] = currentItem;
+
+                                setState(() {
+                                  _cachedArticles = updatedList;
+                                });
+
+                                // Update Firestore
+                                try {
+                                  await FirebaseFirestore.instance
+                                      .collection('learnWithdaad')
+                                      .doc(docId)
+                                      .update({'saves': saves});
+                                } catch (e) {
+                                  print('Error updating save: $e');
+                                  // Revert on error
+                                  if (mounted) {
+                                    final revertList =
+                                        List<Map<String, dynamic>>.from(
+                                          _cachedArticles,
+                                        );
+                                    final revertItem =
+                                        Map<String, dynamic>.from(
+                                          revertList[index],
+                                        );
+                                    List<dynamic> revertSaves = List.from(
+                                      revertItem['saves'] ?? [],
+                                    );
+
+                                    if (revertSaves.contains(currentUserId)) {
+                                      revertSaves.remove(currentUserId);
+                                    } else {
+                                      revertSaves.add(currentUserId);
+                                    }
+
+                                    revertItem['saves'] = revertSaves;
+                                    revertList[index] = revertItem;
+
+                                    setState(() {
+                                      _cachedArticles = revertList;
+                                    });
+                                  }
+                                }
+                              },
+                            );
+                          },
                         ),
                       ),
               ),
@@ -608,7 +657,7 @@ class _LearnDetailsState extends State<LearnDetails> {
   late List<String> _likes;
   late List<String> _saves;
   late List<String> _views;
-  bool _isUpdating = false;
+  final bool _isUpdating = false;
 
   @override
   void initState() {
@@ -696,7 +745,7 @@ class _LearnDetailsState extends State<LearnDetails> {
       }
     }
   }
-  
+
   // Future<void> _toggleLike() async {
   //   if (_isUpdating) return;
 
@@ -931,7 +980,6 @@ class _LearnDetailsState extends State<LearnDetails> {
                             //     ),
                             //   ],
                             // ),
-
                             SizedBox(height: 22.h),
 
                             AppText(

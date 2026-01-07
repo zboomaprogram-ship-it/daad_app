@@ -17,7 +17,7 @@ class NotificationsTab extends StatefulWidget {
 class _NotificationsTabState extends State<NotificationsTab> {
   final int _pageSize = 10;
   DocumentSnapshot? _lastDocument;
-  List<DocumentSnapshot> _notifications = [];
+  final List<DocumentSnapshot> _notifications = [];
   bool _isLoadingMore = false;
   bool _hasMore = true;
   final ScrollController _scrollController = ScrollController();
@@ -46,11 +46,11 @@ class _NotificationsTabState extends State<NotificationsTab> {
     setState(() {
       _currentUserId = user.uid;
       _currentUserRole = userDoc.data()?['role'] ?? 'client';
-      
+
       // For sales, get their assigned users list
       if (_currentUserRole == 'sales') {
         _assignedUserIds = List<String>.from(
-          userDoc.data()?['assignedUsers'] ?? []
+          userDoc.data()?['assignedUsers'] ?? [],
         );
       }
     });
@@ -103,12 +103,12 @@ class _NotificationsTabState extends State<NotificationsTab> {
       }
 
       final snapshot = await query.get();
-      
+
       if (!mounted) return;
 
       // Filter notifications based on role
       List<DocumentSnapshot> filteredDocs = snapshot.docs;
-      
+
       if (_currentUserRole == 'sales') {
         // For sales: show only notifications they sent OR to their assigned clients OR broadcast
         filteredDocs = snapshot.docs.where((doc) {
@@ -116,19 +116,19 @@ class _NotificationsTabState extends State<NotificationsTab> {
           final sentBy = data['sentBy'];
           final userId = data['userId'];
           final targetType = data['targetType'];
-          
+
           // Show if:
           // 1. Sent by this sales person
           // 2. Sent to one of their assigned clients
           // 3. Targeted to "my_clients" and sent by this sales person
           // 4. Broadcast (userId is null and targetType is 'all')
-          return sentBy == _currentUserId || 
-                 (userId != null && _assignedUserIds.contains(userId)) ||
-                 (targetType == 'my_clients' && sentBy == _currentUserId) ||
-                 (userId == null && targetType == 'all');
+          return sentBy == _currentUserId ||
+              (userId != null && _assignedUserIds.contains(userId)) ||
+              (targetType == 'my_clients' && sentBy == _currentUserId) ||
+              (userId == null && targetType == 'all');
         }).toList();
       }
-      
+
       if (filteredDocs.length < _pageSize) {
         if (mounted) {
           setState(() => _hasMore = false);
@@ -191,13 +191,10 @@ class _NotificationsTabState extends State<NotificationsTab> {
                   ),
                 ),
                 SizedBox(height: 16.h),
-                
+
                 // Target selection
-                const AppText(
-                  title: 'إرسال إلى:',
-                  fontWeight: FontWeight.bold,
-                ),
-                
+                const AppText(title: 'إرسال إلى:', fontWeight: FontWeight.bold),
+
                 if (_currentUserRole == 'admin') ...[
                   RadioListTile<String>(
                     title: const AppText(title: 'الجميع'),
@@ -221,7 +218,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
                     },
                   ),
                 ],
-                
+
                 if (_currentUserRole == 'sales') ...[
                   RadioListTile<String>(
                     title: const AppText(title: 'جميع عملائي'),
@@ -245,7 +242,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
                     },
                   ),
                 ],
-                
+
                 if (targetType == 'specific') ...[
                   SizedBox(height: 8.h),
                   ElevatedButton(
@@ -274,16 +271,21 @@ class _NotificationsTabState extends State<NotificationsTab> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (titleController.text.isEmpty || bodyController.text.isEmpty) {
+                if (titleController.text.isEmpty ||
+                    bodyController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: AppText(title: 'الرجاء إدخال العنوان والمحتوى')),
+                    const SnackBar(
+                      content: AppText(title: 'الرجاء إدخال العنوان والمحتوى'),
+                    ),
                   );
                   return;
                 }
 
                 if (targetType == 'specific' && selectedUserId == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: AppText(title: 'الرجاء اختيار مستخدم')),
+                    const SnackBar(
+                      content: AppText(title: 'الرجاء اختيار مستخدم'),
+                    ),
                   );
                   return;
                 }
@@ -307,7 +309,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
 
   Future<String?> _selectUser() async {
     Query query = FirebaseFirestore.instance.collection('users');
-    
+
     // Filter based on role
     if (_currentUserRole == 'sales') {
       // Sales can only select from their assigned clients
@@ -317,17 +319,19 @@ class _NotificationsTabState extends State<NotificationsTab> {
         );
         return null;
       }
-      
+
       // Fetch assigned users
-      final batchSize = 10;
+      const batchSize = 10;
       List<DocumentSnapshot> assignedUsers = [];
-      
+
       for (int i = 0; i < _assignedUserIds.length; i += batchSize) {
         final batch = _assignedUserIds.skip(i).take(batchSize).toList();
-        final snapshot = await query.where(FieldPath.documentId, whereIn: batch).get();
+        final snapshot = await query
+            .where(FieldPath.documentId, whereIn: batch)
+            .get();
         assignedUsers.addAll(snapshot.docs);
       }
-      
+
       if (!mounted) return null;
 
       return await showDialog<String>(
@@ -428,10 +432,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
     try {
       if (targetType == 'all' && _currentUserRole == 'admin') {
         // Send to all users
-        await NotificationService.sendNotification(
-          title: title,
-          body: body,
-        );
+        await NotificationService.sendNotification(title: title, body: body);
       } else if (targetType == 'my_clients') {
         // Send to all assigned clients
         for (final clientId in _assignedUserIds) {
@@ -474,7 +475,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -535,12 +536,16 @@ class _NotificationsTabState extends State<NotificationsTab> {
                 final doc = _notifications[index];
                 final data = doc.data() as Map<String, dynamic>;
                 final timestamp = data['createdAt'] as Timestamp?;
-                final dateStr =
-                    timestamp != null ? _formatTimestamp(timestamp) : 'الآن';
+                final dateStr = timestamp != null
+                    ? _formatTimestamp(timestamp)
+                    : 'الآن';
 
                 return Card(
                   color: AppColors.secondaryColor,
-                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   elevation: 2,
                   child: ListTile(
                     leading: CircleAvatar(
@@ -566,8 +571,11 @@ class _NotificationsTabState extends State<NotificationsTab> {
                         SizedBox(height: 4.h),
                         Row(
                           children: [
-                            Icon(Icons.access_time,
-                                size: 12, color: Colors.grey[600]),
+                            Icon(
+                              Icons.access_time,
+                              size: 12,
+                              color: Colors.grey[600],
+                            ),
                             SizedBox(width: 4.w),
                             AppText(
                               title: dateStr,
@@ -691,7 +699,9 @@ class _NotificationsTabState extends State<NotificationsTab> {
   }
 
   void _showNotificationDetails(
-      BuildContext context, Map<String, dynamic> data) {
+    BuildContext context,
+    Map<String, dynamic> data,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -701,10 +711,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
             const Icon(Icons.notifications, color: Colors.orange),
             SizedBox(width: 8.w),
             Expanded(
-              child: AppText(
-                title: data['title'] ?? 'إشعار',
-                fontSize: 18,
-              ),
+              child: AppText(title: data['title'] ?? 'إشعار', fontSize: 18),
             ),
           ],
         ),
@@ -713,10 +720,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppText(
-                title: 'المحتوى:',
-                fontWeight: FontWeight.bold,
-              ),
+              const AppText(title: 'المحتوى:', fontWeight: FontWeight.bold),
               SizedBox(height: 8.h),
               AppText(title: data['body'] ?? ''),
               SizedBox(height: 16.h),

@@ -27,7 +27,7 @@ import 'package:shimmer/shimmer.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
-  
+
   @override
   State<ContactScreen> createState() => _ContactScreenState();
 }
@@ -60,13 +60,34 @@ class _ContactScreenState extends State<ContactScreen> {
                   child: GlassContainer(
                     width: 100.w,
                     height: 100.h,
-                    child: const Icon(Icons.chat_bubble_outline_rounded, size: 50, color: Colors.white),
+                    child: const Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 50,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.h),
-                const Center(child: Text('اختر طريقة التواصل', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))),
+                const Center(
+                  child: Text(
+                    'اختر طريقة التواصل',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 SizedBox(height: 8.h),
-                Center(child: Text('يمكنك التواصل معنا عبر الدردشة أو الواتساب', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14))),
+                Center(
+                  child: Text(
+                    'يمكنك التواصل معنا عبر الدردشة أو الواتساب',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
                 SizedBox(height: 32.h),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -86,7 +107,8 @@ class _ContactScreenState extends State<ContactScreen> {
                           icon: Icons.chat_bubble_rounded,
                           title: 'واتساب مباشر',
                           isSelected: _contactMethod == 'whatsapp',
-                          onTap: () => setState(() => _contactMethod = 'whatsapp'),
+                          onTap: () =>
+                              setState(() => _contactMethod = 'whatsapp'),
                         ),
                       ),
                     ],
@@ -98,17 +120,39 @@ class _ContactScreenState extends State<ContactScreen> {
                   child: ContactGlassButton(
                     onPressed: () {
                       if (_contactMethod == 'app') {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const UserChatScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const UserChatScreen(),
+                          ),
+                        );
                       } else {
-                        launchUrl(Uri.parse('https://wa.me/+966564639466?text=أرغب باستشارة تسويقية'));
+                        launchUrl(
+                          Uri.parse(
+                            'https://wa.me/+966564639466?text=أرغب باستشارة تسويقية',
+                          ),
+                        );
                       }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(_contactMethod == 'app' ? Icons.chat_rounded : Icons.chat_bubble_rounded, size: 20),
+                        Icon(
+                          _contactMethod == 'app'
+                              ? Icons.chat_rounded
+                              : Icons.chat_bubble_rounded,
+                          size: 20,
+                        ),
                         SizedBox(width: 8.w),
-                        Text(_contactMethod == 'app' ? 'بدء المحادثة' : 'فتح الواتساب', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                          _contactMethod == 'app'
+                              ? 'بدء المحادثة'
+                              : 'فتح الواتساب',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -128,7 +172,12 @@ class _ContactMethodCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _ContactMethodCard({required this.icon, required this.title, required this.isSelected, required this.onTap});
+  const _ContactMethodCard({
+    required this.icon,
+    required this.title,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +190,32 @@ class _ContactMethodCard extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(20.r),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.08),
+              color: isSelected
+                  ? Colors.white.withOpacity(0.2)
+                  : Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: isSelected ? Colors.white.withOpacity(0.4) : Colors.white.withOpacity(0.15), width: isSelected ? 2 : 1),
+              border: Border.all(
+                color: isSelected
+                    ? Colors.white.withOpacity(0.4)
+                    : Colors.white.withOpacity(0.15),
+                width: isSelected ? 2 : 1,
+              ),
             ),
-            child: Column(children: [Icon(icon, size: 40, color: Colors.white), SizedBox(height: 12.h), Text(title, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500))]),
+            child: Column(
+              children: [
+                Icon(icon, size: 40, color: Colors.white),
+                SizedBox(height: 12.h),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -168,24 +238,24 @@ class _UserChatScreenState extends State<UserChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-  
+
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   Timer? _recordingTimer;
   int _recordDuration = 0;
-  
+
   Map<String, dynamic>? _replyMessage;
 
   String? _chatId;
   String? _assignedSalesId;
   bool _isLoading = true;
   bool _isUploadingMedia = false;
-  
+
   static const int _messagesLimit = 30;
   DocumentSnapshot? _lastDocument;
   bool _hasMoreMessages = true;
   bool _isLoadingMore = false;
-  
+
   StreamSubscription<QuerySnapshot>? _messagesSubscription;
   final List<Map<String, dynamic>> _messages = [];
   @override
@@ -206,7 +276,10 @@ class _UserChatScreenState extends State<UserChatScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels <= 100 && !_isLoadingMore && _hasMoreMessages && _chatId != null) {
+    if (_scrollController.position.pixels <= 100 &&
+        !_isLoadingMore &&
+        _hasMoreMessages &&
+        _chatId != null) {
       _loadMoreMessages();
     }
   }
@@ -232,31 +305,42 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
     try {
       final existingChat = await FirebaseFirestore.instance
-          .collection('support_chats').where('userId', isEqualTo: user.uid).limit(1).get();
+          .collection('support_chats')
+          .where('userId', isEqualTo: user.uid)
+          .limit(1)
+          .get();
 
       if (existingChat.docs.isNotEmpty) {
         _chatId = existingChat.docs.first.id;
         final chatData = existingChat.docs.first.data();
         _assignedSalesId = chatData['assignedSalesId'];
-        
+
         await _markMessagesAsRead();
         await _loadInitialMessages();
         _setupRealtimeListener();
       } else {
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         final userData = userDoc.data() ?? {};
-        
-        final chatRef = await FirebaseFirestore.instance.collection('support_chats').add({
-          'userId': user.uid,
-          'userName': userData['name'] ?? user.displayName ?? 'مستخدم',
-          'userEmail': userData['email'] ?? user.email ?? '',
-          'userPhone': userData['phone'] ?? '',
-          'assignedSalesId': null,
-          'createdAt': FieldValue.serverTimestamp(),
-          'lastMessageAt': FieldValue.serverTimestamp(),
-          'lastMessage': 'بدأت المحادثة',
-          'unreadByAdmin': 0, 'unreadBySales': 0, 'unreadByUser': 0, 'status': 'active',
-        });
+
+        final chatRef = await FirebaseFirestore.instance
+            .collection('support_chats')
+            .add({
+              'userId': user.uid,
+              'userName': userData['name'] ?? user.displayName ?? 'مستخدم',
+              'userEmail': userData['email'] ?? user.email ?? '',
+              'userPhone': userData['phone'] ?? '',
+              'assignedSalesId': null,
+              'createdAt': FieldValue.serverTimestamp(),
+              'lastMessageAt': FieldValue.serverTimestamp(),
+              'lastMessage': 'بدأت المحادثة',
+              'unreadByAdmin': 0,
+              'unreadBySales': 0,
+              'unreadByUser': 0,
+              'status': 'active',
+            });
         _chatId = chatRef.id;
         _setupRealtimeListener();
       }
@@ -271,8 +355,12 @@ class _UserChatScreenState extends State<UserChatScreen> {
     if (_chatId == null) return;
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('support_chats').doc(_chatId).collection('messages')
-          .orderBy('timestamp', descending: true).limit(_messagesLimit).get();
+          .collection('support_chats')
+          .doc(_chatId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .limit(_messagesLimit)
+          .get();
 
       setState(() {
         _messages.clear();
@@ -291,7 +379,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
         }
       });
-    } catch (e) { print('❌ Error loading initial: $e'); }
+    } catch (e) {
+      print('❌ Error loading initial: $e');
+    }
   }
 
   Future<void> _loadMoreMessages() async {
@@ -299,13 +389,19 @@ class _UserChatScreenState extends State<UserChatScreen> {
     setState(() => _isLoadingMore = true);
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('support_chats').doc(_chatId).collection('messages')
+          .collection('support_chats')
+          .doc(_chatId)
+          .collection('messages')
           .orderBy('timestamp', descending: true)
           .startAfterDocument(_lastDocument!)
-          .limit(_messagesLimit).get();
+          .limit(_messagesLimit)
+          .get();
 
       if (snapshot.docs.isEmpty) {
-        setState(() { _hasMoreMessages = false; _isLoadingMore = false; });
+        setState(() {
+          _hasMoreMessages = false;
+          _isLoadingMore = false;
+        });
         return;
       }
 
@@ -317,41 +413,60 @@ class _UserChatScreenState extends State<UserChatScreen> {
         _hasMoreMessages = snapshot.docs.length == _messagesLimit;
         _isLoadingMore = false;
       });
-    } catch (e) { setState(() => _isLoadingMore = false); }
+    } catch (e) {
+      setState(() => _isLoadingMore = false);
+    }
   }
 
   void _setupRealtimeListener() {
     if (_chatId == null) return;
     final now = Timestamp.now();
     _messagesSubscription = FirebaseFirestore.instance
-        .collection('support_chats').doc(_chatId).collection('messages')
+        .collection('support_chats')
+        .doc(_chatId)
+        .collection('messages')
         .where('timestamp', isGreaterThan: now)
         .orderBy('timestamp', descending: false)
-        .snapshots().listen((snapshot) {
-        for (var change in snapshot.docChanges) {
-          if (change.type == DocumentChangeType.added) {
-            final newMessage = {'id': change.doc.id, ...change.doc.data()!};
-            if (!_messages.any((m) => m['id'] == newMessage['id'])) {
-              setState(() => _messages.add(newMessage));
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_scrollController.hasClients) {
-                  _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+        .snapshots()
+        .listen((snapshot) {
+          for (var change in snapshot.docChanges) {
+            if (change.type == DocumentChangeType.added) {
+              final newMessage = {'id': change.doc.id, ...change.doc.data()!};
+              if (!_messages.any((m) => m['id'] == newMessage['id'])) {
+                setState(() => _messages.add(newMessage));
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_scrollController.hasClients) {
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                });
+                if (newMessage['isFromAdmin'] == true ||
+                    newMessage['isFromSales'] == true) {
+                  _markSingleMessageAsRead(change.doc.id);
                 }
-              });
-              if (newMessage['isFromAdmin'] == true || newMessage['isFromSales'] == true) {
-                _markSingleMessageAsRead(change.doc.id);
               }
             }
           }
-        }
-      });
+        });
   }
 
   Future<void> _markMessagesAsRead() async {
     if (_chatId == null) return;
     final batch = FirebaseFirestore.instance.batch();
-    batch.update(FirebaseFirestore.instance.collection('support_chats').doc(_chatId), {'unreadByUser': 0});
-    final unreadMessages = await FirebaseFirestore.instance.collection('support_chats').doc(_chatId).collection('messages').where('isRead', isEqualTo: false).limit(50).get();
+    batch.update(
+      FirebaseFirestore.instance.collection('support_chats').doc(_chatId),
+      {'unreadByUser': 0},
+    );
+    final unreadMessages = await FirebaseFirestore.instance
+        .collection('support_chats')
+        .doc(_chatId)
+        .collection('messages')
+        .where('isRead', isEqualTo: false)
+        .limit(50)
+        .get();
     for (final doc in unreadMessages.docs) {
       final data = doc.data();
       if (data['isFromAdmin'] == true || data['isFromSales'] == true) {
@@ -363,8 +478,16 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
   Future<void> _markSingleMessageAsRead(String messageId) async {
     if (_chatId == null) return;
-    await FirebaseFirestore.instance.collection('support_chats').doc(_chatId).collection('messages').doc(messageId).update({'isRead': true});
-    await FirebaseFirestore.instance.collection('support_chats').doc(_chatId).update({'unreadByUser': FieldValue.increment(-1)});
+    await FirebaseFirestore.instance
+        .collection('support_chats')
+        .doc(_chatId)
+        .collection('messages')
+        .doc(messageId)
+        .update({'isRead': true});
+    await FirebaseFirestore.instance
+        .collection('support_chats')
+        .doc(_chatId)
+        .update({'unreadByUser': FieldValue.increment(-1)});
   }
 
   // --- RECORDING FUNCTIONS ---
@@ -375,7 +498,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
       if (await _audioRecorder.hasPermission()) {
         final dir = await getTemporaryDirectory();
-        final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+        final path =
+            '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
         const config = RecordConfig(encoder: AudioEncoder.aacLc);
 
@@ -392,7 +516,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
           });
         });
       } else {
-         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("يرجى تفعيل صلاحية الميكروفون")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("يرجى تفعيل صلاحية الميكروفون")),
+        );
       }
     } catch (e) {
       print("Error starting record: $e");
@@ -403,7 +529,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
     try {
       final path = await _audioRecorder.stop();
       _recordingTimer?.cancel();
-      setState(() { _isRecording = false; });
+      setState(() {
+        _isRecording = false;
+      });
 
       if (send && path != null) {
         final file = File(path);
@@ -423,7 +551,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
   Future<void> _cancelRecording() async {
     await _stopRecording(send: false);
-    setState(() { _recordDuration = 0; });
+    setState(() {
+      _recordDuration = 0;
+    });
   }
 
   String _formatRecordDuration(int seconds) {
@@ -435,14 +565,19 @@ class _UserChatScreenState extends State<UserChatScreen> {
   // --- MEDIA FUNCTIONS ---
   Future<void> _pickAndSendImage() async {
     try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+      );
       if (image == null) return;
       setState(() => _isUploadingMedia = true);
       final imageUrl = await WordPressMediaService.uploadImage(image);
       if (imageUrl == null) throw Exception('فشل رفع الصورة');
       await _sendMessage(imageUrl: imageUrl, messageType: 'image');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ في رفع الصورة: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('خطأ في رفع الصورة: $e')));
     } finally {
       setState(() => _isUploadingMedia = false);
     }
@@ -457,7 +592,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
       if (fileUrl == null) throw Exception('فشل رفع الملف');
       await _sendMessage(fileUrl: fileUrl, messageType: 'file');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ في رفع الملف: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('خطأ في رفع الملف: $e')));
     } finally {
       setState(() => _isUploadingMedia = false);
     }
@@ -471,18 +608,22 @@ class _UserChatScreenState extends State<UserChatScreen> {
     String? messageType,
   }) async {
     final messageText = _messageController.text.trim();
-    if (messageText.isEmpty && imageUrl == null && fileUrl == null && audioUrl == null) return;
+    if (messageText.isEmpty &&
+        imageUrl == null &&
+        fileUrl == null &&
+        audioUrl == null)
+      return;
     if (_chatId == null) return;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     _messageController.clear();
-    
+
     // Capture and Clear Reply
     final replyData = _replyMessage;
     _cancelReply();
-    setState(() {}); 
+    setState(() {});
 
     // Prepare Reply Fields
     String? replyToId;
@@ -492,11 +633,13 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
     if (replyData != null) {
       replyToId = replyData['id'];
-      replyToName = (replyData['isFromAdmin'] == true) ? "الإدارة" 
-                  : (replyData['isFromSales'] == true) ? "المبيعات" 
-                  : "أنت";
+      replyToName = (replyData['isFromAdmin'] == true)
+          ? "الإدارة"
+          : (replyData['isFromSales'] == true)
+          ? "المبيعات"
+          : "أنت";
       replyToType = replyData['messageType'] ?? 'text';
-      
+
       if (replyToType == 'text') {
         replyToText = replyData['text'];
       } else if (replyToType == 'image') {
@@ -526,17 +669,27 @@ class _UserChatScreenState extends State<UserChatScreen> {
       if (replyToName != null) 'replyToName': replyToName,
     };
 
-    setState(() { _messages.add(optimisticMessage); });
+    setState(() {
+      _messages.add(optimisticMessage);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
 
     try {
       final batch = FirebaseFirestore.instance.batch();
-      final messageRef = FirebaseFirestore.instance.collection('support_chats').doc(_chatId).collection('messages').doc();
+      final messageRef = FirebaseFirestore.instance
+          .collection('support_chats')
+          .doc(_chatId)
+          .collection('messages')
+          .doc();
 
       batch.set(messageRef, {
         'text': messageText,
@@ -555,8 +708,16 @@ class _UserChatScreenState extends State<UserChatScreen> {
         if (replyToType != null) 'replyToType': replyToType,
       });
 
-      final chatRef = FirebaseFirestore.instance.collection('support_chats').doc(_chatId);
-      final lastMessage = messageType == 'image' ? '📷 صورة' : messageType == 'file' ? '📎 ملف' : messageType == 'audio' ? '🎤 رسالة صوتية' : messageText;
+      final chatRef = FirebaseFirestore.instance
+          .collection('support_chats')
+          .doc(_chatId);
+      final lastMessage = messageType == 'image'
+          ? '📷 صورة'
+          : messageType == 'file'
+          ? '📎 ملف'
+          : messageType == 'audio'
+          ? '🎤 رسالة صوتية'
+          : messageText;
 
       batch.update(chatRef, {
         'lastMessage': lastMessage,
@@ -566,39 +727,54 @@ class _UserChatScreenState extends State<UserChatScreen> {
       });
 
       await batch.commit();
-      setState(() { _messages.removeWhere((m) => m['id'] == tempId); });
+      setState(() {
+        _messages.removeWhere((m) => m['id'] == tempId);
+      });
       _notifyAdminAndSales(lastMessage);
     } catch (e) {
       print('❌ Error sending message: $e');
-      setState(() { _messages.removeWhere((m) => m['id'] == tempId); });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل إرسال الرسالة. حاول مرة أخرى.')));
+      setState(() {
+        _messages.removeWhere((m) => m['id'] == tempId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('فشل إرسال الرسالة. حاول مرة أخرى.')),
+      );
     }
   }
 
   Future<void> _notifyAdminAndSales(String messageText) async {
-     final user = FirebaseAuth.instance.currentUser;
-     if(user == null) return;
-     try {
-       final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-       final userName = userDoc.data()?['name'] ?? 'مستخدم';
-       final admins = await FirebaseFirestore.instance.collection('users').where('isAdmin', isEqualTo: true).limit(10).get();
-       for (final admin in admins.docs) {
-         await NotificationService.sendNotification(
-           title: '💬 رسالة جديدة من $userName',
-           body: messageText,
-           userId: admin.id,
-           deepLink: DeepLinkHandler.adminSupportLink(),
-         );
-       }
-       if (_assignedSalesId != null) {
-         await NotificationService.sendNotification(
-           title: '💬 رسالة جديدة من $userName',
-           body: messageText,
-           userId: _assignedSalesId!,
-           deepLink: DeepLinkHandler.supportLink(),
-         );
-       }
-     } catch (e) { print(e); }
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final userName = userDoc.data()?['name'] ?? 'مستخدم';
+      final admins = await FirebaseFirestore.instance
+          .collection('users')
+          .where('isAdmin', isEqualTo: true)
+          .limit(10)
+          .get();
+      for (final admin in admins.docs) {
+        await NotificationService.sendNotification(
+          title: '💬 رسالة جديدة من $userName',
+          body: messageText,
+          userId: admin.id,
+          deepLink: DeepLinkHandler.adminSupportLink(),
+        );
+      }
+      if (_assignedSalesId != null) {
+        await NotificationService.sendNotification(
+          title: '💬 رسالة جديدة من $userName',
+          body: messageText,
+          userId: _assignedSalesId!,
+          deepLink: DeepLinkHandler.supportLink(),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -606,14 +782,30 @@ class _UserChatScreenState extends State<UserChatScreen> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: AppColors.primaryColor,
-        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: const GlassBackButton(), title: const Text('الدعم الفني', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const GlassBackButton(),
+          title: const Text(
+            'الدعم الفني',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
         body: _buildShimmerLoading(),
       );
     }
 
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: const GlassBackButton(), title: const Text('الدعم الفني', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: const GlassBackButton(),
+        title: const Text(
+          'الدعم الفني',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Directionality(
         textDirection: TextDirection.rtl,
         child: Column(
@@ -628,47 +820,90 @@ class _UserChatScreenState extends State<UserChatScreen> {
                     itemBuilder: (context, index) {
                       final message = _messages[index];
                       return _MessageBubble(
-                        message: message, 
+                        message: message,
                         onReply: _startReply,
                       );
                     },
                   ),
                   if (_isLoadingMore)
-                    Positioned(top: 10, left: 0, right: 0, child: Center(child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(20)), child: const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))))),
+                    Positioned(
+                      top: 10,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black38,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-            
+
             // --- REPLY PREVIEW BAR ---
             if (_replyMessage != null)
               Container(
                 padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.3),
-                  border: Border(top: BorderSide(color: Colors.white.withOpacity(0.1))),
+                  border: Border(
+                    top: BorderSide(color: Colors.white.withOpacity(0.1)),
+                  ),
                 ),
                 child: Row(
                   children: [
-                    Container(width: 4.w, height: 35.h, color: AppColors.secondaryColor),
+                    Container(
+                      width: 4.w,
+                      height: 35.h,
+                      color: AppColors.secondaryColor,
+                    ),
                     SizedBox(width: 12.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "الرد على: ${(_replyMessage!['isFromAdmin'] == true) ? "الإدارة" : (_replyMessage!['isFromSales'] == true) ? "المبيعات" : "أنت"}",
-                            style: TextStyle(color: AppColors.secondaryColor, fontWeight: FontWeight.bold, fontSize: 12.sp),
+                            "الرد على: ${(_replyMessage!['isFromAdmin'] == true)
+                                ? "الإدارة"
+                                : (_replyMessage!['isFromSales'] == true)
+                                ? "المبيعات"
+                                : "أنت"}",
+                            style: TextStyle(
+                              color: AppColors.secondaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
+                            ),
                           ),
                           Text(
                             _getReplyPreviewText(_replyMessage!),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12.sp,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    IconButton(icon: const Icon(Icons.close, color: Colors.white70), onPressed: _cancelReply),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      onPressed: _cancelReply,
+                    ),
                   ],
                 ),
               ),
@@ -676,43 +911,121 @@ class _UserChatScreenState extends State<UserChatScreen> {
             // --- INPUT BAR ---
             Container(
               padding: EdgeInsets.all(16.r),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), border: Border(top: BorderSide(color: Colors.white.withOpacity(0.1)))),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                border: Border(
+                  top: BorderSide(color: Colors.white.withOpacity(0.1)),
+                ),
+              ),
               child: _isRecording
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: _cancelRecording),
-                        Expanded(child: Center(child: Text(_formatRecordDuration(_recordDuration), style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)))),
-                        const Text("جاري التسجيل...", style: TextStyle(color: Colors.white70)),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: _cancelRecording,
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              _formatRecordDuration(_recordDuration),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Text(
+                          "جاري التسجيل...",
+                          style: TextStyle(color: Colors.white70),
+                        ),
                         SizedBox(width: 10.w),
                         GestureDetector(
                           onTap: () => _stopRecording(send: true),
-                          child: CircleAvatar(backgroundColor: AppColors.primaryColor, radius: 24.r, child: const Icon(Icons.send, color: Colors.white)),
+                          child: CircleAvatar(
+                            backgroundColor: AppColors.primaryColor,
+                            radius: 24.r,
+                            child: const Icon(Icons.send, color: Colors.white),
+                          ),
                         ),
                       ],
                     )
                   : Row(
                       children: [
                         GestureDetector(
-                          onTap: _isUploadingMedia ? null : () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: AppColors.secondaryColor,
-                              builder: (_) => Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ListTile(leading: const Icon(Icons.image, color: Colors.white), title: const Text('إرسال صورة', style: TextStyle(color: Colors.white)), onTap: () { Navigator.pop(context); _pickAndSendImage(); }),
-                                  ListTile(leading: const Icon(Icons.attach_file, color: Colors.white), title: const Text('إرسال ملف', style: TextStyle(color: Colors.white)), onTap: () { Navigator.pop(context); _pickAndSendFile(); }),
-                                ],
-                              ),
-                            );
-                          },
+                          onTap: _isUploadingMedia
+                              ? null
+                              : () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: AppColors.secondaryColor,
+                                    builder: (_) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          leading: const Icon(
+                                            Icons.image,
+                                            color: Colors.white,
+                                          ),
+                                          title: const Text(
+                                            'إرسال صورة',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            _pickAndSendImage();
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(
+                                            Icons.attach_file,
+                                            color: Colors.white,
+                                          ),
+                                          title: const Text(
+                                            'إرسال ملف',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            _pickAndSendFile();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                           child: Container(
-                            width: 44.w, height: 44.h,
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(24.r), border: Border.all(color: Colors.white.withOpacity(0.2))),
+                            width: 44.w,
+                            height: 44.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(24.r),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                              ),
+                            ),
                             child: _isUploadingMedia
-                                ? const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))
-                                : const Icon(Icons.attach_file, color: Colors.white, size: 20),
+                                ? const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.attach_file,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                           ),
                         ),
                         SizedBox(width: 10.w),
@@ -722,14 +1035,28 @@ class _UserChatScreenState extends State<UserChatScreen> {
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(24.r), border: Border.all(color: Colors.white.withOpacity(0.2))),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(24.r),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
+                                  ),
+                                ),
                                 child: TextField(
                                   controller: _messageController,
-                                  onChanged: (val) { setState(() {}); },
+                                  onChanged: (val) {
+                                    setState(() {});
+                                  },
                                   style: const TextStyle(color: Colors.white),
                                   maxLines: null,
-                                  decoration: const InputDecoration(hintText: 'اكتب رسالتك...', hintStyle: TextStyle(color: Colors.white60), border: InputBorder.none),
+                                  decoration: const InputDecoration(
+                                    hintText: 'اكتب رسالتك...',
+                                    hintStyle: TextStyle(color: Colors.white60),
+                                    border: InputBorder.none,
+                                  ),
                                 ),
                               ),
                             ),
@@ -738,7 +1065,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
                         SizedBox(width: 10.w),
                         GestureDetector(
                           onTap: () {
-                            if (_messageController.text.trim().isNotEmpty || _replyMessage != null) {
+                            if (_messageController.text.trim().isNotEmpty ||
+                                _replyMessage != null) {
                               _sendMessage();
                             } else {
                               _startRecording();
@@ -749,9 +1077,29 @@ class _UserChatScreenState extends State<UserChatScreen> {
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                               child: Container(
-                                width: 44.w, height: 44.h,
-                                decoration: BoxDecoration(color: (_messageController.text.trim().isNotEmpty || _replyMessage != null) ? Colors.white.withOpacity(0.2) : Colors.red.withOpacity(0.7), borderRadius: BorderRadius.circular(24.r), border: Border.all(color: Colors.white.withOpacity(0.3))),
-                                child: Icon((_messageController.text.trim().isNotEmpty || _replyMessage != null) ? Icons.send_rounded : Icons.mic_rounded, color: Colors.white, size: 22),
+                                width: 44.w,
+                                height: 44.h,
+                                decoration: BoxDecoration(
+                                  color:
+                                      (_messageController.text
+                                              .trim()
+                                              .isNotEmpty ||
+                                          _replyMessage != null)
+                                      ? Colors.white.withOpacity(0.2)
+                                      : Colors.red.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(24.r),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Icon(
+                                  (_messageController.text.trim().isNotEmpty ||
+                                          _replyMessage != null)
+                                      ? Icons.send_rounded
+                                      : Icons.mic_rounded,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                               ),
                             ),
                           ),
@@ -784,10 +1132,27 @@ class _UserChatScreenState extends State<UserChatScreen> {
           return Padding(
             padding: EdgeInsets.only(bottom: 16.h),
             child: Row(
-              mainAxisAlignment: isFromAdmin ? MainAxisAlignment.start : MainAxisAlignment.end,
+              mainAxisAlignment: isFromAdmin
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
               children: [
                 if (!isFromAdmin) const Spacer(),
-                Flexible(child: Shimmer.fromColors(baseColor: Colors.white.withOpacity(0.1), highlightColor: Colors.white.withOpacity(0.3), child: Container(width: MediaQuery.of(context).size.width * (isFromAdmin ? 0.7 : 0.6), height: index % 2 == 0 ? 80.h : 60.h, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16.r))))),
+                Flexible(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.white.withOpacity(0.1),
+                    highlightColor: Colors.white.withOpacity(0.3),
+                    child: Container(
+                      width:
+                          MediaQuery.of(context).size.width *
+                          (isFromAdmin ? 0.7 : 0.6),
+                      height: index % 2 == 0 ? 80.h : 60.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                    ),
+                  ),
+                ),
                 if (isFromAdmin) const Spacer(),
               ],
             ),
@@ -806,10 +1171,7 @@ class _MessageBubble extends StatelessWidget {
   final Map<String, dynamic> message;
   final Function(Map<String, dynamic>) onReply;
 
-  const _MessageBubble({
-    required this.message, 
-    required this.onReply
-  });
+  const _MessageBubble({required this.message, required this.onReply});
 
   @override
   Widget build(BuildContext context) {
@@ -821,18 +1183,18 @@ class _MessageBubble extends StatelessWidget {
     final imageUrl = message['imageUrl'];
     final fileUrl = message['fileUrl'];
     final audioUrl = message['audioUrl'];
-    
+
     final replyToText = message['replyToText'];
     final replyToName = message['replyToName'];
-    
+
     final isFromSupport = isFromAdmin || isFromSales;
 
     return Dismissible(
       key: Key(message['id']),
-      direction: DismissDirection.startToEnd, 
+      direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) async {
         onReply(message);
-        return false; 
+        return false;
       },
       background: Container(
         alignment: Alignment.centerRight,
@@ -846,7 +1208,9 @@ class _MessageBubble extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: Row(
-            mainAxisAlignment: isFromSupport ? MainAxisAlignment.start : MainAxisAlignment.end,
+            mainAxisAlignment: isFromSupport
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
             children: [
               if (!isFromSupport) const Spacer(),
               Flexible(
@@ -855,21 +1219,62 @@ class _MessageBubble extends StatelessWidget {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       decoration: BoxDecoration(
-                        color: isFromSupport ? Colors.white.withOpacity(0.15) : Colors.white.withOpacity(0.25),
+                        color: isFromSupport
+                            ? Colors.white.withOpacity(0.15)
+                            : Colors.white.withOpacity(0.25),
                         borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (isFromSales) ...[
-                            Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Colors.blue.withOpacity(0.3), borderRadius: BorderRadius.circular(8)), child: const Text('💼 مندوب المبيعات', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                '💼 مندوب المبيعات',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 8.h),
                           ],
                           if (isFromAdmin) ...[
-                            Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Colors.amber.withOpacity(0.3), borderRadius: BorderRadius.circular(8)), child: const Text('👨‍💼 الإدارة', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                '👨‍💼 الإدارة',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 8.h),
                           ],
 
@@ -880,72 +1285,183 @@ class _MessageBubble extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(8.r),
-                                border: Border(right: BorderSide(color: AppColors.secondaryColor, width: 3)),
+                                border: const Border(
+                                  right: BorderSide(
+                                    color: AppColors.secondaryColor,
+                                    width: 3,
+                                  ),
+                                ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(replyToName ?? "مستخدم", style: TextStyle(color: AppColors.secondaryColor, fontSize: 11.sp, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    replyToName ?? "مستخدم",
+                                    style: TextStyle(
+                                      color: AppColors.secondaryColor,
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   SizedBox(height: 2.h),
-                                  Text(replyToText, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontSize: 11.sp)),
+                                  Text(
+                                    replyToText,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 11.sp,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
-                          
+
                           if (messageType == 'audio' && audioUrl != null) ...[
-                            VoiceMessageBubble(audioUrl: audioUrl, isSender: !isFromSupport),
+                            VoiceMessageBubble(
+                              audioUrl: audioUrl,
+                              isSender: !isFromSupport,
+                            ),
                             if (text.isNotEmpty) SizedBox(height: 8.h),
                           ],
 
                           if (messageType == 'image' && imageUrl != null) ...[
                             GestureDetector(
                               onTap: () => _showFullImage(context, imageUrl),
-                              child: ClipRRect(borderRadius: BorderRadius.circular(12.r), child: CachedNetworkImage(imageUrl: imageUrl, width: 200.w, fit: BoxFit.cover, placeholder: (context, url) => Container(width: 200.w, height: 150.h, color: Colors.white.withOpacity(0.1), child: const Center(child: CircularProgressIndicator(color: Colors.white))), errorWidget: (context, url, error) => Container(width: 200.w, height: 150.h, color: Colors.red.withOpacity(0.2), child: const Center(child: Icon(Icons.error, color: Colors.white))))),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl,
+                                  width: 200.w,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    width: 200.w,
+                                    height: 150.h,
+                                    color: Colors.white.withOpacity(0.1),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        width: 200.w,
+                                        height: 150.h,
+                                        color: Colors.red.withOpacity(0.2),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.error,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                ),
+                              ),
                             ),
                             if (text.isNotEmpty) SizedBox(height: 8.h),
                           ],
-                          
+
                           if (messageType == 'file' && fileUrl != null) ...[
                             GestureDetector(
                               onTap: () => _openFile(context, fileUrl),
-                              child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(12.r)), child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.insert_drive_file, color: Colors.white, size: 24), SizedBox(width: 8.w), Flexible(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('ملف مرفق', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)), Text('اضغط للفتح', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11))]))])),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.insert_drive_file,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'ملف مرفق',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            'اضغط للفتح',
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(
+                                                0.7,
+                                              ),
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                             if (text.isNotEmpty) SizedBox(height: 8.h),
                           ],
-                          
+
                           // --- UPDATED TEXT WIDGET WITH LINK SUPPORT ---
-                         if (text.isNotEmpty)
-                          SelectableLinkify(
-                            text: text,
-                            onOpen: (link) async {
-                              final uri = Uri.parse(link.url);
-                              try {
-                                // 1. Try launching specifically in an external app (Browser)
-                                if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                                  // 2. If that fails, try the default platform mode (fallback)
-                                  if (!await launchUrl(uri, mode: LaunchMode.platformDefault)) {
-                                    throw 'Could not launch $uri';
+                          if (text.isNotEmpty)
+                            SelectableLinkify(
+                              text: text,
+                              onOpen: (link) async {
+                                final uri = Uri.parse(link.url);
+                                try {
+                                  // 1. Try launching specifically in an external app (Browser)
+                                  if (!await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  )) {
+                                    // 2. If that fails, try the default platform mode (fallback)
+                                    if (!await launchUrl(
+                                      uri,
+                                      mode: LaunchMode.platformDefault,
+                                    )) {
+                                      throw 'Could not launch $uri';
+                                    }
                                   }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('لا يمكن فتح الرابط'),
+                                    ),
+                                  );
                                 }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('لا يمكن فتح الرابط')),
-                                );
-                              }
-                            },
-                            style: const TextStyle(color: Colors.white, fontSize: 15),
-                            linkStyle: const TextStyle(
-                              color: AppColors.secondaryTextColor, 
-                              decoration: TextDecoration.underline, 
-                              decorationColor: AppColors.secondaryTextColor
+                              },
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                              linkStyle: const TextStyle(
+                                color: AppColors.secondaryTextColor,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.secondaryTextColor,
+                              ),
+                              options: const LinkifyOptions(humanize: false),
                             ),
-                            options: const LinkifyOptions(humanize: false),
-                          ),
-                          
+
                           if (timestamp != null) ...[
                             SizedBox(height: 4.h),
-                            Text(_formatTime(timestamp), style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 11.sp)),
+                            Text(
+                              _formatTime(timestamp),
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 11.sp,
+                              ),
+                            ),
                           ],
                         ],
                       ),
@@ -960,9 +1476,15 @@ class _MessageBubble extends StatelessWidget {
       ),
     );
   }
-  
+
   // ... Keep existing helper methods (_showMessageOptions, _showFullImage, _openFile, _formatTime) ...
-  void _showMessageOptions(BuildContext context, String text, String? imageUrl, String? fileUrl, String? audioUrl) {
+  void _showMessageOptions(
+    BuildContext context,
+    String text,
+    String? imageUrl,
+    String? fileUrl,
+    String? audioUrl,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -986,11 +1508,16 @@ class _MessageBubble extends StatelessWidget {
               if (text.isNotEmpty)
                 ListTile(
                   leading: const Icon(Icons.copy, color: Colors.white),
-                  title: const Text('نسخ النص', style: TextStyle(color: Colors.white)),
+                  title: const Text(
+                    'نسخ النص',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: text));
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم نسخ النص')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('تم نسخ النص')),
+                    );
                   },
                 ),
             ],
@@ -1001,24 +1528,48 @@ class _MessageBubble extends StatelessWidget {
   }
 
   void _showFullImage(BuildContext context, String imageUrl) {
-    showDialog(context: context, builder: (context) => Dialog(backgroundColor: Colors.transparent, child: GestureDetector(onTap: () => Navigator.pop(context), child: InteractiveViewer(child: CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.contain, placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white)), errorWidget: (context, url, error) => const Center(child: Icon(Icons.error, color: Colors.white, size: 50)))))));
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: InteractiveViewer(
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+              errorWidget: (context, url, error) => const Center(
+                child: Icon(Icons.error, color: Colors.white, size: 50),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _openFile(BuildContext context, String fileUrl) async {
     try {
       final uri = Uri.parse(fileUrl);
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-         throw 'Could not launch $fileUrl';
+        throw 'Could not launch $fileUrl';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('لا يمكن فتح هذا الملف')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('لا يمكن فتح هذا الملف')));
     }
   }
 
   String _formatTime(Timestamp timestamp) {
     final date = timestamp.toDate();
     final now = DateTime.now();
-    if (date.day == now.day && date.month == now.month && date.year == now.year) {
+    if (date.day == now.day &&
+        date.month == now.month &&
+        date.year == now.year) {
       return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
     }
     return '${date.day}/${date.month} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';

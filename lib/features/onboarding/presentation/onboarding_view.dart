@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -23,14 +23,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       image: kOnboarding2,
       title: 'نظـــام الولاء',
       description:
-         'يمنحك تطبيق ضاد فرصة كبيرة للحصول على خصومات لخدماتنا تصل إلى ١٠٠٪ من خلال نظام الولاء ، والذي يعمل على منح عملائنا المميزين خطط طويلة المدى لنجاح أعمالهم',
+          'يمنحك تطبيق ضاد فرصة كبيرة للحصول على خصومات لخدماتنا تصل إلى ١٠٠٪ من خلال نظام الولاء ، والذي يعمل على منح عملائنا المميزين خطط طويلة المدى لنجاح أعمالهم',
       showButton: true,
     ),
     OnboardingData(
       image: kOnboarding1,
       title: 'خدماتنا',
       description:
-         'نساعدك على تحويل رؤيتك إلى قصة نجاح تلهم الجميع من خلال خدماتنا: إنشاء المتاجر - إنشاء هوية بصرية  - تحسين محركات البحث -  إدارة الحملات التسويقية- إدارة منصات التواصل الاجتماعي - خدمة ال UG والكثير..',
+          'نساعدك على تحويل رؤيتك إلى قصة نجاح تلهم الجميع من خلال خدماتنا: إنشاء المتاجر - إنشاء هوية بصرية  - تحسين محركات البحث -  إدارة الحملات التسويقية- إدارة منصات التواصل الاجتماعي - خدمة ال UG والكثير..',
       showButton: false,
     ),
   ];
@@ -43,13 +43,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _navigateToLogin() {
     Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const LoginScreen(
-              ),
-            ),
-          );
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +83,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Image.asset(
                           page.image,
                           fit: BoxFit.cover,
-                          cacheHeight: (MediaQuery.of(context).size.height *
-                                  0.65 *
-                                  MediaQuery.of(context).devicePixelRatio)
-                              .toInt(),
+                          cacheHeight:
+                              (MediaQuery.of(context).size.height *
+                                      0.65 *
+                                      MediaQuery.of(context).devicePixelRatio)
+                                  .toInt(),
                         ),
                       ),
                     ),
@@ -169,16 +168,19 @@ class _GlassContentCard extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // ✅ Fast, responsive tap (no nested GestureDetector)
-              
+
               // ✅ Lightweight tap button
               if (page.showButton) ...[
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.textColor.withOpacity(0.45),width: 1),
-                        borderRadius: BorderRadius.circular(15)
+                        border: Border.all(
+                          color: AppColors.textColor.withOpacity(0.45),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       child: GestureDetector(
                         onTap: onNavigateToLogin,
@@ -189,8 +191,8 @@ class _GlassContentCard extends StatelessWidget {
                               Icons.arrow_back_ios_new,
                               color: Colors.white,
                               size: 12.sp,
+
                               // weight: 200,
-                              
                             ),
                             SizedBox(width: 5.w),
                             const AppText(
@@ -208,10 +210,7 @@ class _GlassContentCard extends StatelessWidget {
               ] else
                 SizedBox(height: 24.h),
 
-              _PageIndicators(
-                currentPage: currentPage,
-                pageCount: pageCount,
-              ),
+              _PageIndicators(currentPage: currentPage, pageCount: pageCount),
             ],
           ),
         ),
@@ -224,10 +223,7 @@ class _PageIndicators extends StatelessWidget {
   final int currentPage;
   final int pageCount;
 
-  const _PageIndicators({
-    required this.currentPage,
-    required this.pageCount,
-  });
+  const _PageIndicators({required this.currentPage, required this.pageCount});
 
   @override
   Widget build(BuildContext context) {

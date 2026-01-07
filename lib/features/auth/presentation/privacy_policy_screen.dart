@@ -76,11 +76,19 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   _buildParagraph('نستخدم البيانات بهدف:'),
                   SizedBox(height: 8.h),
                   _buildBulletPoint('إنشاء حساب المستخدم وإدارته'),
-                  _buildBulletPoint('تقديم محتوى تعليمي مثل المقالات والبودكاست'),
-                  _buildBulletPoint('تمكينك من الاستفادة من نظام الولاء والعروض'),
+                  _buildBulletPoint(
+                    'تقديم محتوى تعليمي مثل المقالات والبودكاست',
+                  ),
+                  _buildBulletPoint(
+                    'تمكينك من الاستفادة من نظام الولاء والعروض',
+                  ),
                   _buildBulletPoint('تحسين خدماتنا وتجربتك داخل التطبيق'),
-                  _buildBulletPoint('التواصل معك حول الخدمات الحالية أو المستجدة'),
-                  _buildBulletPoint('تخصيص المحتوى والخدمات بما يناسب اهتماماتك'),
+                  _buildBulletPoint(
+                    'التواصل معك حول الخدمات الحالية أو المستجدة',
+                  ),
+                  _buildBulletPoint(
+                    'تخصيص المحتوى والخدمات بما يناسب اهتماماتك',
+                  ),
                   SizedBox(height: 12.h),
 
                   _buildParagraph(
@@ -129,7 +137,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
                   _buildSubsectionTitle('كيفية حذف الحساب'),
                   SizedBox(height: 8.h),
-                  _buildParagraph('يمكن للمستخدم حذف حسابه من خلال واحدة من الطرق التالية:'),
+                  _buildParagraph(
+                    'يمكن للمستخدم حذف حسابه من خلال واحدة من الطرق التالية:',
+                  ),
                   SizedBox(height: 10.h),
 
                   _buildSubsectionTitle('1) من داخل التطبيق'),
@@ -152,7 +162,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _buildParagraph('عند تنفيذ طلب الحذف:'),
                   SizedBox(height: 8.h),
-                  _buildBulletPoint('يتم حذف جميع بيانات المستخدم من خوادمنا بشكل كامل ودائم'),
+                  _buildBulletPoint(
+                    'يتم حذف جميع بيانات المستخدم من خوادمنا بشكل كامل ودائم',
+                  ),
                   _buildBulletPoint('لا يمكن استعادة الحساب بعد الحذف'),
                   _buildParagraph('ويتم إزالة:'),
                   SizedBox(height: 8.h),
@@ -202,7 +214,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppText(
+          const AppText(
             title: '• ',
             fontSize: 14,
             color: AppColors.secondaryTextColor,
@@ -226,10 +238,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.14),
-          width: 1.w,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.14), width: 1.w),
       ),
       child: AppText(
         title: text,

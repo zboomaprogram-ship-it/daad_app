@@ -14,7 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SignUpScreen extends StatefulWidget {
-  SignUpScreen({super.key});
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -185,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Navigator.canPop(context) ? GlassBackButton() : null,
+        leading: Navigator.canPop(context) ? const GlassBackButton() : null,
       ),
       body: Stack(
         children: [
@@ -338,7 +338,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   TextSpan(
                                     text: 'قراءة السياسة',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: AppColors.secondaryTextColor,
                                       decoration: TextDecoration.underline,
                                       fontWeight: FontWeight.bold,

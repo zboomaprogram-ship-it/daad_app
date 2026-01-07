@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:ui';
-import 'package:daad_app/core/constants.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/core/widgets/daad_image.dart';
 import 'package:flutter/material.dart';
@@ -27,21 +25,14 @@ class ServiceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onViewDetails,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r)
-,
+        borderRadius: BorderRadius.circular(16.r),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-             
               color: Colors.transparent.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16.r)
-,
-              border: Border.all(
-                color: Colors.transparent,
-                width: 1.w
-,
-              ),
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: Colors.transparent, width: 1.w),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,10 +44,7 @@ class ServiceCard extends StatelessWidget {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
-                    child: DaadImage(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    ),
+                    child: DaadImage(imageUrl, fit: BoxFit.cover),
                   ),
                 ),
 
@@ -69,25 +57,20 @@ class ServiceCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                         AppText(
-                          title: 
-                          title,
-                      
-                          
-                            fontWeight: FontWeight.bold,
-                        
+                        AppText(
+                          title: title,
+
+                          fontWeight: FontWeight.bold,
+
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 4.h
-),
-                         AppText(
-                          title: 
-                          desc,
-                         
-                       
-                            fontSize: 13,
-                       
+                        SizedBox(height: 4.h),
+                        AppText(
+                          title: desc,
+
+                          fontSize: 13,
+
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),

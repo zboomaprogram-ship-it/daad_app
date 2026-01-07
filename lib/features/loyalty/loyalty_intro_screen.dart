@@ -11,9 +11,8 @@ import 'package:daad_app/core/constants.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class LoyaltyIntroScreen extends StatefulWidget {
-  const LoyaltyIntroScreen({Key? key}) : super(key: key);
+  const LoyaltyIntroScreen({super.key});
 
   @override
   State<LoyaltyIntroScreen> createState() => _LoyaltyIntroScreenState();
@@ -39,8 +38,10 @@ class _LoyaltyIntroScreenState extends State<LoyaltyIntroScreen> {
   Future<void> _loadData() async {
     try {
       // ===== Activities =====
-      final activitiesSnap =
-          await _db.collection('activities').orderBy('points').get();
+      final activitiesSnap = await _db
+          .collection('activities')
+          .orderBy('points')
+          .get();
 
       final activities = <_ActivityItem>[];
       for (final doc in activitiesSnap.docs) {
@@ -116,12 +117,12 @@ class _LoyaltyIntroScreenState extends State<LoyaltyIntroScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading:const GlassBackButton()
+          leading: const GlassBackButton(),
         ),
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
-              image: const AssetImage(kAuthBackgroundImage),
+              image: AssetImage(kAuthBackgroundImage),
               fit: BoxFit.cover,
               // colorFilter: ColorFilter.mode(
               //   Colors.black.withOpacity(0.25),
@@ -130,166 +131,164 @@ class _LoyaltyIntroScreenState extends State<LoyaltyIntroScreen> {
             ),
           ),
           child: SafeArea(
-            child:_isLoading
-    ? const LoyaltyIntroShimmer()
-
+            child: _isLoading
+                ? const LoyaltyIntroShimmer()
                 : _error != null
-                    ? Center(
-                        child: Text(
-                          'حدث خطأ في تحميل البيانات\n$_error',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.w, vertical: 20.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // SizedBox(height: 10.h),
+                ? Center(
+                    child: Text(
+                      'حدث خطأ في تحميل البيانات\n$_error',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 20.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // SizedBox(height: 10.h),
 
-                            // ===== Logo + Title =====
-                            Container(
-                              padding: EdgeInsets.all(8.r),
-                              child: Image.asset(kLogoImage,height: 60,width: 60,),
+                        // ===== Logo + Title =====
+                        Container(
+                          padding: EdgeInsets.all(8.r),
+                          child: Image.asset(kLogoImage, height: 60, width: 60),
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'نظام الولاء - ضاد بلس',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 80.h),
+
+                        // ===== Intro paragraph =====
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          child: Text(
+                            'يهدف نظام الولاء إلى الترابط القوي بين ضاد وعملائها بهدف التعاون المثمر للطرفين، حيث يمنح للعملاء فرص وخصومات على الخدمات بشروط سلسة ومبسطة.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                              height: 1.8,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(height: 32.h),
+
+                        // ===== Activities section =====
+                        _SectionCard(
+                          title: 'آلية تجميع النقاط',
+                          leftHeader: 'عدد النقاط',
+                          rightHeader: 'النشاط',
+                          rows: _activities
+                              .map(
+                                (a) => _TwoColumnRowData(
+                                  right: a.title,
+                                  left: '${a.points} نقاط',
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        SizedBox(height: 24.h),
+
+                        // ===== Rewards section =====
+                        _SectionCard(
+                          title: 'المكافآت حسب عدد النقاط',
+                          leftHeader: 'عدد النقاط',
+                          rightHeader: 'المكافأة',
+                          rows: _rewards
+                              .map(
+                                (r) => _TwoColumnRowData(
+                                  right: r.title,
+                                  left: '${r.requiredPoints} نقطة',
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        SizedBox(height: 24.h),
+
+                        // ===== How it works =====
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'طريقة التسجيل والمتابعة',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                             SizedBox(height: 16.h),
                             Text(
-                              'نظام الولاء - ضاد بلس',
+                              'يتم تسجيل عدد التفاعلات والمشاركات مع إرسال إثبات (سواء كان صورة أو لينك)، يتم حسابها بشكل مبدئي إلكترونياً، ثم يتم مراجعتها من خلال فريق المراجعة، يتمكن العميل من اختيار فرص الخصومات إذا وصل للحد المطلوب، ثم طلب اجتماع عاجل.',
                               style: TextStyle(
                                 color: Colors.white,
+
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 80.h),
-
-                            // ===== Intro paragraph =====
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.w),
-                              child: Text(
-                                'يهدف نظام الولاء إلى الترابط القوي بين ضاد وعملائها بهدف التعاون المثمر للطرفين، حيث يمنح للعملاء فرص وخصومات على الخدمات بشروط سلسة ومبسطة.',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.8,
-                                ),
-                                textAlign: TextAlign.center,
+                                height: 1.9,
                               ),
                             ),
-                            SizedBox(height: 32.h),
-
-                            // ===== Activities section =====
-                            _SectionCard(
-                              title: 'آلية تجميع النقاط',
-                              leftHeader: 'عدد النقاط',
-                              rightHeader: 'النشاط',
-                              rows: _activities
-                                  .map(
-                                    (a) => _TwoColumnRowData(
-                                      right: a.title,
-                                      left: '${a.points} نقاط',
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                            SizedBox(height: 24.h),
-
-                            // ===== Rewards section =====
-                            _SectionCard(
-                              title: 'المكافآت حسب عدد النقاط',
-                              leftHeader: 'عدد النقاط',
-                              rightHeader: 'المكافأة',
-                              rows: _rewards
-                                  .map(
-                                    (r) => _TwoColumnRowData(
-                                      right: r.title,
-                                      left: '${r.requiredPoints} نقطة',
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                            SizedBox(height: 24.h),
-
-                            // ===== How it works =====
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'طريقة التسجيل والمتابعة',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-                                Text(
-                                  'يتم تسجيل عدد التفاعلات والمشاركات مع إرسال إثبات (سواء كان صورة أو لينك)، يتم حسابها بشكل مبدئي إلكترونياً، ثم يتم مراجعتها من خلال فريق المراجعة، يتمكن العميل من اختيار فرص الخصومات إذا وصل للحد المطلوب، ثم طلب اجتماع عاجل.',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                   
-                                       fontSize: 13.sp,
-                                  fontWeight: FontWeight.bold,
-                                    height: 1.9,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(height: 32.h),
-
-                            // ===== New points button =====
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const PointsRecordingScreen(),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.r),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                  ),
-                                ),
-                                child: Text(
-                                  'تسجيل نقاط جديدة',
-                                  style: TextStyle(
-                                    color: Color(0xFF5A1735),
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 16.h),
-
-                            // Current user points
-                            if (_auth.currentUser != null)
-                              Text(
-                                'نقاطك الحالية: $_userPoints',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 14.sp,
-                                ),
-                              ),
                           ],
                         ),
-                      ),
+
+                        SizedBox(height: 32.h),
+
+                        // ===== New points button =====
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const PointsRecordingScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.r),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                            ),
+                            child: Text(
+                              'تسجيل نقاط جديدة',
+                              style: TextStyle(
+                                color: const Color(0xFF5A1735),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 16.h),
+
+                        // Current user points
+                        if (_auth.currentUser != null)
+                          Text(
+                            'نقاطك الحالية: $_userPoints',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
           ),
         ),
       ),
@@ -319,12 +318,12 @@ class _SectionCard extends StatelessWidget {
   final List<_TwoColumnRowData> rows;
 
   const _SectionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.rightHeader,
     required this.leftHeader,
     required this.rows,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +335,6 @@ class _SectionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.06),
             borderRadius: BorderRadius.circular(16.r),
-           
           ),
           child: Column(
             children: [
@@ -363,7 +361,7 @@ class _SectionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Column headers and data rows in a stack with continuous vertical line
               Stack(
                 children: [
@@ -377,13 +375,16 @@ class _SectionCard extends StatelessWidget {
                       color: Colors.white.withOpacity(0.3),
                     ),
                   ),
-                  
+
                   // Content
                   Column(
                     children: [
                       // Column headers
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 16.w,
+                        ),
                         decoration: BoxDecoration(
                           // color: Colors.black.withOpacity(0.2),
                           border: Border(
@@ -408,7 +409,7 @@ class _SectionCard extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 12.w),
-                            SizedBox(width: 1), // Space for the line
+                            const SizedBox(width: 1), // Space for the line
                             SizedBox(width: 12.w),
                             Expanded(
                               flex: 2,
@@ -442,7 +443,10 @@ class _SectionCard extends StatelessWidget {
                             //     : null,
                           ),
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 12.h,
+                              horizontal: 16.w,
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -459,7 +463,7 @@ class _SectionCard extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(width: 12.w),
-                                SizedBox(width: 1), // Space for the line
+                                const SizedBox(width: 1), // Space for the line
                                 SizedBox(width: 12.w),
                                 Expanded(
                                   flex: 2,

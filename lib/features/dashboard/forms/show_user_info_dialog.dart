@@ -19,7 +19,7 @@ Future<void> showUserInfoDialog(
   final data = doc.data() as Map<String, dynamic>;
   final contractStats = await ContractService.getContractStats(doc.id);
 
-  final socialLinks = (data['socialLinks'] ?? {}) as  dynamic;
+  final socialLinks = (data['socialLinks'] ?? {}) as dynamic;
 
   showDialog(
     context: context,
@@ -147,9 +147,12 @@ Future<void> showUserInfoDialog(
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.link, color: Colors.white),
+                                      const Icon(
+                                        Icons.link,
+                                        color: Colors.white,
+                                      ),
                                       SizedBox(width: 8.w),
-                                      AppText(
+                                      const AppText(
                                         title: 'روابط التواصل الاجتماعي',
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -215,12 +218,12 @@ Future<void> showUserInfoDialog(
                               children: [
                                 Row(
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.description,
                                       color: Colors.white,
                                     ),
                                     SizedBox(width: 8.w),
-                                    AppText(
+                                    const AppText(
                                       title: 'العقود والاتفاقيات',
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -274,7 +277,7 @@ Future<void> showUserInfoDialog(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFF7A4458),
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: () {
                               Navigator.pop(context);
@@ -298,7 +301,7 @@ Future<void> showUserInfoDialog(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             side: const BorderSide(color: Colors.white),
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           onPressed: () {
                             Navigator.pop(context);
@@ -339,7 +342,7 @@ Future<void> showUserInfoDialog(
 
 Widget _buildGlassInfoRow(String label, String value) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 6),
+    padding: const EdgeInsets.symmetric(vertical: 6),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: BackdropFilter(
@@ -374,7 +377,7 @@ Widget _buildSocialLinkRow(
   Color color,
 ) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.symmetric(vertical: 4),
     child: InkWell(
       onTap: () async {
         final Uri uri = Uri.parse(url);

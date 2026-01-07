@@ -10,10 +10,10 @@ Future<void> showProjectForm(
 }) async {
   final isEdit = doc != null;
   final data = (doc?.data() as Map<String, dynamic>?) ?? {};
-  
+
   final titleCtrl = TextEditingController(text: data['title'] ?? '');
   final userIdCtrl = TextEditingController(text: data['userId'] ?? '');
-  
+
   String status = (data['status'] ?? 'pending') as String;
 
   await showModalBottomSheet(
@@ -38,27 +38,33 @@ Future<void> showProjectForm(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               LabeledField(label: 'عنوان المشروع', controller: titleCtrl),
               LabeledField(label: 'معرف المستخدم', controller: userIdCtrl),
-              SizedBox(height: 8.h
-),
+              SizedBox(height: 8.h),
               DropdownButtonFormField<String>(
-                value: status,
+                initialValue: status,
                 decoration: const InputDecoration(
                   labelText: 'حالة المشروع',
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'pending', child: AppText(title:'معلق')),
-                  DropdownMenuItem(value: 'in_progress', child: AppText(title:'جاري العمل')),
-                  DropdownMenuItem(value: 'completed', child: AppText(title:'مكتمل')),
+                  DropdownMenuItem(
+                    value: 'pending',
+                    child: AppText(title: 'معلق'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'in_progress',
+                    child: AppText(title: 'جاري العمل'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'completed',
+                    child: AppText(title: 'مكتمل'),
+                  ),
                 ],
                 onChanged: (v) => setModalState(() => status = v ?? 'pending'),
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {
@@ -81,7 +87,9 @@ Future<void> showProjectForm(
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(isEdit ? 'تم التحديث' : 'تم الإضافة')),
+                      SnackBar(
+                        content: Text(isEdit ? 'تم التحديث' : 'تم الإضافة'),
+                      ),
                     );
                   }
                 },

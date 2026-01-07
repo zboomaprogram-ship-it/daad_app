@@ -55,7 +55,7 @@ class _UsersTabState extends State<UsersTab> {
 
       if (_currentUserRole == 'sales') {
         _assignedUserIds = List<String>.from(
-            userDoc.data()?['assignedUsers'] ?? []
+          userDoc.data()?['assignedUsers'] ?? [],
         );
       }
     });
@@ -75,12 +75,15 @@ class _UsersTabState extends State<UsersTab> {
       if (_currentUserRole == 'sales') {
         // --- SALES LOGIC ---
         if (_assignedUserIds.isEmpty) {
-          setState(() { _users = []; _isLoading = false; });
+          setState(() {
+            _users = [];
+            _isLoading = false;
+          });
           return;
         }
 
         // Batch load assigned users (Firestore limit 10 per batch)
-        final batchSize = 10;
+        const batchSize = 10;
         for (int i = 0; i < _assignedUserIds.length; i += batchSize) {
           final batch = _assignedUserIds.skip(i).take(batchSize).toList();
           final snapshot = await FirebaseFirestore.instance
@@ -93,11 +96,11 @@ class _UsersTabState extends State<UsersTab> {
         // --- ADMIN LOGIC (FIXED) ---
         // 1. Removed 'limit(10)' -> Fetches all so Search works.
         // 2. Removed 'orderBy(lastSeenAt)' -> Fixes missing Admins.
-        
+
         final snapshot = await FirebaseFirestore.instance
             .collection('users')
             // You can uncomment this if you are SURE all users have createdAt
-            // .orderBy('createdAt', descending: true) 
+            // .orderBy('createdAt', descending: true)
             .get();
 
         loadedDocs = snapshot.docs;
@@ -124,24 +127,22 @@ class _UsersTabState extends State<UsersTab> {
 
       final matchesSearch =
           _searchQuery.isEmpty ||
-              name.contains(_searchQuery) ||
-              email.contains(_searchQuery);
+          name.contains(_searchQuery) ||
+          email.contains(_searchQuery);
 
       final matchesRole = _roleFilter == 'all' || role == _roleFilter;
 
       return matchesSearch && matchesRole;
     }).toList();
   }
-
   // ... (Keep existing _showPointsDialog, _showAssignToSalesDialog, etc.)
   // I will include the manage clients dialog here for completeness
 
-Future<void> _showManageAssignedClientsDialog(
-      BuildContext context,
-      String salesId,
-      List<String> currentAssignedIds,
-      ) async {
-    
+  Future<void> _showManageAssignedClientsDialog(
+    BuildContext context,
+    String salesId,
+    List<String> currentAssignedIds,
+  ) async {
     // ✅ FIX: Removed .where('role', isEqualTo: 'client') to show EVERYONE (Admins included)
     final allUsersSnapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -153,7 +154,7 @@ Future<void> _showManageAssignedClientsDialog(
     List<DocumentSnapshot> allUsers = allUsersSnapshot.docs
         .where((doc) => doc.id != salesId)
         .toList();
-        
+
     List<String> selectedIds = List.from(currentAssignedIds);
     String dialogSearchQuery = '';
 
@@ -167,13 +168,15 @@ Future<void> _showManageAssignedClientsDialog(
               final data = doc.data() as Map<String, dynamic>;
               final name = (data['name'] ?? '').toString().toLowerCase();
               final email = (data['email'] ?? '').toString().toLowerCase();
-              final role = (data['role'] ?? 'client').toString().toLowerCase(); // Optional: Search by role too
-              
+              final role = (data['role'] ?? 'client')
+                  .toString()
+                  .toLowerCase(); // Optional: Search by role too
+
               final query = dialogSearchQuery.toLowerCase();
-              
-              return name.contains(query) || 
-                     email.contains(query) || 
-                     role.contains(query);
+
+              return name.contains(query) ||
+                  email.contains(query) ||
+                  role.contains(query);
             }).toList();
 
             return AlertDialog(
@@ -202,50 +205,60 @@ Future<void> _showManageAssignedClientsDialog(
                     // List
                     Expanded(
                       child: filteredUsers.isEmpty
-                          ? const Center(child: AppText(title: 'لا يوجد مستخدمين'))
+                          ? const Center(
+                              child: AppText(title: 'لا يوجد مستخدمين'),
+                            )
                           : ListView.builder(
-                        itemCount: filteredUsers.length,
-                        itemBuilder: (context, index) {
-                          final doc = filteredUsers[index];
-                          final data = doc.data() as Map<String, dynamic>;
-                          final isSelected = selectedIds.contains(doc.id);
-                          
-                          // Show Role Label next to name
-                          String roleLabel = '';
-                          if (data['role'] == 'admin') roleLabel = ' (Admin)';
-                          if (data['role'] == 'sales') roleLabel = ' (Sales)';
+                              itemCount: filteredUsers.length,
+                              itemBuilder: (context, index) {
+                                final doc = filteredUsers[index];
+                                final data = doc.data() as Map<String, dynamic>;
+                                final isSelected = selectedIds.contains(doc.id);
 
-                          return CheckboxListTile(
-                            side: const BorderSide(color: Colors.white),
-                            activeColor: AppColors.primaryColor,
-                            checkColor: Colors.white,
-                            title: Row(
-                              children: [
-                                AppText(
-                                  title: (data['name'] ?? 'مستخدم') + roleLabel,
-                                  fontSize: 14,
-                                  color: data['role'] == 'admin' ? Colors.amber : Colors.white, // Highlight Admins
-                                ),
-                              ],
-                            ),
-                            subtitle: AppText(
-                              title: data['email'] ?? '',
-                              fontSize: 12,
-                              color: Colors.white70,
-                            ),
-                            value: isSelected,
-                            onChanged: (bool? value) {
-                              setStateDialog(() {
-                                if (value == true) {
-                                  selectedIds.add(doc.id);
-                                } else {
-                                  selectedIds.remove(doc.id);
+                                // Show Role Label next to name
+                                String roleLabel = '';
+                                if (data['role'] == 'admin') {
+                                  roleLabel = ' (Admin)';
                                 }
-                              });
-                            },
-                          );
-                        },
-                      ),
+                                if (data['role'] == 'sales') {
+                                  roleLabel = ' (Sales)';
+                                }
+
+                                return CheckboxListTile(
+                                  side: const BorderSide(color: Colors.white),
+                                  activeColor: AppColors.primaryColor,
+                                  checkColor: Colors.white,
+                                  title: Row(
+                                    children: [
+                                      AppText(
+                                        title:
+                                            (data['name'] ?? 'مستخدم') +
+                                            roleLabel,
+                                        fontSize: 14,
+                                        color: data['role'] == 'admin'
+                                            ? Colors.amber
+                                            : Colors.white, // Highlight Admins
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: AppText(
+                                    title: data['email'] ?? '',
+                                    fontSize: 12,
+                                    color: Colors.white70,
+                                  ),
+                                  value: isSelected,
+                                  onChanged: (bool? value) {
+                                    setStateDialog(() {
+                                      if (value == true) {
+                                        selectedIds.add(doc.id);
+                                      } else {
+                                        selectedIds.remove(doc.id);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -261,13 +274,13 @@ Future<void> _showManageAssignedClientsDialog(
                       await FirebaseFirestore.instance
                           .collection('users')
                           .doc(salesId)
-                          .update({
-                        'assignedUsers': selectedIds,
-                      });
+                          .update({'assignedUsers': selectedIds});
                       if (mounted) {
                         Navigator.pop(dialogContext);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: AppText(title: 'تم تحديث القائمة بنجاح')),
+                          const SnackBar(
+                            content: AppText(title: 'تم تحديث القائمة بنجاح'),
+                          ),
                         );
                         _loadUsers(); // Refresh main list
                       }
@@ -304,22 +317,35 @@ Future<void> _showManageAssignedClientsDialog(
             TextField(
               keyboardType: TextInputType.number,
               style: const TextStyle(color: AppColors.textColor),
-              decoration: const InputDecoration(labelText: 'عدد النقاط (+/-)', labelStyle: TextStyle(color: AppColors.textColor)),
+              decoration: const InputDecoration(
+                labelText: 'عدد النقاط (+/-)',
+                labelStyle: TextStyle(color: AppColors.textColor),
+              ),
               onChanged: (v) => change = int.tryParse(v) ?? 0,
             ),
             TextField(
               controller: reasonController,
               style: const TextStyle(color: AppColors.textColor),
-              decoration: const InputDecoration(labelText: 'السبب', labelStyle: TextStyle(color: AppColors.textColor)),
+              decoration: const InputDecoration(
+                labelText: 'السبب',
+                labelStyle: TextStyle(color: AppColors.textColor),
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const AppText(title: 'إلغاء')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const AppText(title: 'إلغاء'),
+          ),
           ElevatedButton(
             onPressed: () async {
               if (change != 0) {
-                await FirebaseService.updateUserPoints(userId: userId, change: change, reason: reasonController.text);
+                await FirebaseService.updateUserPoints(
+                  userId: userId,
+                  change: change,
+                  reason: reasonController.text,
+                );
                 if (mounted) Navigator.pop(context);
               }
             },
@@ -330,11 +356,20 @@ Future<void> _showManageAssignedClientsDialog(
     );
   }
 
-  Future<void> _showAssignToSalesDialog(BuildContext context, String userId, String userName) async {
-    final salesUsers = await FirebaseFirestore.instance.collection('users').where('role', isEqualTo: 'sales').get();
+  Future<void> _showAssignToSalesDialog(
+    BuildContext context,
+    String userId,
+    String userName,
+  ) async {
+    final salesUsers = await FirebaseFirestore.instance
+        .collection('users')
+        .where('role', isEqualTo: 'sales')
+        .get();
     if (!mounted) return;
     if (salesUsers.docs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: AppText(title: 'لا يوجد مندوبي مبيعات')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: AppText(title: 'لا يوجد مندوبي مبيعات')),
+      );
       return;
     }
     final selected = await showDialog<String>(
@@ -360,12 +395,19 @@ Future<void> _showManageAssignedClientsDialog(
       ),
     );
     if (selected != null) {
-      await FirebaseFirestore.instance.collection('users').doc(selected).update({'assignedUsers': FieldValue.arrayUnion([userId])});
+      await FirebaseFirestore.instance.collection('users').doc(selected).update(
+        {
+          'assignedUsers': FieldValue.arrayUnion([userId]),
+        },
+      );
       if (mounted) _loadUsers();
     }
   }
 
-  Future<void> _showChangeRoleDialog(BuildContext context, DocumentSnapshot doc) async {
+  Future<void> _showChangeRoleDialog(
+    BuildContext context,
+    DocumentSnapshot doc,
+  ) async {
     final data = doc.data() as Map<String, dynamic>;
     String currentRole = data['role'] ?? 'client';
     final result = await showDialog<String>(
@@ -375,46 +417,69 @@ Future<void> _showManageAssignedClientsDialog(
         title: const AppText(title: 'تغيير الدور'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: ['client', 'sales', 'admin'].map((role) => RadioListTile<String>(
-            title: AppText(title: role),
-            value: role,
-            groupValue: currentRole,
-            onChanged: (v) => Navigator.pop(context, v),
-          )).toList(),
+          children: ['client', 'sales', 'admin']
+              .map(
+                (role) => RadioListTile<String>(
+                  title: AppText(title: role),
+                  value: role,
+                  groupValue: currentRole,
+                  onChanged: (v) => Navigator.pop(context, v),
+                ),
+              )
+              .toList(),
         ),
       ),
     );
     if (result != null && result != currentRole) {
       await FirebaseService.updateUserRole(doc.id, result);
-      if (result == 'sales') await FirebaseFirestore.instance.collection('users').doc(doc.id).update({'assignedUsers': []});
+      if (result == 'sales')
+        await FirebaseFirestore.instance.collection('users').doc(doc.id).update(
+          {'assignedUsers': []},
+        );
       if (mounted) _loadUsers();
     }
   }
 
-  Future<void> _confirmDelete(BuildContext context, DocumentSnapshot doc) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    DocumentSnapshot doc,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.secondaryColor.withOpacity(0.95),
         title: const AppText(title: 'تأكيد الحذف'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const AppText(title: 'إلغاء')),
-          ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red), onPressed: () => Navigator.pop(context, true), child: const AppText(title: 'حذف')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const AppText(title: 'إلغاء'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(context, true),
+            child: const AppText(title: 'حذف'),
+          ),
         ],
       ),
     );
     if (confirmed == true) {
       await doc.reference.delete();
-      setState(() { _users.removeWhere((u) => u.id == doc.id); });
+      setState(() {
+        _users.removeWhere((u) => u.id == doc.id);
+      });
     }
   }
 
   String _getRoleLabel(String? role) {
     switch (role) {
-      case 'admin': return 'مسؤول 👨‍💼';
-      case 'sales': return 'مبيعات 💼';
-      case 'client': return 'عميل 👤';
-      default: return 'غير محدد';
+      case 'admin':
+        return 'مسؤول 👨‍💼';
+      case 'sales':
+        return 'مبيعات 💼';
+      case 'client':
+        return 'عميل 👤';
+      default:
+        return 'غير محدد';
     }
   }
 
@@ -437,7 +502,10 @@ Future<void> _showManageAssignedClientsDialog(
                     decoration: const InputDecoration(
                       hintText: 'بحث عن مستخدم...',
                       hintStyle: TextStyle(color: AppColors.textColor),
-                      prefixIcon: Icon(Icons.search, color: AppColors.textColor),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: AppColors.textColor,
+                      ),
                       border: UnderlineInputBorder(borderSide: BorderSide.none),
                     ),
                     onChanged: (value) {
@@ -452,17 +520,31 @@ Future<void> _showManageAssignedClientsDialog(
                     iconEnabledColor: AppColors.textColor,
                     value: _roleFilter,
                     items: const [
-                      DropdownMenuItem(value: 'all', child: AppText(title: 'الكل')),
-                      DropdownMenuItem(value: 'client', child: AppText(title: 'عميل')),
-                      DropdownMenuItem(value: 'admin', child: AppText(title: 'مسؤول')),
-                      DropdownMenuItem(value: 'sales', child: AppText(title: 'مبيعات')),
+                      DropdownMenuItem(
+                        value: 'all',
+                        child: AppText(title: 'الكل'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'client',
+                        child: AppText(title: 'عميل'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'admin',
+                        child: AppText(title: 'مسؤول'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'sales',
+                        child: AppText(title: 'مبيعات'),
+                      ),
                     ],
-                    onChanged: (value) => setState(() => _roleFilter = value ?? 'all'),
+                    onChanged: (value) =>
+                        setState(() => _roleFilter = value ?? 'all'),
                   ),
                   IconButton(
                     icon: const Icon(Icons.download),
                     tooltip: 'تصدير Excel',
-                    onPressed: () => ExcelExportService.exportUsersToExcel(context),
+                    onPressed: () =>
+                        ExcelExportService.exportUsersToExcel(context),
                   ),
                 ],
               ],
@@ -474,9 +556,16 @@ Future<void> _showManageAssignedClientsDialog(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(isSales ? Icons.people_outline : Icons.search_off, size: 64, color: Colors.white38),
+                        Icon(
+                          isSales ? Icons.people_outline : Icons.search_off,
+                          size: 64,
+                          color: Colors.white38,
+                        ),
                         SizedBox(height: 16.h),
-                        AppText(title: isSales ? 'لا يوجد عملاء' : 'لا توجد نتائج', color: Colors.white60),
+                        AppText(
+                          title: isSales ? 'لا يوجد عملاء' : 'لا توجد نتائج',
+                          color: Colors.white60,
+                        ),
                       ],
                     ),
                   )
@@ -494,15 +583,23 @@ Future<void> _showManageAssignedClientsDialog(
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundColor: AppColors.primaryColor,
-                            child: AppText(title: (data['name'] ?? 'U')[0].toUpperCase()),
+                            child: AppText(
+                              title: (data['name'] ?? 'U')[0].toUpperCase(),
+                            ),
                           ),
-                          title: AppText(title: data['name'] ?? 'مستخدم', fontWeight: FontWeight.bold),
+                          title: AppText(
+                            title: data['name'] ?? 'مستخدم',
+                            fontWeight: FontWeight.bold,
+                          ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AppText(title: '📧 ${data['email'] ?? '-'}'),
                               AppText(title: '📱 ${data['phone'] ?? '-'}'),
-                              if (isAdmin) AppText(title: '🏷️ ${_getRoleLabel(data['role'])}'),
+                              if (isAdmin)
+                                AppText(
+                                  title: '🏷️ ${_getRoleLabel(data['role'])}',
+                                ),
                               AppText(title: '⭐ نقاط: ${data['points'] ?? 0}'),
                             ],
                           ),
@@ -510,37 +607,126 @@ Future<void> _showManageAssignedClientsDialog(
                             color: AppColors.secondaryColor.withOpacity(0.9),
                             iconColor: AppColors.textColor,
                             itemBuilder: (context) => [
-                              const PopupMenuItem(value: 'info', child: AppText(title: 'معلومات كاملة')),
+                              const PopupMenuItem(
+                                value: 'info',
+                                child: AppText(title: 'معلومات كاملة'),
+                              ),
                               if (isAdmin && data['role'] == 'sales')
-                                const PopupMenuItem(value: 'manage-clients', child: AppText(title: 'إدارة العملاء')),
+                                const PopupMenuItem(
+                                  value: 'manage-clients',
+                                  child: AppText(title: 'إدارة العملاء'),
+                                ),
                               if (isAdmin && data['role'] != 'sales')
-                                const PopupMenuItem(value: 'assign-sales', child: AppText(title: 'تعيين لمندوب')),
-                              const PopupMenuItem(value: 'contracts', child: AppText(title: 'العقود')),
-                              const PopupMenuItem(value: 'add-contract', child: AppText(title: 'إضافة عقد')),
-                              const PopupMenuItem(value: 'points', child: AppText(title: 'إدارة النقاط')),
-                              const PopupMenuItem(value: 'history', child: AppText(title: 'سجل النقاط')),
-                              const PopupMenuItem(value: 'packages', child: AppText(title: 'الباقات')),
-                              const PopupMenuItem(value: 'add-package', child: AppText(title: 'إضافة باقة')),
+                                const PopupMenuItem(
+                                  value: 'assign-sales',
+                                  child: AppText(title: 'تعيين لمندوب'),
+                                ),
+                              const PopupMenuItem(
+                                value: 'contracts',
+                                child: AppText(title: 'العقود'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'add-contract',
+                                child: AppText(title: 'إضافة عقد'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'points',
+                                child: AppText(title: 'إدارة النقاط'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'history',
+                                child: AppText(title: 'سجل النقاط'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'packages',
+                                child: AppText(title: 'الباقات'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'add-package',
+                                child: AppText(title: 'إضافة باقة'),
+                              ),
                               if (isAdmin) ...[
-                                const PopupMenuItem(value: 'role', child: AppText(title: 'تغيير الدور')),
-                                const PopupMenuItem(value: 'delete', child: AppText(title: 'حذف', color: Colors.red)),
+                                const PopupMenuItem(
+                                  value: 'role',
+                                  child: AppText(title: 'تغيير الدور'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: AppText(
+                                    title: 'حذف',
+                                    color: Colors.red,
+                                  ),
+                                ),
                               ],
                             ],
                             onSelected: (value) {
-                              if (value == 'info') showUserInfoDialog(context, doc, isAdmin: isAdmin, currentUserId: _currentUserId ?? '');
+                              if (value == 'info')
+                                showUserInfoDialog(
+                                  context,
+                                  doc,
+                                  isAdmin: isAdmin,
+                                  currentUserId: _currentUserId ?? '',
+                                );
                               if (value == 'manage-clients') {
-                                List<String> current = List<String>.from(data['assignedUsers'] ?? []);
-                                _showManageAssignedClientsDialog(context, doc.id, current);
+                                List<String> current = List<String>.from(
+                                  data['assignedUsers'] ?? [],
+                                );
+                                _showManageAssignedClientsDialog(
+                                  context,
+                                  doc.id,
+                                  current,
+                                );
                               }
-                              if (value == 'assign-sales') _showAssignToSalesDialog(context, doc.id, data['name'] ?? '');
-                              if (value == 'contracts') Navigator.push(context, MaterialPageRoute(builder: (_) => UserContractsScreen(userId: doc.id, userName: data['name'] ?? '', isAdmin: isAdmin || isSales)));
-                              if (value == 'add-contract') showAddContractDialog(context, userId: doc.id, userName: data['name'] ?? '', currentAdminId: _currentUserId ?? '');
-                              if (value == 'points') _showPointsDialog(context, doc.id);
-                              if (value == 'history') showPointsHistoryDialog(context, doc.id);
-                              if (value == 'packages') Navigator.push(context, MaterialPageRoute(builder: (_) => UserPackagesScreen(userId: doc.id, userName: data['name'] ?? '', isAdmin: isAdmin || isSales)));
-                              if (value == 'add-package') showAddPackageDialog(context, userId: doc.id, userName: data['name'] ?? '', currentAdminId: _currentUserId ?? '');
-                              if (value == 'role') _showChangeRoleDialog(context, doc);
-                              if (value == 'delete') _confirmDelete(context, doc);
+                              if (value == 'assign-sales')
+                                _showAssignToSalesDialog(
+                                  context,
+                                  doc.id,
+                                  data['name'] ?? '',
+                                );
+                              if (value == 'contracts')
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UserContractsScreen(
+                                      userId: doc.id,
+                                      userName: data['name'] ?? '',
+                                      isAdmin: isAdmin || isSales,
+                                    ),
+                                  ),
+                                );
+                              if (value == 'add-contract')
+                                showAddContractDialog(
+                                  context,
+                                  userId: doc.id,
+                                  userName: data['name'] ?? '',
+                                  currentAdminId: _currentUserId ?? '',
+                                );
+                              if (value == 'points')
+                                _showPointsDialog(context, doc.id);
+                              if (value == 'history')
+                                showPointsHistoryDialog(context, doc.id);
+                              if (value == 'packages')
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UserPackagesScreen(
+                                      userId: doc.id,
+                                      userName: data['name'] ?? '',
+                                      isAdmin: isAdmin || isSales,
+                                    ),
+                                  ),
+                                );
+                              if (value == 'add-package')
+                                showAddPackageDialog(
+                                  context,
+                                  userId: doc.id,
+                                  userName: data['name'] ?? '',
+                                  currentAdminId: _currentUserId ?? '',
+                                );
+                              if (value == 'role')
+                                _showChangeRoleDialog(context, doc);
+                              if (value == 'delete')
+                                _confirmDelete(context, doc);
                             },
                           ),
                         ),

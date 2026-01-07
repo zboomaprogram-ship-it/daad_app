@@ -7,7 +7,6 @@ import 'package:daad_app/features/dashboard/services/contract_service.dart';
 import 'package:flutter/material.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 
 Future<void> showAddContractDialog(
   BuildContext context, {
@@ -55,7 +54,11 @@ Future<void> showAddContractDialog(
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.description, color: Colors.white, size: 28),
+                        const Icon(
+                          Icons.description,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                         SizedBox(width: 12.w),
                         Expanded(
                           child: AppText(
@@ -74,9 +77,13 @@ Future<void> showAddContractDialog(
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'عنوان العقد',
-                        labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+                        labelStyle: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                        ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                          borderSide: BorderSide(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -96,7 +103,9 @@ Future<void> showAddContractDialog(
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.white.withOpacity(0.3)),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -104,12 +113,15 @@ Future<void> showAddContractDialog(
                               children: [
                                 const CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
                                 SizedBox(width: 12.w),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const AppText(
                                         title: 'جاري رفع الملف...',
@@ -132,7 +144,9 @@ Future<void> showAddContractDialog(
                             LinearProgressIndicator(
                               value: uploadProgress,
                               backgroundColor: Colors.white.withOpacity(0.2),
-                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.green,
+                              ),
                             ),
                             SizedBox(height: 4.h),
                             AppText(
@@ -149,11 +163,17 @@ Future<void> showAddContractDialog(
                         decoration: BoxDecoration(
                           color: Colors.green.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.green.withOpacity(0.3)),
+                          border: Border.all(
+                            color: Colors.green.withOpacity(0.3),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.check_circle, color: Colors.green, size: 24.sp),
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 24.sp,
+                            ),
                             SizedBox(width: 12.w),
                             Expanded(
                               child: Column(
@@ -189,7 +209,8 @@ Future<void> showAddContractDialog(
                     else
                       InkWell(
                         onTap: () async {
-                          final file = await WordPressMediaService.pickPdfFile();
+                          final file =
+                              await WordPressMediaService.pickPdfFile();
                           if (file != null) {
                             setState(() {
                               selectedFile = file;
@@ -209,7 +230,10 @@ Future<void> showAddContractDialog(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.upload_file, color: Colors.white),
+                              const Icon(
+                                Icons.upload_file,
+                                color: Colors.white,
+                              ),
                               SizedBox(width: 12.w),
                               const AppText(
                                 title: 'اختر ملف PDF',
@@ -227,10 +251,10 @@ Future<void> showAddContractDialog(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: isUploading ? null : () => Navigator.pop(context),
-                          child: const AppText(
-                            title: 'إلغاء',
-                          ),
+                          onPressed: isUploading
+                              ? null
+                              : () => Navigator.pop(context),
+                          child: const AppText(title: 'إلغاء'),
                         ),
                         SizedBox(width: 8.w),
                         ElevatedButton(
@@ -238,9 +262,10 @@ Future<void> showAddContractDialog(
                             backgroundColor: Colors.white,
                             foregroundColor: const Color(0xFF7A4458),
                           ),
-                          onPressed: selectedFile == null || 
-                                     titleController.text.isEmpty || 
-                                     isUploading
+                          onPressed:
+                              selectedFile == null ||
+                                  titleController.text.isEmpty ||
+                                  isUploading
                               ? null
                               : () async {
                                   setState(() {
@@ -251,7 +276,9 @@ Future<void> showAddContractDialog(
                                   try {
                                     // Simulate progress
                                     for (int i = 0; i <= 100; i += 10) {
-                                      await Future.delayed(const Duration(milliseconds: 150));
+                                      await Future.delayed(
+                                        const Duration(milliseconds: 150),
+                                      );
                                       if (context.mounted) {
                                         setState(() {
                                           uploadProgress = i / 100;
@@ -260,7 +287,10 @@ Future<void> showAddContractDialog(
                                     }
 
                                     // Upload to WordPress
-                                    final pdfUrl = await WordPressMediaService.uploadPdf(selectedFile!);
+                                    final pdfUrl =
+                                        await WordPressMediaService.uploadPdf(
+                                          selectedFile!,
+                                        );
 
                                     if (!context.mounted) return;
 
@@ -276,16 +306,24 @@ Future<void> showAddContractDialog(
                                       // Send notification
                                       await NotificationService.sendNotification(
                                         title: '📄 عقد جديد متاح',
-                                        body: 'تم إضافة عقد جديد: ${titleController.text}',
+                                        body:
+                                            'تم إضافة عقد جديد: ${titleController.text}',
                                         userId: userId,
-                                        deepLink: DeepLinkHandler.contractLink(pdfUrl),
+                                        deepLink: DeepLinkHandler.contractLink(
+                                          pdfUrl,
+                                        ),
                                       );
 
                                       if (context.mounted) {
                                         Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           const SnackBar(
-                                            content: AppText(title: 'تم إضافة العقد وإرسال الإشعار بنجاح'),
+                                            content: AppText(
+                                              title:
+                                                  'تم إضافة العقد وإرسال الإشعار بنجاح',
+                                            ),
                                             backgroundColor: Colors.green,
                                           ),
                                         );
@@ -295,7 +333,9 @@ Future<void> showAddContractDialog(
                                     }
                                   } catch (e) {
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: AppText(title: 'خطأ: $e'),
                                           backgroundColor: Colors.red,

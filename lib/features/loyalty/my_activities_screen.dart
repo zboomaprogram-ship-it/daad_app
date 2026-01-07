@@ -10,7 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class MyActivitiesScreen extends StatelessWidget {
-  MyActivitiesScreen({Key? key}) : super(key: key);
+  MyActivitiesScreen({super.key});
 
   final service = LoyaltyService();
   final df = DateFormat.yMd().add_Hm();
@@ -20,7 +20,8 @@ class MyActivitiesScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return const Scaffold(
-          body: Center(child: AppText(title: 'تسجيل الدخول مطلوب')));
+        body: Center(child: AppText(title: 'تسجيل الدخول مطلوب')),
+      );
     }
 
     return Scaffold(
@@ -43,14 +44,15 @@ class MyActivitiesScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: service.myActivitiesStream(user.uid),
         builder: (ctx, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+          if (!snap.hasData)
+            return const Center(child: CircularProgressIndicator());
           final docs = snap.data!.docs;
-          if (docs.isEmpty) return const Center(child: AppText(title:'لا توجد أنشطة بعد'));
-          
+          if (docs.isEmpty)
+            return const Center(child: AppText(title: 'لا توجد أنشطة بعد'));
+
           return ListView.separated(
             padding: EdgeInsets.all(12.r),
-            separatorBuilder: (_, __) => SizedBox(height: 8.h
-),
+            separatorBuilder: (_, __) => SizedBox(height: 8.h),
             itemCount: docs.length,
             itemBuilder: (c, i) {
               final d = docs[i];
@@ -60,20 +62,27 @@ class MyActivitiesScreen extends StatelessWidget {
               return Card(
                 color: AppColors.secondaryColor.withOpacity(0.2),
                 child: ListTile(
-                  title: AppText(title:'${data['type']} • ${data['points']} نقطة'),
+                  title: AppText(
+                    title: '${data['type']} • ${data['points']} نقطة',
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (data['link'] != null) AppText(title:'رابط: ${data['link']}'),
-                      AppText(title:'الحالة: ${data['status'] ?? 'pending'}'),
-                      if (date != null) AppText(title:'تاريخ: ${df.format(date)}'),
+                      if (data['link'] != null)
+                        AppText(title: 'رابط: ${data['link']}'),
+                      AppText(title: 'الحالة: ${data['status'] ?? 'pending'}'),
+                      if (date != null)
+                        AppText(title: 'تاريخ: ${df.format(date)}'),
                     ],
                   ),
                   trailing: data['status'] == 'pending'
                       ? const Icon(Icons.hourglass_top)
                       : (data['status'] == 'approved'
-                          ? const Icon(Icons.check_circle, color: Colors.green)
-                          : const Icon(Icons.cancel, color: Colors.red)),
+                            ? const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              )
+                            : const Icon(Icons.cancel, color: Colors.red)),
                 ),
               );
             },

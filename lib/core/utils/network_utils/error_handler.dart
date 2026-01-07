@@ -4,13 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 
 /// Error types for better handling
-enum ErrorType {
-  noInternet,
-  serverError,
-  notFound,
-  unauthorized,
-  unknown,
-}
+enum ErrorType { noInternet, serverError, notFound, unauthorized, unknown }
 
 /// Error handler utility
 class ErrorHandler {
@@ -65,11 +59,11 @@ class ErrorView extends StatelessWidget {
   final String? customMessage;
 
   const ErrorView({
-    Key? key,
+    super.key,
     required this.error,
     required this.onRetry,
     this.customMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +84,7 @@ class ErrorView extends StatelessWidget {
                 color: Colors.white.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 50,
-                color: Colors.white.withOpacity(0.7),
-              ),
+              child: Icon(icon, size: 50, color: Colors.white.withOpacity(0.7)),
             ),
             SizedBox(height: 24.h),
             AppText(
@@ -109,10 +99,7 @@ class ErrorView extends StatelessWidget {
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white.withOpacity(0.2),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 40.w,
-                  vertical: 16.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 16.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.r),
                   side: BorderSide(
@@ -124,9 +111,9 @@ class ErrorView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.refresh, color: Colors.white, size: 20),
+                  const Icon(Icons.refresh, color: Colors.white, size: 20),
                   SizedBox(width: 8.w),
-                  AppText(
+                  const AppText(
                     title: 'إعادة المحاولة',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -150,12 +137,12 @@ class EmptyStateView extends StatelessWidget {
   final String? actionText;
 
   const EmptyStateView({
-    Key? key,
+    super.key,
     required this.message,
     this.icon = Icons.inbox_outlined,
     this.onAction,
     this.actionText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -172,11 +159,7 @@ class EmptyStateView extends StatelessWidget {
                 color: Colors.white.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 50,
-                color: Colors.white.withOpacity(0.5),
-              ),
+              child: Icon(icon, size: 50, color: Colors.white.withOpacity(0.5)),
             ),
             SizedBox(height: 24.h),
             AppText(

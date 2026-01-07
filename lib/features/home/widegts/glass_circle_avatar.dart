@@ -8,6 +8,7 @@ class GlassCircleAvatar extends StatelessWidget {
   final Widget child;
 
   const GlassCircleAvatar({
+    super.key,
     required this.radius,
     required this.child,
   });
@@ -22,18 +23,14 @@ class GlassCircleAvatar extends StatelessWidget {
           height: radius * 2,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.transparent,
-                Colors.transparent,
-              ],
+              colors: [Colors.transparent, Colors.transparent],
             ),
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1.5.w
-,
+              width: 1.5.w,
             ),
             boxShadow: [
               BoxShadow(

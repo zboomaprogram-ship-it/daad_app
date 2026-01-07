@@ -10,7 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  EditProfileScreen({super.key});
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -199,7 +199,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: GlassBackButton(),
+        leading: const GlassBackButton(),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -215,7 +215,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 )
               : SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
                       children: [
                         SizedBox(height: 20.h),
@@ -225,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           height: 62.18.h,
                         ),
                         SizedBox(height: 15.h),
-                        AppText(
+                        const AppText(
                           title: 'تعديل الملف الشخصي',
                           color: AppColors.textColor,
                           fontSize: 23,
@@ -275,7 +275,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 14,
                             ),
@@ -338,7 +338,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Padding(
-                            padding: EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.only(bottom: 12),
                             child: AppText(
                               title: 'ادخل لينكات المنصات الخاصة بك',
 
@@ -429,7 +429,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 textAlign: TextAlign.right,
                 style: TextStyle(

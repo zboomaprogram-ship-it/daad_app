@@ -20,10 +20,9 @@ class LabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r)
-,
+        borderRadius: BorderRadius.circular(12.r),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
@@ -34,13 +33,8 @@ class LabeledField extends StatelessWidget {
                   Colors.transparent.withOpacity(0.2),
                 ],
               ),
-              borderRadius: BorderRadius.circular(12.r)
-,
-              border: Border.all(
-                color: Colors.transparent,
-                width: 1.w
-,
-              ),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.transparent, width: 1.w),
             ),
             child: TextField(
               controller: controller,

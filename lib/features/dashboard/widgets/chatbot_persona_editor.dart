@@ -112,7 +112,8 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
       'botRole': 'مستشار أعمال وتسويق إلكتروني',
       'personalityTraits': 'لطيف، ذكي، محترف، منظم، واقعي',
       'communicationStyle': 'عربية فصحى واضحة، يتكيف مع مستوى العميل',
-      'firstTimeWelcome': '''مرحباً بك! أنا {botName}، {botRole} في {companyName}.
+      'firstTimeWelcome':
+          '''مرحباً بك! أنا {botName}، {botRole} في {companyName}.
 
 أنا هنا لمساعدتك في:
 • استشارات التسويق الإلكتروني
@@ -143,7 +144,8 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
       _personalityCtrl.text = defaultData['personalityTraits'] as String;
       _communicationCtrl.text = defaultData['communicationStyle'] as String;
       _firstWelcomeCtrl.text = defaultData['firstTimeWelcome'] as String;
-      _returningWelcomeCtrl.text = defaultData['returningUserWelcome'] as String;
+      _returningWelcomeCtrl.text =
+          defaultData['returningUserWelcome'] as String;
       _systemPromptCtrl.text = defaultData['systemPrompt'] as String;
       _isLoading = false;
     });
@@ -198,7 +200,7 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: AppText(title:'✅ تم حفظ إعدادات البوت بنجاح'),
+            content: AppText(title: '✅ تم حفظ إعدادات البوت بنجاح'),
             backgroundColor: Colors.green,
           ),
         );
@@ -207,7 +209,7 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:AppText(title:'❌ خطأ: $e'),
+            content: AppText(title: '❌ خطأ: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -225,7 +227,7 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const AppText(title:'إعدادات شخصية البوت'),
+        title: const AppText(title: 'إعدادات شخصية البوت'),
         actions: [
           IconButton(
             icon: _isSaving
@@ -234,7 +236,7 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.save,color: AppColors.textColor,),
+                : const Icon(Icons.save, color: AppColors.textColor),
             onPressed: _isSaving ? null : _savePersona,
           ),
         ],
@@ -364,7 +366,9 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: AppText(title:_isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'),
+              label: AppText(
+                title: _isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات',
+              ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
@@ -378,12 +382,7 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
-      child: AppText(
-        title:
-        title,
-        fontWeight: FontWeight.bold,
-     
-      ),
+      child: AppText(title: title, fontWeight: FontWeight.bold),
     );
   }
 
@@ -398,20 +397,19 @@ class _ChatBotPersonaEditorState extends State<ChatBotPersonaEditor> {
       padding: EdgeInsets.only(bottom: 16.h),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(
-              fontSize: 12,
-              color: AppColors.textColor,
-              fontWeight: FontWeight.w400,
-            ),
+        style: const TextStyle(
+          fontSize: 12,
+          color: AppColors.textColor,
+          fontWeight: FontWeight.w400,
+        ),
         decoration: InputDecoration(
-          
           labelText: label,
-          labelStyle:TextStyle(color: AppColors.textColor) ,
+          labelStyle: const TextStyle(color: AppColors.textColor),
           hintText: hint,
           border: const OutlineInputBorder(),
-          hintStyle: TextStyle(color: AppColors.textColor)
+          hintStyle: const TextStyle(color: AppColors.textColor),
         ),
-      
+
         maxLines: maxLines,
         keyboardType: keyboardType,
         validator: (value) {

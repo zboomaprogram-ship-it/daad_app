@@ -9,7 +9,7 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title:  AppText(title:data['name'] ?? 'معلومات المستخدم'),
+      title: AppText(title: data['name'] ?? 'معلومات المستخدم'),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,17 +24,14 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
               '📅 تاريخ التسجيل',
               _formatTimestamp(data['createdAt']),
             ),
-            _buildInfoRow(
-              '🕐 آخر ظهور',
-              _formatTimestamp(data['lastSeenAt']),
-            ),
+            _buildInfoRow('🕐 آخر ظهور', _formatTimestamp(data['lastSeenAt'])),
           ],
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const  AppText(title:'إغلاق'),
+          child: const AppText(title: 'إغلاق'),
         ),
       ],
     ),
@@ -43,15 +40,12 @@ void showUserInfoDialog(BuildContext context, DocumentSnapshot doc) {
 
 Widget _buildInfoRow(String label, String value) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-   AppText(title:
-          '$label: ',
-        fontWeight: FontWeight.bold,
-        ),
-        Expanded(child:  AppText(title:value)),
+        AppText(title: '$label: ', fontWeight: FontWeight.bold),
+        Expanded(child: AppText(title: value)),
       ],
     ),
   );

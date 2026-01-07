@@ -43,7 +43,7 @@ class _MyFavoritesScreenState extends State<MyFavoritesScreen>
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: EmptyStateView(
             message: 'يرجى تسجيل الدخول أولاً',
@@ -124,7 +124,7 @@ class _MyFavoritesScreenState extends State<MyFavoritesScreen>
 
         final docs = snapshot.data?.docs ?? [];
         if (docs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد أعمال مفضلة',
             icon: Icons.favorite_border_rounded,
           );
@@ -168,7 +168,7 @@ class _MyFavoritesScreenState extends State<MyFavoritesScreen>
 
         final docs = snapshot.data?.docs ?? [];
         if (docs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد دروس مفضلة',
             icon: Icons.favorite_border_rounded,
           );
@@ -216,7 +216,7 @@ class _MyFavoritesScreenState extends State<MyFavoritesScreen>
         }).toList();
 
         if (likedDocs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد مقالات مفضلة',
             icon: Icons.favorite_border_rounded,
           );
@@ -266,9 +266,13 @@ class _FavoritePortfolioCard extends StatelessWidget {
 
   Future<void> _removeLike(BuildContext context) async {
     try {
-      await FirebaseFirestore.instance.collection('portfolio').doc(docId).update({
-        'likedBy': FieldValue.arrayRemove([userId]),
-      }).timeout(const Duration(seconds: 5));
+      await FirebaseFirestore.instance
+          .collection('portfolio')
+          .doc(docId)
+          .update({
+            'likedBy': FieldValue.arrayRemove([userId]),
+          })
+          .timeout(const Duration(seconds: 5));
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -411,9 +415,13 @@ class _FavoriteLearnCard extends StatelessWidget {
 
   Future<void> _removeLike(BuildContext context) async {
     try {
-      await FirebaseFirestore.instance.collection('learnWithdaad').doc(docId).update({
-        'likes': FieldValue.arrayRemove([userId]),
-      }).timeout(const Duration(seconds: 5));
+      await FirebaseFirestore.instance
+          .collection('learnWithdaad')
+          .doc(docId)
+          .update({
+            'likes': FieldValue.arrayRemove([userId]),
+          })
+          .timeout(const Duration(seconds: 5));
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -549,9 +557,13 @@ class _FavoriteArticleCard extends StatelessWidget {
 
   Future<void> _removeLike(BuildContext context) async {
     try {
-      await FirebaseFirestore.instance.collection('articles').doc(docId).update({
-        'likedBy': FieldValue.arrayRemove([userId]),
-      }).timeout(const Duration(seconds: 5));
+      await FirebaseFirestore.instance
+          .collection('articles')
+          .doc(docId)
+          .update({
+            'likedBy': FieldValue.arrayRemove([userId]),
+          })
+          .timeout(const Duration(seconds: 5));
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

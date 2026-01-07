@@ -14,8 +14,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
- 
-
 class MySavedItemsScreen extends StatefulWidget {
   const MySavedItemsScreen({super.key});
 
@@ -44,7 +42,7 @@ class _MySavedItemsScreenState extends State<MySavedItemsScreen>
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: EmptyStateView(
             message: 'يرجى تسجيل الدخول أولاً',
@@ -124,7 +122,7 @@ class _MySavedItemsScreenState extends State<MySavedItemsScreen>
         final docs = snapshot.data?.docs ?? [];
 
         if (docs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد أعمال محفوظة',
             icon: Icons.bookmark_border_rounded,
           );
@@ -171,7 +169,7 @@ class _MySavedItemsScreenState extends State<MySavedItemsScreen>
         final docs = snapshot.data?.docs ?? [];
 
         if (docs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد دروس محفوظة',
             icon: Icons.bookmark_border_rounded,
           );
@@ -220,7 +218,7 @@ class _MySavedItemsScreenState extends State<MySavedItemsScreen>
         }).toList();
 
         if (savedDocs.isEmpty) {
-          return EmptyStateView(
+          return const EmptyStateView(
             message: 'لا توجد مقالات محفوظة',
             icon: Icons.bookmark_border_rounded,
           );
@@ -287,7 +285,10 @@ class _SavedPortfolioCard extends StatelessWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: AppText(title: 'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}'),
+          content: AppText(
+            title:
+                'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -434,7 +435,10 @@ class _SavedLearnCard extends StatelessWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: AppText(title: 'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}'),
+          content: AppText(
+            title:
+                'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -574,7 +578,10 @@ class _SavedArticleCard extends StatelessWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: AppText(title: 'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}'),
+          content: AppText(
+            title:
+                'خطأ: ${ErrorHandler.getErrorMessage(ErrorHandler.getErrorType(e))}',
+          ),
           backgroundColor: Colors.red,
         ),
       );

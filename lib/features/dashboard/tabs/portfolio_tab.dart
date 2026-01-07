@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:daad_app/features/dashboard/forms/portfolio_form.dart';
@@ -12,10 +11,10 @@ class PortfolioTab extends StatelessWidget {
 
   // نفس قائمة القطاعات
   static const List<String> industries = [
-     'نتائج الحملات الإعلانية',
-  'نتائج تحسين محركات البحث',
-  'معرض تصاميمنا',
-  'أعمال قسم إدارة وسائل التواصل الأجتماعى',
+    'نتائج الحملات الإعلانية',
+    'نتائج تحسين محركات البحث',
+    'معرض تصاميمنا',
+    'أعمال قسم إدارة وسائل التواصل الأجتماعى',
   ];
 
   @override
@@ -28,8 +27,9 @@ class PortfolioTab extends StatelessWidget {
       },
       tileBuilder: (doc) {
         final d = doc.data() as Map<String, dynamic>;
-        final imageCount =
-            d['images'] is List ? (d['images'] as List).length : 0;
+        final imageCount = d['images'] is List
+            ? (d['images'] as List).length
+            : 0;
         final hasPdf = (d['pdfUrl'] ?? '').toString().isNotEmpty;
 
         return Card(

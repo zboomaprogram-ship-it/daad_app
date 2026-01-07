@@ -161,7 +161,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Navigator.canPop(context) ? GlassBackButton() : null,
+        leading: Navigator.canPop(context) ? const GlassBackButton() : null,
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -173,7 +173,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
                   SizedBox(height: 20.h),
@@ -216,7 +216,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                       });
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
                       ),
@@ -285,7 +285,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
                         'ادخل لينكات المنصات الخاصة بك',
                         style: TextStyle(
@@ -414,7 +414,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           // Input Field
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 textAlign: TextAlign.right,
                 style: TextStyle(

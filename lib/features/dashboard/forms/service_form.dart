@@ -27,21 +27,28 @@ Future<void> openServiceForm(
   final featuresCsv = TextEditingController(
     text:
         (data['priceTiers'] is List &&
-                data['priceTiers'].isNotEmpty &&
-                data['priceTiers'][0]['features'] is List)
-            ? (data['priceTiers'][0]['features'] as List).join(',')
-            : '',
+            data['priceTiers'].isNotEmpty &&
+            data['priceTiers'][0]['features'] is List)
+        ? (data['priceTiers'][0]['features'] as List).join(',')
+        : '',
   );
 
-  List<String> uploadedImages =
-      data['images'] != null ? List<String>.from(data['images']) : [];
+  List<String> uploadedImages = data['images'] != null
+      ? List<String>.from(data['images'])
+      : [];
 
   bool isActive = (data['isActive'] ?? true) as bool;
   final orderCtrl = TextEditingController(
     text: (data['order'] ?? 1).toString(),
   );
 
-  final categoryOptions = ['main', 'المجال الطبي', 'إنشاء المتاجر', 'التجارة الإلكترونية', 'مطاعم'];
+  final categoryOptions = [
+    'main',
+    'المجال الطبي',
+    'إنشاء المتاجر',
+    'التجارة الإلكترونية',
+    'مطاعم',
+  ];
   String selectedCategory = data['category'] ?? 'main';
 
   // ✅ Notification switch
@@ -63,74 +70,96 @@ Future<void> openServiceForm(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-             AppText(title:
-                isEdit ? 'تعديل خدمة' : 'إضافة خدمة',
-       
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-            
+              AppText(
+                title: isEdit ? 'تعديل خدمة' : 'إضافة خدمة',
+
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 12.h
-),
+              SizedBox(height: 12.h),
 
               LabeledField(label: 'العنوان (عربي)', controller: titleAr),
-              LabeledField(label: 'الوصف (عربي)', controller: descAr, maxLines: 3),
+              LabeledField(
+                label: 'الوصف (عربي)',
+                controller: descAr,
+                maxLines: 3,
+              ),
 
               // ✅ Category
               DropdownButtonFormField<String>(
-                value: selectedCategory,
+                initialValue: selectedCategory,
                 onChanged: (v) => setModalState(() => selectedCategory = v!),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 items: categoryOptions
-                    .map((cat) => DropdownMenuItem(value: cat, child: AppText(title:cat)))
+                    .map(
+                      (cat) => DropdownMenuItem(
+                        value: cat,
+                        child: AppText(title: cat),
+                      ),
+                    )
                     .toList(),
               ),
 
-              SizedBox(height: 8.h
-),
+              SizedBox(height: 8.h),
 
               // ✅ Upload images
               ElevatedButton.icon(
-                
                 onPressed: () async {
-    final images = await ImagePicker().pickMultiImage();
-    if (images.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: AppText(title: 'جاري رفع الصور...')),
-      );
+                  final images = await ImagePicker().pickMultiImage();
+                  if (images.isNotEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: AppText(title: 'جاري رفع الصور...'),
+                      ),
+                    );
 
-      try {
-        // Upload to WordPress instead of Cloudinary
-        final wordPressUrls = await WordPressMediaService.uploadMultipleImages(images);
-        
-        if (wordPressUrls.isNotEmpty) {
-          setModalState(() => uploadedImages.addAll(wordPressUrls));
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: AppText(title: "تم رفع ${wordPressUrls.length} صورة")),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: AppText(title: 'فشل رفع الصور')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: AppText(title: 'خطأ في رفع الصور: $e')),
-        );
-      }
-    }
-  },
+                    try {
+                      // Upload to WordPress instead of Cloudinary
+                      final wordPressUrls =
+                          await WordPressMediaService.uploadMultipleImages(
+                            images,
+                          );
+
+                      if (wordPressUrls.isNotEmpty) {
+                        setModalState(
+                          () => uploadedImages.addAll(wordPressUrls),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: AppText(
+                              title: "تم رفع ${wordPressUrls.length} صورة",
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: AppText(title: 'فشل رفع الصور'),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: AppText(title: 'خطأ في رفع الصور: $e'),
+                        ),
+                      );
+                    }
+                  }
+                },
                 icon: const Icon(Icons.add_photo_alternate),
-                label: const AppText(title:'اختيار صور',),
+                label: const AppText(title: 'اختيار صور'),
               ),
 
               if (uploadedImages.isNotEmpty)
                 SizedBox(
-                  height: 120.h
-,
+                  height: 120.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: uploadedImages.length,
@@ -140,10 +169,8 @@ Future<void> openServiceForm(
                         children: [
                           Image.network(
                             uploadedImages[i],
-                            height: 100.h
-,
-                            width: 100.w
-,
+                            height: 100.h,
+                            width: 100.w,
                             fit: BoxFit.cover,
                           ),
                           Positioned(
@@ -151,51 +178,64 @@ Future<void> openServiceForm(
                             top: 0,
                             child: IconButton(
                               icon: const Icon(Icons.cancel, color: Colors.red),
-                              onPressed: () =>
-                                  setModalState(() => uploadedImages.removeAt(i)),
+                              onPressed: () => setModalState(
+                                () => uploadedImages.removeAt(i),
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-              LabeledField(label: 'الترتيب', controller: orderCtrl, keyboardType: TextInputType.number),
+              LabeledField(
+                label: 'الترتيب',
+                controller: orderCtrl,
+                keyboardType: TextInputType.number,
+              ),
               SwitchListTile(
-                title: const AppText(title:'مُفعل', ),
+                title: const AppText(title: 'مُفعل'),
                 value: isActive,
                 onChanged: (v) => setModalState(() => isActive = v),
               ),
 
               // ✅ Pricing inputs
-              LabeledField(label: 'السعر', controller: priceCtrl, keyboardType: TextInputType.number),
-              LabeledField(label: 'المميزات (مفصولة بفواصل)', controller: featuresCsv),
+              LabeledField(
+                label: 'السعر',
+                controller: priceCtrl,
+                keyboardType: TextInputType.number,
+              ),
+              LabeledField(
+                label: 'المميزات (مفصولة بفواصل)',
+                controller: featuresCsv,
+              ),
 
-              SizedBox(height: 10.h
-),
+              SizedBox(height: 10.h),
 
               // ✅ Notification toggle
               SwitchListTile(
-                title: const AppText(title:'إرسال إشعار للعملاء',  ),
-                subtitle: const AppText(title:'تنبيه المستخدمين بشأن الخدمة',  ),
+                title: const AppText(title: 'إرسال إشعار للعملاء'),
+                subtitle: const AppText(title: 'تنبيه المستخدمين بشأن الخدمة'),
                 value: sendNotification,
                 onChanged: (v) => setModalState(() => sendNotification = v),
-                activeColor: Colors.greenAccent,
+                activeThumbColor: Colors.greenAccent,
               ),
 
-              SizedBox(height: 10.h
-),
+              SizedBox(height: 10.h),
 
               ElevatedButton.icon(
                 icon: const Icon(Icons.save),
-                label: AppText(title:isEdit ? 'حفظ التعديلات' : 'إضافة' ,),
+                label: AppText(title: isEdit ? 'حفظ التعديلات' : 'إضافة'),
                 onPressed: () async {
                   final price = double.tryParse(priceCtrl.text.trim());
                   final order = int.tryParse(orderCtrl.text.trim()) ?? 1;
                   final features = featuresCsv.text.trim().isEmpty
                       ? <String>[]
-                      : featuresCsv.text.split(',').map((e) => e.trim()).toList();
+                      : featuresCsv.text
+                            .split(',')
+                            .map((e) => e.trim())
+                            .toList();
 
                   final body = {
                     'title': titleAr.text.trim(),
@@ -205,7 +245,11 @@ Future<void> openServiceForm(
                     'order': order,
                     'category': selectedCategory,
                     'priceTiers': [
-                      {'name': 'Basic', 'price': price ?? 0, 'features': features}
+                      {
+                        'name': 'Basic',
+                        'price': price ?? 0,
+                        'features': features,
+                      },
                     ],
                     'updatedAt': FieldValue.serverTimestamp(),
                     'sendNotification': sendNotification,
@@ -217,7 +261,8 @@ Future<void> openServiceForm(
                   showDialog(
                     barrierDismissible: false,
                     context: context,
-                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
                   );
 
                   try {
@@ -235,11 +280,17 @@ Future<void> openServiceForm(
                         deepLink: DeepLinkHandler.serviceLink(doc!.id),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content:AppText(title:'✅ تم حفظ الخدمة وإرسال الإشعار')),
+                        const SnackBar(
+                          content: AppText(
+                            title: '✅ تم حفظ الخدمة وإرسال الإشعار',
+                          ),
+                        ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: AppText(title:'✅ تم حفظ الخدمة')),
+                        const SnackBar(
+                          content: AppText(title: '✅ تم حفظ الخدمة'),
+                        ),
                       );
                     }
 
@@ -248,7 +299,7 @@ Future<void> openServiceForm(
                   } catch (e) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: AppText(title:'خطأ: $e')),
+                      SnackBar(content: AppText(title: 'خطأ: $e')),
                     );
                   }
                 },

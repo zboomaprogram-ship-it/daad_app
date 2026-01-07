@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
@@ -37,7 +36,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploadingImage = false;
-  bool _isUpdatingField = false;
+  final bool _isUpdatingField = false;
 
   TextEditingController? _nameController;
   TextEditingController? _phoneController;
@@ -83,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         source: ImageSource.gallery,
         imageQuality: 70,
       );
-      
+
       if (image == null) return;
 
       setState(() => _isUploadingImage = true);
@@ -329,7 +328,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: Colors.white.withOpacity(0.45),
             fontSize: 13,
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
     );
@@ -359,14 +358,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           centerTitle: true,
           actions: [
             Padding(
-              padding: EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.only(left: 8),
               child: GlassIconButton(
                 icon: Icons.edit_rounded,
                 onPressed: () => RouteUtils.push(EditProfileScreen()),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15),
               child: GlassIconButton(
                 icon: Icons.logout_rounded,
                 onPressed: _confirmLogout,
@@ -438,7 +437,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                         child: Column(
                           children: [
                             SizedBox(height: 20.h),
@@ -517,7 +516,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             // شريط نقاط الولاء
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 14,
                                 vertical: 8,
                               ),
@@ -571,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 8,
                         ),
@@ -637,7 +636,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 0,
                           ),
@@ -679,7 +678,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SliverToBoxAdapter(child: _buildSectionHeader('التفاعلات')),
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 0,
                         ),
@@ -719,7 +718,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // bottom buttons
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(24, 28, 24, 12),
+                        padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
                         child: Column(
                           children: [
                             _buildBottomButton(
@@ -761,8 +760,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(height: 10.h),
                               _buildBottomButton(
                                 text: 'لوحة التحكم',
-                                onTap: () =>
-                                    RouteUtils.push(const SalesDashboardScreen()),
+                                onTap: () => RouteUtils.push(
+                                  const SalesDashboardScreen(),
+                                ),
                               ),
                             ],
                             SizedBox(height: 16.h),
@@ -814,7 +814,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ---------- Widgets ----------
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(32, 24, 32, 12),
+      padding: const EdgeInsets.fromLTRB(32, 24, 32, 12),
       child: Column(
         children: [
           AppText(
@@ -836,7 +836,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return Container(
       height: 46.h,
-      margin: EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(14.r),
@@ -859,7 +859,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: Colors.white.withOpacity(0.45),
             fontSize: 12.sp,
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 0,
+          ),
         ),
       ),
     );
@@ -875,7 +878,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Container(
         height: 48.h,
-        margin: EdgeInsets.symmetric(vertical: 6),
+        margin: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(14.r),
@@ -914,14 +917,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: onTap,
       child: Container(
         height: 46.h,
-        margin: EdgeInsets.symmetric(vertical: 6),
+        margin: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: Colors.white.withOpacity(0.22), width: 1.w),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1032,7 +1035,7 @@ class _GlassDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 18),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(18.r),
         child: BackdropFilter(

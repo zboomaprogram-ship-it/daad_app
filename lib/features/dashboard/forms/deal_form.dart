@@ -5,13 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/labeled_field.dart';
 
-Future<void> showDealForm(
-  BuildContext context, {
-  DocumentSnapshot? doc,
-}) async {
+Future<void> showDealForm(BuildContext context, {DocumentSnapshot? doc}) async {
   final isEdit = doc != null;
   final data = (doc?.data() as Map<String, dynamic>?) ?? {};
-  
+
   final labelCtrl = TextEditingController(text: data['label'] ?? '');
   final codeCtrl = TextEditingController(text: data['code'] ?? '');
   final discountCtrl = TextEditingController(
@@ -20,7 +17,7 @@ Future<void> showDealForm(
   final weightCtrl = TextEditingController(
     text: (data['weight'] ?? 1).toString(),
   );
-  
+
   bool isActive = (data['isActive'] ?? true) as bool;
   DateTime? startsAt = (data['startsAt'] is Timestamp)
       ? (data['startsAt'] as Timestamp).toDate()
@@ -44,15 +41,13 @@ Future<void> showDealForm(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppText(title:
-                isEdit ? 'تعديل عرض' : 'إضافة عرض',
-                
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-          
+              AppText(
+                title: isEdit ? 'تعديل عرض' : 'إضافة عرض',
+
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               LabeledField(label: 'التسمية', controller: labelCtrl),
               LabeledField(label: 'كود الخصم', controller: codeCtrl),
               LabeledField(
@@ -66,7 +61,7 @@ Future<void> showDealForm(
                 keyboardType: TextInputType.number,
               ),
               SwitchListTile(
-                title: AppText(title:'مفعل'),
+                title: const AppText(title: 'مفعل'),
                 value: isActive,
                 onChanged: (v) => setModalState(() => isActive = v),
               ),
@@ -76,11 +71,11 @@ Future<void> showDealForm(
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.calendar_today),
-                      label: AppText(title:
-                        startsAt == null
+                      label: AppText(
+                        title: startsAt == null
                             ? 'تاريخ البداية'
-                            : 'من: ${startsAt!.toString().split(' ')[0]}'
-                            ,color: AppColors.primaryColor,
+                            : 'من: ${startsAt!.toString().split(' ')[0]}',
+                        color: AppColors.primaryColor,
                       ),
                       onPressed: () async {
                         final picked = await showDatePicker(
@@ -95,13 +90,12 @@ Future<void> showDealForm(
                       },
                     ),
                   ),
-                    SizedBox(width: 8.w
-),
+                  SizedBox(width: 8.w),
                   Expanded(
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.calendar_today),
-                      label:AppText(title:
-                        endsAt == null
+                      label: AppText(
+                        title: endsAt == null
                             ? 'تاريخ النهاية'
                             : 'إلى: ${endsAt!.toString().split(' ')[0]}',
                       ),
@@ -120,8 +114,7 @@ Future<void> showDealForm(
                   ),
                 ],
               ),
-              SizedBox(height: 16.h
-),
+              SizedBox(height: 16.h),
               ElevatedButton.icon(
                 onPressed: () async {
                   final body = {
@@ -130,16 +123,18 @@ Future<void> showDealForm(
                     'discountPercent': double.tryParse(discountCtrl.text) ?? 0,
                     'weight': int.tryParse(weightCtrl.text) ?? 1,
                     'isActive': isActive,
-                    'startsAt': startsAt != null 
-                        ? Timestamp.fromDate(startsAt!) 
+                    'startsAt': startsAt != null
+                        ? Timestamp.fromDate(startsAt!)
                         : null,
-                    'endsAt': endsAt != null 
-                        ? Timestamp.fromDate(endsAt!) 
+                    'endsAt': endsAt != null
+                        ? Timestamp.fromDate(endsAt!)
                         : null,
                     'updatedAt': FieldValue.serverTimestamp(),
                   };
 
-                  final col = FirebaseFirestore.instance.collection('deals_wheel');
+                  final col = FirebaseFirestore.instance.collection(
+                    'deals_wheel',
+                  );
                   if (isEdit) {
                     await col.doc(doc.id).set(body, SetOptions(merge: true));
                   } else {
@@ -150,12 +145,19 @@ Future<void> showDealForm(
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: AppText(title:isEdit ? 'تم التحديث' : 'تم الإضافة')),
+                      SnackBar(
+                        content: AppText(
+                          title: isEdit ? 'تم التحديث' : 'تم الإضافة',
+                        ),
+                      ),
                     );
                   }
                 },
                 icon: const Icon(Icons.save),
-                label: AppText(title:isEdit ? 'حفظ' : 'إضافة',color: AppColors.primaryColor,),
+                label: AppText(
+                  title: isEdit ? 'حفظ' : 'إضافة',
+                  color: AppColors.primaryColor,
+                ),
               ),
             ],
           ),

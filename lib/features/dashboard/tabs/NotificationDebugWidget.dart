@@ -181,16 +181,16 @@ class _NotificationDebugWidgetState extends State<NotificationDebugWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText(
+                  const AppText(
                     title: '📋 خطوات الاختبار:',
                     fontWeight: FontWeight.bold,
                   ),
                   SizedBox(height: 8.h),
-                  AppText(title: '1. اضغط على زر "إرسال إشعار تجريبي"'),
-                  AppText(title: '2. اغلق التطبيق أو ضعه في الخلفية'),
-                  AppText(title: '3. يجب أن تستلم الإشعار خلال ثوانٍ'),
+                  const AppText(title: '1. اضغط على زر "إرسال إشعار تجريبي"'),
+                  const AppText(title: '2. اغلق التطبيق أو ضعه في الخلفية'),
+                  const AppText(title: '3. يجب أن تستلم الإشعار خلال ثوانٍ'),
                   SizedBox(height: 8.h),
-                  AppText(
+                  const AppText(
                     title: '💡 ملاحظة: الإشعارات لا تعمل بشكل جيد على المحاكي',
 
                     fontSize: 12,
@@ -224,7 +224,7 @@ class _NotificationDebugWidgetState extends State<NotificationDebugWidget> {
                   color: AppColors.primaryColor,
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                 ),

@@ -7,7 +7,6 @@ import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:daad_app/core/widgets/app_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Add this to your UsersTab PopupMenu
 // PopupMenuItem(
@@ -54,10 +53,7 @@ Future<void> showAssignSalesDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
         backgroundColor: AppColors.secondaryColor.withOpacity(0.95),
-        title: AppText(
-          title: 'تعيين مندوب مبيعات لـ $userName',
-          fontSize: 16,
-        ),
+        title: AppText(title: 'تعيين مندوب مبيعات لـ $userName', fontSize: 16),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -131,7 +127,8 @@ Future<void> showAssignSalesDialog(
                   );
                 } else if (selectedSalesId != null) {
                   // Remove old assignment if exists
-                  if (currentSalesId != null && currentSalesId != selectedSalesId) {
+                  if (currentSalesId != null &&
+                      currentSalesId != selectedSalesId) {
                     await FirebaseService.removeUserFromSales(
                       userId: userId,
                       salesId: currentSalesId,
@@ -193,22 +190,16 @@ class FirebaseService {
     final batch = FirebaseFirestore.instance.batch();
 
     // Update user document
-    batch.update(
-      FirebaseFirestore.instance.collection('users').doc(userId),
-      {
-        'assignedSalesId': salesId,
-        'assignedSalesName': salesName,
-        'assignedAt': FieldValue.serverTimestamp(),
-      },
-    );
+    batch.update(FirebaseFirestore.instance.collection('users').doc(userId), {
+      'assignedSalesId': salesId,
+      'assignedSalesName': salesName,
+      'assignedAt': FieldValue.serverTimestamp(),
+    });
 
     // Update sales document - add to assigned users array
-    batch.update(
-      FirebaseFirestore.instance.collection('users').doc(salesId),
-      {
-        'assignedUsers': FieldValue.arrayUnion([userId]),
-      },
-    );
+    batch.update(FirebaseFirestore.instance.collection('users').doc(salesId), {
+      'assignedUsers': FieldValue.arrayUnion([userId]),
+    });
 
     // Update existing support chat if exists
     final chatQuery = await FirebaseFirestore.instance
@@ -218,13 +209,10 @@ class FirebaseService {
         .get();
 
     if (chatQuery.docs.isNotEmpty) {
-      batch.update(
-        chatQuery.docs.first.reference,
-        {
-          'assignedSalesId': salesId,
-          'assignedSalesName': salesName,
-        },
-      );
+      batch.update(chatQuery.docs.first.reference, {
+        'assignedSalesId': salesId,
+        'assignedSalesName': salesName,
+      });
     }
 
     await batch.commit();
@@ -238,22 +226,16 @@ class FirebaseService {
     final batch = FirebaseFirestore.instance.batch();
 
     // Update user document
-    batch.update(
-      FirebaseFirestore.instance.collection('users').doc(userId),
-      {
-        'assignedSalesId': FieldValue.delete(),
-        'assignedSalesName': FieldValue.delete(),
-        'assignedAt': FieldValue.delete(),
-      },
-    );
+    batch.update(FirebaseFirestore.instance.collection('users').doc(userId), {
+      'assignedSalesId': FieldValue.delete(),
+      'assignedSalesName': FieldValue.delete(),
+      'assignedAt': FieldValue.delete(),
+    });
 
     // Update sales document - remove from assigned users array
-    batch.update(
-      FirebaseFirestore.instance.collection('users').doc(salesId),
-      {
-        'assignedUsers': FieldValue.arrayRemove([userId]),
-      },
-    );
+    batch.update(FirebaseFirestore.instance.collection('users').doc(salesId), {
+      'assignedUsers': FieldValue.arrayRemove([userId]),
+    });
 
     // Update support chat
     final chatQuery = await FirebaseFirestore.instance
@@ -263,13 +245,10 @@ class FirebaseService {
         .get();
 
     if (chatQuery.docs.isNotEmpty) {
-      batch.update(
-        chatQuery.docs.first.reference,
-        {
-          'assignedSalesId': FieldValue.delete(),
-          'assignedSalesName': FieldValue.delete(),
-        },
-      );
+      batch.update(chatQuery.docs.first.reference, {
+        'assignedSalesId': FieldValue.delete(),
+        'assignedSalesName': FieldValue.delete(),
+      });
     }
 
     await batch.commit();
@@ -324,13 +303,10 @@ class FirebaseService {
     final batch = FirebaseFirestore.instance.batch();
 
     // Update user points
-    batch.update(
-      FirebaseFirestore.instance.collection('users').doc(userId),
-      {
-        'points': FieldValue.increment(change),
-        'updatedAt': FieldValue.serverTimestamp(),
-      },
-    );
+    batch.update(FirebaseFirestore.instance.collection('users').doc(userId), {
+      'points': FieldValue.increment(change),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
 
     // Add to points history
     batch.set(
@@ -383,7 +359,7 @@ Future<void> createSupportChat({
 
   if (existingChat.docs.isNotEmpty) {
     chatId = existingChat.docs.first.id;
-    
+
     // Update chat with new message
     await existingChat.docs.first.reference.update({
       'lastMessage': firstMessage,
@@ -393,7 +369,9 @@ Future<void> createSupportChat({
     });
   } else {
     // Create new chat
-    final chatRef = FirebaseFirestore.instance.collection('support_chats').doc();
+    final chatRef = FirebaseFirestore.instance
+        .collection('support_chats')
+        .doc();
     chatId = chatRef.id;
 
     await chatRef.set({
@@ -420,10 +398,10 @@ Future<void> createSupportChat({
       .doc(chatId)
       .collection('messages')
       .add({
-    'text': firstMessage,
-    'senderId': userId,
-    'isFromAdmin': false,
-    'timestamp': FieldValue.serverTimestamp(),
-    'isRead': false,
-  });
+        'text': firstMessage,
+        'senderId': userId,
+        'isFromAdmin': false,
+        'timestamp': FieldValue.serverTimestamp(),
+        'isRead': false,
+      });
 }

@@ -119,7 +119,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       children: [
         SizedBox(height: 16.h),
         Container(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           height: 65.h,
           width: 65.w,
           decoration: BoxDecoration(
@@ -191,7 +191,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.folder_open_rounded, color: Colors.white, size: 64),
+              const Icon(
+                Icons.folder_open_rounded,
+                color: Colors.white,
+                size: 64,
+              ),
               SizedBox(height: 16.h),
               const AppText(
                 title: 'لا توجد أعمال في هذا القطاع',
@@ -249,11 +253,7 @@ class IndustryCard extends StatelessWidget {
   final IndustryCategory category;
   final VoidCallback onTap;
 
-  const IndustryCard({
-    super.key,
-    required this.category,
-    required this.onTap,
-  });
+  const IndustryCard({super.key, required this.category, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -278,11 +278,7 @@ class IndustryCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(14.r),
                   decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: Image.asset(
-                    category.image,
-                    height: 50.h,
-                    width: 50.w,
-                  ),
+                  child: Image.asset(category.image, height: 50.h, width: 50.w),
                 ),
                 SizedBox(height: 14.h),
                 AppText(
@@ -294,14 +290,17 @@ class IndustryCard extends StatelessWidget {
                 SizedBox(height: 10.h),
                 Divider(
                   height: 1.h,
-                  color: const Color(0xffDFD8BC2B).withOpacity(0.17),
+                  color: const Color(0xffdfd8bc2b).withOpacity(0.17),
                   thickness: 1.03,
                   indent: 50,
                   endIndent: 50,
                 ),
                 SizedBox(height: 10.h),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryTextColor,
                     borderRadius: BorderRadius.circular(18.r),
@@ -348,7 +347,9 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
   void initState() {
     super.initState();
     _likedBy = List<String>.from(widget.portfolioData['likedBy'] ?? []);
-    _bookmarkedBy = List<String>.from(widget.portfolioData['bookmarkedBy'] ?? []);
+    _bookmarkedBy = List<String>.from(
+      widget.portfolioData['bookmarkedBy'] ?? [],
+    );
     _views = (widget.portfolioData['views'] is num)
         ? (widget.portfolioData['views'] as num).toInt()
         : 0;
@@ -440,7 +441,7 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
 
   Future<void> _openPdf(BuildContext context) async {
     final pdfUrl = (widget.portfolioData['pdfUrl'] ?? '').toString();
-    
+
     if (pdfUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -454,7 +455,8 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
     // Track recently viewed
     try {
       String imageUrl = '';
-      final images = widget.portfolioData['images'] ?? widget.portfolioData['imageUrl'];
+      final images =
+          widget.portfolioData['images'] ?? widget.portfolioData['imageUrl'];
       if (images is List && images.isNotEmpty) {
         imageUrl = images.first.toString();
       } else if (images != null) {
@@ -469,7 +471,10 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
         body: widget.portfolioData['body'] ?? '',
         additionalData: {
           'pdfUrl': pdfUrl,
-          'industry': widget.portfolioData['subtitle'] ?? widget.portfolioData['industry'] ?? '',
+          'industry':
+              widget.portfolioData['subtitle'] ??
+              widget.portfolioData['industry'] ??
+              '',
         },
       );
     } catch (e) {
@@ -490,11 +495,13 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
         final snap = await transaction.get(docRef);
         if (!snap.exists) return;
 
-        final data = (snap.data() as Map<String, dynamic>?) ?? {};
-        final int currentViews =
-            (data['views'] is num) ? (data['views'] as num).toInt() : 0;
-        final List<dynamic> viewedBy =
-            List<dynamic>.from(data['viewedBy'] ?? []);
+        final data = snap.data() ?? {};
+        final int currentViews = (data['views'] is num)
+            ? (data['views'] as num).toInt()
+            : 0;
+        final List<dynamic> viewedBy = List<dynamic>.from(
+          data['viewedBy'] ?? [],
+        );
 
         if (!viewedBy.contains(uid)) {
           shouldIncreaseLocalViews = true;
@@ -530,7 +537,8 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
     final isLiked = _likedBy.contains(currentUid);
     final isBookmarked = _bookmarkedBy.contains(currentUid);
 
-    final imageData = widget.portfolioData['images'] ??
+    final imageData =
+        widget.portfolioData['images'] ??
         widget.portfolioData['imageUrl'] ??
         kDefaultImage;
 
@@ -553,7 +561,9 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20.r),
+                  ),
                   child: SizedBox(
                     height: 250.h,
                     width: double.infinity,
@@ -567,23 +577,33 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        title: (widget.portfolioData['title'] ?? 'عنوان العمل').toString(),
+                        title: (widget.portfolioData['title'] ?? 'عنوان العمل')
+                            .toString(),
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 6.h),
-                      if ((widget.portfolioData['subtitle'] ?? widget.portfolioData['industry'] ?? '').toString().isNotEmpty) ...[
+                      if ((widget.portfolioData['subtitle'] ??
+                              widget.portfolioData['industry'] ??
+                              '')
+                          .toString()
+                          .isNotEmpty) ...[
                         AppText(
-                          title: (widget.portfolioData['subtitle'] ?? widget.portfolioData['industry'] ?? '').toString(),
+                          title:
+                              (widget.portfolioData['subtitle'] ??
+                                      widget.portfolioData['industry'] ??
+                                      '')
+                                  .toString(),
                           fontSize: 12,
                           color: AppColors.secondaryTextColor,
                         ),
                         SizedBox(height: 6.h),
                       ],
                       AppText(
-                        title: (widget.portfolioData['body'] ?? 'محتوى العمل').toString(),
+                        title: (widget.portfolioData['body'] ?? 'محتوى العمل')
+                            .toString(),
                         fontSize: 11,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -599,7 +619,9 @@ class _LargePortfolioCardState extends State<LargePortfolioCard> {
                           ),
                           SizedBox(width: 40.w),
                           _buildStatItem(
-                            icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                            icon: isLiked
+                                ? Icons.favorite
+                                : Icons.favorite_border,
                             count: _likedBy.length,
                             onTap: _toggleLike,
                           ),
