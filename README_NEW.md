@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>شريكك الرقمي في التعلم، التطوير، والأمان التجاري</strong><br>
-  Your Digital Partner in Learning, Development & Business Security
+  Your Digital Partner in Learning, Development & Business Security,
 </p>
 
 <p align="center">

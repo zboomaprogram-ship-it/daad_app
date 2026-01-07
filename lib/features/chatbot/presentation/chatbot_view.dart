@@ -1036,7 +1036,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   bool _servicesLoaded = false;
 
   ChatBotPersona? _persona;
-
   @override
   void initState() {
     super.initState();
