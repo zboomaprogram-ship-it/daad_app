@@ -58,8 +58,8 @@ class GlassIconButton extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          width: 40.w,
-          height: 40.h,
+          width: 38.w,
+          height: 38.h,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [

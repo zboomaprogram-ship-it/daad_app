@@ -229,7 +229,7 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.secondaryColor.withOpacity(0.95),
-        title: const AppText(title: 'اختر مندوب المبيعات'),
+        title: const AppText(title: 'اختر دعم فني'),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -554,12 +554,38 @@ class _SupportChatsTabState extends State<SupportChatsTab> {
   String _formatTime(Timestamp timestamp) {
     final date = timestamp.toDate();
     final now = DateTime.now();
-    if (date.day == now.day &&
-        date.month == now.month &&
-        date.year == now.year) {
-      return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final messageDate = DateTime(date.year, date.month, date.day);
+
+    // Format time in 12-hour with AM/PM
+    final hour = date.hour == 0
+        ? 12
+        : (date.hour > 12 ? date.hour - 12 : date.hour);
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'م' : 'ص'; // ص = AM, م = PM in Arabic
+    final timeStr = '$hour:$minute $period';
+
+    if (messageDate == today) {
+      return 'اليوم $timeStr';
+    } else if (messageDate == yesterday) {
+      return 'أمس $timeStr';
+    } else if (now.difference(date).inDays < 7) {
+      // Within last week - show day name
+      final dayNames = [
+        'الأحد',
+        'الإثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة',
+        'السبت',
+      ];
+      return '${dayNames[date.weekday % 7]} $timeStr';
+    } else {
+      // Older - show date
+      return '${date.day}/${date.month}/${date.year} $timeStr';
     }
-    return '${date.day}/${date.month}/${date.year}';
   }
 }
 
@@ -1279,7 +1305,37 @@ class _MessageBubble extends StatelessWidget {
 
   String _formatTime(Timestamp? t) {
     if (t == null) return '';
-    final d = t.toDate();
-    return "${d.hour}:${d.minute.toString().padLeft(2, '0')}";
+    final date = t.toDate();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final messageDate = DateTime(date.year, date.month, date.day);
+
+    // Format time in 12-hour with AM/PM
+    final hour = date.hour == 0
+        ? 12
+        : (date.hour > 12 ? date.hour - 12 : date.hour);
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'م' : 'ص';
+    final timeStr = '$hour:$minute $period';
+
+    if (messageDate == today) {
+      return 'اليوم $timeStr';
+    } else if (messageDate == yesterday) {
+      return 'أمس $timeStr';
+    } else if (now.difference(date).inDays < 7) {
+      final dayNames = [
+        'الأحد',
+        'الإثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة',
+        'السبت',
+      ];
+      return '${dayNames[date.weekday % 7]} $timeStr';
+    } else {
+      return '${date.day}/${date.month}/${date.year} $timeStr';
+    }
   }
 }

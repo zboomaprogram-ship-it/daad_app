@@ -57,16 +57,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
-  // FIXED: Make phone optional - no validation error if empty
+  // Phone is now required and must be a Saudi Arabian number
   String? _validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return null; // Phone is now optional
+      return 'الرجاء إدخال رقم الهاتف';
     }
-    final phoneRegex = RegExp(r'^[0-9]{10,15}$');
-    if (!phoneRegex.hasMatch(
-      value.trim().replaceAll(RegExp(r'[\s\-\(\)]'), ''),
-    )) {
-      return 'رقم الهاتف غير صحيح';
+
+    // Remove spaces, dashes, and parentheses
+    String cleanPhone = value.trim().replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
+
+    // Saudi phone validation:
+    // - Starts with 966 (country code without +) followed by 5 and 8 digits = 12 digits total
+    // - Or starts with 05 followed by 8 digits = 10 digits total
+    // - Or starts with 5 followed by 8 digits = 9 digits total
+
+    final saudiWithCountryCode = RegExp(r'^966[5][0-9]{8}$'); // 9665XXXXXXXX
+    final saudiWithZero = RegExp(r'^0[5][0-9]{8}$'); // 05XXXXXXXX
+    final saudiWithoutZero = RegExp(r'^[5][0-9]{8}$'); // 5XXXXXXXX
+
+    if (!saudiWithCountryCode.hasMatch(cleanPhone) &&
+        !saudiWithZero.hasMatch(cleanPhone) &&
+        !saudiWithoutZero.hasMatch(cleanPhone)) {
+      return 'الرجاء إدخال رقم هاتف سعودي صحيح (مثال: 05XXXXXXXX)';
     }
     return null;
   }
@@ -117,15 +129,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final user = await AuthService.signUpWithEmailPassword(email, password);
 
       if (user != null) {
-        // FIXED: Only save phone if provided
-        final phoneValue = _phoneController.text.trim();
-
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'name': _nameController.text.trim(),
           'email': email,
-          if (phoneValue.isNotEmpty)
-            'phone': phoneValue, // Only add if not empty
+          'phone': _phoneController.text.trim(), // Required field
           'role': _role,
           'points': 0,
           'emailVerified': false,
@@ -231,10 +239,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     SizedBox(height: 16.h),
 
-                    // FIXED: Added "(اختياري)" to label
+                    // Phone is required - Saudi number
                     GlassTextField(
                       controller: _phoneController,
-                      label: 'رقم الهاتف (اختياري)',
+                      label: 'رقم الهاتف (سعودي)',
                       icon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
                       validator: _validatePhone,

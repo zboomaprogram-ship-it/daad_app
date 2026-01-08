@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daad_app/core/images_picker_grid.dart'; // Keep your imports
 import 'package:daad_app/core/utils/app_colors/app_colors.dart';
 import 'package:daad_app/core/utils/notification_utils/notification_utils.dart';
-import 'package:daad_app/core/utils/services/deep_link_handler.dart';
 import 'package:daad_app/features/contact/voice_message_bubble.dart';
 import 'package:daad_app/features/contact/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -258,6 +257,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
   StreamSubscription<QuerySnapshot>? _messagesSubscription;
   final List<Map<String, dynamic>> _messages = [];
+  String? _assignedSalesName; // For call button
   @override
   void initState() {
     super.initState();
@@ -314,6 +314,15 @@ class _UserChatScreenState extends State<UserChatScreen> {
         _chatId = existingChat.docs.first.id;
         final chatData = existingChat.docs.first.data();
         _assignedSalesId = chatData['assignedSalesId'];
+
+        // Get assigned sales name for call
+        if (_assignedSalesId != null) {
+          final salesDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(_assignedSalesId)
+              .get();
+          _assignedSalesName = salesDoc.data()?['name'] ?? 'دعم فني';
+        }
 
         await _markMessagesAsRead();
         await _loadInitialMessages();
@@ -751,29 +760,40 @@ class _UserChatScreenState extends State<UserChatScreen> {
           .doc(user.uid)
           .get();
       final userName = userDoc.data()?['name'] ?? 'مستخدم';
+
+      // ✅ FIXED: Query by 'role' field not 'isAdmin'
       final admins = await FirebaseFirestore.instance
           .collection('users')
-          .where('isAdmin', isEqualTo: true)
+          .where('role', isEqualTo: 'admin')
           .limit(10)
           .get();
+
+      // Notify all admins
       for (final admin in admins.docs) {
         await NotificationService.sendNotification(
           title: '💬 رسالة جديدة من $userName',
           body: messageText,
           userId: admin.id,
-          deepLink: DeepLinkHandler.adminSupportLink(),
+          deepLink: 'chat/${user.uid}',
         );
       }
-      if (_assignedSalesId != null) {
-        await NotificationService.sendNotification(
-          title: '💬 رسالة جديدة من $userName',
-          body: messageText,
-          userId: _assignedSalesId!,
-          deepLink: DeepLinkHandler.supportLink(),
+
+      // Notify assigned sales (if exists and not already an admin)
+      if (_assignedSalesId != null && _assignedSalesId!.isNotEmpty) {
+        final isAlreadyNotified = admins.docs.any(
+          (doc) => doc.id == _assignedSalesId,
         );
+        if (!isAlreadyNotified) {
+          await NotificationService.sendNotification(
+            title: '💬 رسالة جديدة من $userName',
+            body: messageText,
+            userId: _assignedSalesId!,
+            deepLink: 'chat/${user.uid}',
+          );
+        }
       }
     } catch (e) {
-      print(e);
+      print('❌ Error notifying admin/sales: $e');
     }
   }
 
@@ -805,6 +825,17 @@ class _UserChatScreenState extends State<UserChatScreen> {
           'الدعم الفني',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        // actions: [
+        //   // Voice Call Button - only show if sales agent is assigned
+        //   if (_assignedSalesId != null)
+        //     Padding(
+        //       padding: EdgeInsets.only(left: 12.w),
+        //       child: CallButton(
+        //         receiverId: _assignedSalesId!,
+        //         receiverName: 'دعم فني',
+        //       ),
+        //     ),
+        // ],
       ),
       body: Directionality(
         textDirection: TextDirection.rtl,
@@ -1162,7 +1193,6 @@ class _UserChatScreenState extends State<UserChatScreen> {
     );
   }
 }
-
 // ============================================
 // 3. MESSAGE BUBBLE WITH SWIPE & LONG PRESS REPLY
 // ============================================
@@ -1246,7 +1276,7 @@ class _MessageBubble extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(
-                                '💼 مندوب المبيعات',
+                                ' دعم فني',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
@@ -1567,11 +1597,37 @@ class _MessageBubble extends StatelessWidget {
   String _formatTime(Timestamp timestamp) {
     final date = timestamp.toDate();
     final now = DateTime.now();
-    if (date.day == now.day &&
-        date.month == now.month &&
-        date.year == now.year) {
-      return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final messageDate = DateTime(date.year, date.month, date.day);
+
+    // Format time in 12-hour with AM/PM
+    final hour = date.hour == 0
+        ? 12
+        : (date.hour > 12 ? date.hour - 12 : date.hour);
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'م' : 'ص'; // ص = AM, م = PM in Arabic
+    final timeStr = '$hour:$minute $period';
+
+    if (messageDate == today) {
+      return 'اليوم $timeStr';
+    } else if (messageDate == yesterday) {
+      return 'أمس $timeStr';
+    } else if (now.difference(date).inDays < 7) {
+      // Within last week - show day name
+      final dayNames = [
+        'الأحد',
+        'الإثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة',
+        'السبت',
+      ];
+      return '${dayNames[date.weekday % 7]} $timeStr';
+    } else {
+      // Older - show date
+      return '${date.day}/${date.month}/${date.year} $timeStr';
     }
-    return '${date.day}/${date.month} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

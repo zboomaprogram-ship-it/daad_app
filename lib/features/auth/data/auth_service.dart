@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:daad_app/core/utils/services/debug_logger.dart';
+import 'package:daad_app/core/utils/notification_utils/notification_utils.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,6 +25,9 @@ class AuthService {
           await signOut();
           return null;
         }
+
+        // ✅ Register user with OneSignal for push notifications
+        await NotificationService.setExternalUserId(userCredential.user!.uid);
       }
 
       return userCredential.user;
@@ -41,6 +45,12 @@ class AuthService {
     try {
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
+
+      // ✅ Register user with OneSignal for push notifications
+      if (userCredential.user != null) {
+        await NotificationService.setExternalUserId(userCredential.user!.uid);
+      }
+
       return userCredential.user;
     } catch (e) {
       DebugLogger.error('Error signing up', e);

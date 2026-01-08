@@ -11,14 +11,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // ✅ Only initialize Firebase - let other services load asynchronously
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   // ✅ Start app immediately - initialize services in background
   runApp(const LifeCycleWatcher(child: ProviderScope(child: DaadRoot())));
   // ✅ Initialize other services asynchronously (non-blocking)
@@ -28,10 +27,12 @@ Future<void> main() async {
 /// Initialize services in background without blocking app startup
 Future<void> _initializeServicesInBackground() async {
   try {
-    // Start all initializations in parallel
+    // ✅ STEP 1: Initialize SecureConfig FIRST (has the API keys)
+    await _initializeSecureConfig();
+
+    // ✅ STEP 2: Initialize services that depend on SecureConfig
     await Future.wait([
-      _initializeSecureConfig(),
-      _initializeNotifications(),
+      _initializeNotifications(), // Needs OneSignal App ID from SecureConfig
       _initializeRemoteConfig(),
       _initializeHiveCache(),
     ]);
@@ -72,9 +73,30 @@ Future<void> _initializeNotifications() async {
       },
     );
 
+    // ✅ Auto-register existing logged-in users with OneSignal
+    await _registerExistingUserWithOneSignal();
+
     DebugLogger.success('Notifications initialized');
   } catch (e) {
     DebugLogger.warning('Notification initialization failed: $e');
+  }
+}
+
+/// ✅ Register existing logged-in user with OneSignal on EVERY app start
+/// This ensures all existing production users get registered without logout
+Future<void> _registerExistingUserWithOneSignal() async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    DebugLogger.info(
+      '🔄 Registering existing user with OneSignal: ${user.uid}',
+    );
+
+    // Register and save player_id to Firestore
+    await NotificationService.setExternalUserId(user.uid);
+  } catch (e) {
+    DebugLogger.warning('Failed to register existing user with OneSignal: $e');
   }
 }
 

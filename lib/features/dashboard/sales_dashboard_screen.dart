@@ -48,20 +48,10 @@ class _SalesDashboardScreenState extends State<SalesDashboardScreen>
 
           isScrollable: true,
           tabs: const [
-            // Tab(icon: Icon(Icons.settings,color: AppColors.textColor,), text: 'إعدادات',),
-            // Tab(icon: Icon(Icons.design_services,color: AppColors.textColor), text: 'الخدمات'),
-            // Tab(icon: Icon(Icons.article,color: AppColors.textColor), text: 'المقالات'),
-            // Tab(icon: Icon(Icons.book,color: AppColors.textColor), text: 'تعلم مع ضاد'),
             Tab(
               icon: Icon(Icons.people, color: AppColors.textColor),
               text: 'المستخدمون',
             ),
-            // Tab(icon: Icon(Icons.edit,color: AppColors.textColor), text: 'مراجعة تغييرات الملف الشخصي'),
-            // Tab(icon: Icon(Icons.access_time,color: AppColors.textColor), text: 'الانشطه'),
-            // Tab(icon: Icon(Icons.present_to_all,color: AppColors.textColor), text: 'الجوايز'),
-            // Tab(icon: Icon(Icons.point_of_sale,color: AppColors.textColor), text: 'point'),
-            // Tab(icon: Icon(Icons.redeem,color: AppColors.textColor), text: 'redeem'),
-            // Tab(icon: Icon(Icons.work,color: AppColors.textColor), text: 'الأعمال'),
             Tab(
               icon: Icon(Icons.message, color: AppColors.textColor),
               text: 'Chats',
@@ -75,21 +65,7 @@ class _SalesDashboardScreenState extends State<SalesDashboardScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          // SettingsTab(),
-          // ServicesTab(),
-          // ArticlesTab(),
-          // LearnTab(),
-          UsersTab(),
-          // ProfileChangesReviewTab(),
-          // ActivitiesTab(),
-          // RewardsTab(),
-          // PointsReviewTab(),
-          // RedeemRequestsTab(),
-          // PortfolioTab(),
-          SupportChatsTab(),
-          NotificationsTab(),
-        ],
+        children: const [UsersTab(), SupportChatsTab(), NotificationsTab()],
       ),
     );
   }

@@ -42,11 +42,16 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>نحتاج إلى إذن الكاميرا لالتقاط صورة ملفك الشخصي ورفعها داخل التطبيق.</string>
+	<string>نحتاج إذن الكاميرا لتصوير إيصالات الدفع وصور أنشطتك لتسجيلها وكسب نقاط الولاء، وكذلك لتحديث صورة ملفك الشخصي.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>نحتاج إلى إذن لحفظ الصور في ألبوم الصور عند طلبك ذلك.</string>
+	<string>نحتاج إذن حفظ الصور لتحميل عقودك واتفاقياتك كصور إلى ألبوم الصور عند طلبك ذلك.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>نحتاج إلى إذن الصور لاختيار ورفع الصور داخل التطبيق.</string>
+	<string>نحتاج الوصول إلى مكتبة الصور لتتمكن من رفع لقطات شاشة لأنشطتك لكسب نقاط الولاء، واختيار صورة ملفك الشخصي.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

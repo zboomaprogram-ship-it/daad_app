@@ -19,14 +19,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
-                                <rect key="frame" x="106" y="292" width="178" height="269"/>
+                            <!-- Background Image - Full Screen -->
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="BKG-01-001">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            </imageView>
+                            <!-- Logo Image - Centered -->
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
+                                <rect key="frame" x="121.5" y="351" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="logo-width"/>
+                                    <constraint firstAttribute="height" constant="150" id="logo-height"/>
+                                </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.16078431372549" green="0.011764705882353" blue="0.094117647058824" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1a2-6s-vTC"/>
-                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="12" id="4X2-HB-R7a"/>
+                            <!-- Background constraints - fill entire view -->
+                            <constraint firstItem="BKG-01-001" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="bkg-top"/>
+                            <constraint firstItem="BKG-01-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bkg-leading"/>
+                            <constraint firstItem="BKG-01-001" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bkg-trailing"/>
+                            <constraint firstItem="BKG-01-001" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="bkg-bottom"/>
+                            <!-- Logo constraints - centered -->
+                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="logo-centerX"/>
+                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="logo-centerY"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,6 +51,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchImage" width="40" height="40"/>
+        <image name="LaunchImage" width="150" height="150"/>
+        <image name="background" width="393" height="852"/>
     </resources>
 </document>

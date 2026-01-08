@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../services/firebase_service.dart';
 import '../services/excel_export_service.dart';
+// import 'package:daad_app/features/calling/data/webrtc_service.dart';
+// import 'package:daad_app/features/calling/presentation/call_screen.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class UsersTab extends StatefulWidget {
   const UsersTab({super.key});
@@ -475,7 +478,7 @@ class _UsersTabState extends State<UsersTab> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.secondaryColor.withOpacity(0.95),
-        title: const AppText(title: 'اختر مندوب المبيعات'),
+        title: const AppText(title: 'اختر دعم فني'),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -568,6 +571,84 @@ class _UsersTabState extends State<UsersTab> {
       });
     }
   }
+
+  /// Start a voice call to a user (for Sales calling clients)
+  // Future<void> _startCallToUser(
+  //   BuildContext context,
+  //   String receiverId,
+  //   String receiverName,
+  // ) async {
+  //   // Check microphone permission
+  //   final micStatus = await Permission.microphone.request();
+  //   if (micStatus.isDenied || micStatus.isPermanentlyDenied) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('يجب السماح بإذن الميكروفون للمكالمات'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //     return;
+  //   }
+
+  //   // Get current user info
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user == null) return;
+
+  //   final userDoc = await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(user.uid)
+  //       .get();
+
+  //   final userData = userDoc.data() ?? {};
+  //   final callerName = userData['name'] ?? 'دعم فني';
+  //   final callerPhone = userData['phone'] ?? '';
+
+  //   // Show loading indicator
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (_) => const Center(child: CircularProgressIndicator()),
+  //   );
+
+  //   try {
+  //     final webrtcService = WebRTCService();
+  //     final callId = await webrtcService.startCall(
+  //       receiverId: receiverId,
+  //       receiverName: receiverName,
+  //       callerName: callerName,
+  //       callerPhone: callerPhone,
+  //     );
+
+  //     // Dismiss loading
+  //     if (mounted) Navigator.of(context).pop();
+
+  //     if (callId != null && mounted) {
+  //       Navigator.of(context).push(
+  //         MaterialPageRoute(
+  //           builder: (_) => CallScreen(
+  //             callId: callId,
+  //             remoteName: receiverName,
+  //             isOutgoing: true,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('فشل بدء المكالمة'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) Navigator.of(context).pop();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+  //     );
+  //   }
+  // }
 
   String _getRoleLabel(String? role) {
     switch (role) {
@@ -762,6 +843,25 @@ class _UsersTabState extends State<UsersTab> {
                                   value: 'add-package',
                                   child: AppText(title: 'إضافة باقة'),
                                 ),
+                                // Call option for Sales to call assigned clients
+                                if (isSales && data['role'] == 'client')
+                                  const PopupMenuItem(
+                                    value: 'call',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.call,
+                                          color: Colors.green,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        AppText(
+                                          title: 'اتصال صوتي',
+                                          color: Colors.green,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 if (isAdmin) ...[
                                   const PopupMenuItem(
                                     value: 'role',
@@ -850,6 +950,12 @@ class _UsersTabState extends State<UsersTab> {
                                   _showChangeRoleDialog(context, data, docId);
                                 if (value == 'delete')
                                   _confirmDelete(context, docId);
+                                // if (value == 'call')
+                                //   _startCallToUser(
+                                //     context,
+                                //     docId,
+                                //     data['name'] ?? 'عميل',
+                                //   );
                               },
                             ),
                           ),

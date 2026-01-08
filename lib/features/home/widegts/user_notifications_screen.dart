@@ -68,7 +68,7 @@ class _UserNotificationsScreenState extends State<UserNotificationsScreen> {
         backgroundColor: AppColors.secondaryColor,
         elevation: 0,
         title: AppText(
-          title: _showHistory ? 'الأرشيف (أقدم من 3 أيام)' : 'الإشعارات',
+          title: _showHistory ? 'الأرشيف' : 'الإشعارات',
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.white,
