@@ -57,10 +57,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
-  // Phone is now required and must be a Saudi Arabian number
+  // Phone is optional - only validate format if provided
   String? _validatePhone(String? value) {
+    // Empty is allowed - phone is optional
     if (value == null || value.trim().isEmpty) {
-      return 'الرجاء إدخال رقم الهاتف';
+      return null;
     }
 
     // Remove spaces, dashes, and parentheses
@@ -242,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // Phone is required - Saudi number
                     GlassTextField(
                       controller: _phoneController,
-                      label: 'رقم الهاتف (سعودي)',
+                      label: 'رقم الهاتف (اختياري)',
                       icon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
                       validator: _validatePhone,
