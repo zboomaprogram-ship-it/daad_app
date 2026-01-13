@@ -8,14 +8,16 @@ import AVFoundation
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // ✅ Configure audio session globally to prevent audioplayers crash
+    // ✅ Configure audio session category ONLY - don't activate yet
     do {
       let audioSession = AVAudioSession.sharedInstance()
-      try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
-      try audioSession.setActive(true)
+      // Set category and options but DON'T activate (setActive) yet
+      // This prevents crash from early activation while still configuring the session
+      try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth, .mixWithOthers])
     } catch {
       print("⚠️ Failed to configure audio session: \(error)")
     }
+
     
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

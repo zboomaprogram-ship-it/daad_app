@@ -17,7 +17,13 @@ class VoiceMessageBubble extends StatefulWidget {
 }
 
 class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  // ✅ LAZY: Only create AudioPlayer when first needed, not at startup
+  AudioPlayer? _audioPlayerInstance;
+  AudioPlayer get _audioPlayer {
+    _audioPlayerInstance ??= AudioPlayer();
+    return _audioPlayerInstance!;
+  }
+
   bool _isPlaying = false;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
@@ -51,7 +57,8 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    // Only dispose if we actually created the player
+    _audioPlayerInstance?.dispose();
     super.dispose();
   }
 
