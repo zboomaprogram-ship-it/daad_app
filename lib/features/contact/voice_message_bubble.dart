@@ -19,8 +19,13 @@ class VoiceMessageBubble extends StatefulWidget {
 class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
   // ✅ LAZY: Only create AudioPlayer when first needed, not at startup
   AudioPlayer? _audioPlayerInstance;
+  bool _listenersInitialized = false;
+
   AudioPlayer get _audioPlayer {
-    _audioPlayerInstance ??= AudioPlayer();
+    if (_audioPlayerInstance == null) {
+      _audioPlayerInstance = AudioPlayer();
+      _setupListeners(); // Set up listeners ONLY when player is first created
+    }
     return _audioPlayerInstance!;
   }
 
@@ -32,9 +37,15 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
   @override
   void initState() {
     super.initState();
-    // ⚠️ CHANGED: Removed setAudioContext from here.
-    // It was conflicting with the microphone.
-    _audioPlayer.onPlayerStateChanged.listen((state) {
+    // ✅ DON'T set up listeners here! That would create AudioPlayer immediately!
+    // Listeners are set up in _setupListeners() when _audioPlayer is first accessed
+  }
+
+  void _setupListeners() {
+    if (_listenersInitialized) return;
+    _listenersInitialized = true;
+
+    _audioPlayerInstance!.onPlayerStateChanged.listen((state) {
       if (mounted) {
         setState(() {
           _isPlaying = state == PlayerState.playing;
@@ -46,11 +57,11 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       }
     });
 
-    _audioPlayer.onDurationChanged.listen((newDuration) {
+    _audioPlayerInstance!.onDurationChanged.listen((newDuration) {
       if (mounted) setState(() => _duration = newDuration);
     });
 
-    _audioPlayer.onPositionChanged.listen((newPosition) {
+    _audioPlayerInstance!.onPositionChanged.listen((newPosition) {
       if (mounted) setState(() => _position = newPosition);
     });
   }
