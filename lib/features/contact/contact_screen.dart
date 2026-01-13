@@ -1069,17 +1069,14 @@ class _UserChatScreenState extends State<UserChatScreen> {
                                             .isNotEmpty ||
                                         _replyMessage != null)
                                     ? Colors.white.withOpacity(0.2)
-                                    : Colors.red.withOpacity(0.7),
+                                    : Colors.grey.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(24.r),
                                 border: Border.all(
                                   color: Colors.white.withOpacity(0.3),
                                 ),
                               ),
-                              child: Icon(
-                                (_messageController.text.trim().isNotEmpty ||
-                                        _replyMessage != null)
-                                    ? Icons.send_rounded
-                                    : Icons.mic_rounded,
+                              child: const Icon(
+                                Icons.send_rounded,
                                 color: Colors.white,
                                 size: 22,
                               ),
