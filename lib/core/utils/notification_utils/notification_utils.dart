@@ -14,23 +14,39 @@ class NotificationService {
   static Future<void> initialize() async {
     try {
       final appId = oneSignalAppId;
-      if (appId.isEmpty) {
-        DebugLogger.error('❌ OneSignal App ID is empty!');
+      if (appId.isEmpty || appId == '') {
+        DebugLogger.error(
+          '❌ OneSignal App ID is empty! Skipping initialization.',
+        );
         return;
       }
 
+      DebugLogger.info('🔔 Initializing OneSignal...');
+
+      // Set debug logging level
       OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
 
       // ✅ Disable location tracking to avoid requiring location permissions
       OneSignal.Location.setShared(false);
 
+      // Initialize OneSignal with App ID
       OneSignal.initialize(appId);
-      await OneSignal.Notifications.requestPermission(true);
+
+      // Request notification permission (may fail silently on iOS)
+      try {
+        await OneSignal.Notifications.requestPermission(true);
+      } catch (permissionError) {
+        DebugLogger.warning('⚠️ Permission request failed: $permissionError');
+        // Don't throw - continue anyway
+      }
+
       DebugLogger.success(
         '✅ OneSignal initialized with App ID: ${appId.substring(0, 8)}...',
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       DebugLogger.error('❌ OneSignal initialization failed: $e');
+      DebugLogger.error('Stack trace: $stackTrace');
+      // Don't rethrow - allow app to continue without notifications
     }
   }
 

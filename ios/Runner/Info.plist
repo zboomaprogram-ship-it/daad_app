@@ -48,7 +48,11 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>نحتاج الوصول إلى مكتبة الصور لتتمكن من رفع لقطات شاشة لأنشطتك لكسب نقاط الولاء، واختيار صورة ملفك الشخصي.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>نحتاج الوصول إلى موقعك لإرسال إشعارات مخصصة لمنطقتك عند الحاجة.</string>
+	<string>نحتاج الوصول إلى موقعك لإرسال إشعارات مخصصة وعروض بناءً على منطقتك.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>نحتاج الوصول إلى موقعك لإرسال إشعارات مخصصة وعروض بناءً على منطقتك.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>نحتاج الوصول إلى موقعك لإرسال إشعارات مخصصة وعروض بناءً على منطقتك.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>نحتاج إذن الميكروفون لتسجيل الرسائل الصوتية للتواصل مع الدعم الفني.</string>
 	<key>UIBackgroundModes</key>
