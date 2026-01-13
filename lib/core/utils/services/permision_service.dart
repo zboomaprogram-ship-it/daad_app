@@ -11,12 +11,17 @@ class PermissionService {
   /// - NO pressure dialogs after denial
   /// - ONLY show neutral info when user ACTIVELY tries to use feature
   static Future<PermissionResult> requestPhotosPermission() async {
+    // ✅ ANDROID 13+: No permissions needed if using Photo Picker
+    // We treat it as "granted" so the UI proceeds to open the picker.
+    if (Platform.isAndroid) {
+      return PermissionResult.granted;
+    }
+
+    // iOS Logic
     final prefs = await SharedPreferences.getInstance();
     final hasAskedBefore = prefs.getBool(_photosAskedKey) ?? false;
 
-    Permission permission = Platform.isIOS
-        ? Permission.photos
-        : Permission.photos;
+    Permission permission = Permission.photos;
 
     PermissionStatus status = await permission.status;
 
@@ -50,8 +55,10 @@ class PermissionService {
 
   /// ✅ Check current permission status without requesting
   static Future<bool> hasPhotosPermission() async {
-    final permission = Platform.isIOS ? Permission.photos : Permission.photos;
+    // ✅ ANDROID: Always return true to allow UI to proceed to picker
+    if (Platform.isAndroid) return true;
 
+    final permission = Permission.photos;
     final status = await permission.status;
     return status.isGranted || status.isLimited;
   }

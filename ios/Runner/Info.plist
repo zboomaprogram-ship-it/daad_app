@@ -47,6 +47,10 @@
 	<string>نحتاج إذن حفظ الصور لتحميل عقودك واتفاقياتك كصور إلى ألبوم الصور عند طلبك ذلك.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>نحتاج الوصول إلى مكتبة الصور لتتمكن من رفع لقطات شاشة لأنشطتك لكسب نقاط الولاء، واختيار صورة ملفك الشخصي.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>نحتاج الوصول إلى موقعك لإرسال إشعارات مخصصة لمنطقتك عند الحاجة.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>نحتاج إذن الميكروفون لتسجيل الرسائل الصوتية للتواصل مع الدعم الفني.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
@@ -71,5 +75,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 </dict>
 </plist>

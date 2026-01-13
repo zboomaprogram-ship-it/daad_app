@@ -20,6 +20,10 @@ class NotificationService {
       }
 
       OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+      // ✅ Disable location tracking to avoid requiring location permissions
+      OneSignal.Location.setShared(false);
+
       OneSignal.initialize(appId);
       await OneSignal.Notifications.requestPermission(true);
       DebugLogger.success(

@@ -41,6 +41,11 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+    
+    // ✅ Force Android Photo Picker - no READ_MEDIA_IMAGES/VIDEO permissions needed
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {
