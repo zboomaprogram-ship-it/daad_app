@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
+// import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -238,7 +238,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
   final _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
 
-  final AudioRecorder _audioRecorder = AudioRecorder();
+  // final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   Timer? _recordingTimer;
   int _recordDuration = 0;
@@ -510,7 +510,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
         final path =
             '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
-        const config = RecordConfig(encoder: AudioEncoder.aacLc);
+        // const config = RecordConfig(encoder: AudioEncoder.aacLc);
 
         await _audioRecorder.start(config, path: path);
 
@@ -1095,14 +1095,11 @@ class _UserChatScreenState extends State<UserChatScreen> {
                         ),
                         SizedBox(width: 10.w),
                         GestureDetector(
-                          onTap: () {
-                            if (_messageController.text.trim().isNotEmpty ||
-                                _replyMessage != null) {
-                              _sendMessage();
-                            } else {
-                              _startRecording();
-                            }
-                          },
+                          onTap:
+                              (_messageController.text.trim().isNotEmpty ||
+                                  _replyMessage != null)
+                              ? () => _sendMessage()
+                              : null, // Mic disabled
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(24.r),
                             child: BackdropFilter(
@@ -1349,9 +1346,13 @@ class _MessageBubble extends StatelessWidget {
                           ],
 
                           if (messageType == 'audio' && audioUrl != null) ...[
-                            VoiceMessageBubble(
-                              audioUrl: audioUrl,
-                              isSender: !isFromSupport,
+                            // Voice messages currently disabled
+                            const Text(
+                              '🎤 الرسائل الصوتية معطلة مؤقتاً',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                             if (text.isNotEmpty) SizedBox(height: 8.h),
                           ],

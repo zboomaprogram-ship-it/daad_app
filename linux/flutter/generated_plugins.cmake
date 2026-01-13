@@ -3,12 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_linux
   file_selector_linux
   flutter_localization
   flutter_secure_storage_linux
   open_file_linux
-  record_linux
   syncfusion_pdfviewer_linux
   url_launcher_linux
 )

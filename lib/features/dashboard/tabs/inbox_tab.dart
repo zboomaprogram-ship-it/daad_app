@@ -19,7 +19,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart'; // Voice Recording
+// import 'package:record/record.dart'; // Voice Recording
 import 'package:url_launcher/url_launcher.dart';
 
 // ============================================
@@ -1081,19 +1081,10 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
                           ),
                         ),
                         IconButton(
-                          icon: Icon(
-                            _messageController.text.trim().isEmpty
-                                ? Icons.mic
-                                : Icons.send,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () {
-                            if (_messageController.text.trim().isNotEmpty) {
-                              _sendMessage();
-                            } else {
-                              _startRecording();
-                            }
-                          },
+                          icon: const Icon(Icons.send, color: Colors.blue),
+                          onPressed: _messageController.text.trim().isNotEmpty
+                              ? () => _sendMessage()
+                              : null, // Mic disabled
                         ),
                       ],
                     ),
@@ -1233,8 +1224,14 @@ class _MessageBubble extends StatelessWidget {
                     errorWidget: (_, __, ___) => const Icon(Icons.error),
                   ),
                 ),
-              if (type == 'audio')
-                VoiceMessageBubble(audioUrl: url, isSender: isFromSupport),
+              // Voice messages currently disabled
+              const Text(
+                '🎤 الرسائل الصوتية معطلة مؤقتاً',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
               if (type == 'file')
                 GestureDetector(
                   onTap: () => _openFile(context, url),
