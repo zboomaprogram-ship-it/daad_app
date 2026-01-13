@@ -237,18 +237,19 @@ class _UserChatScreenState extends State<UserChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-
+  // DISABLED: Voice recording feature
   // final AudioRecorder _audioRecorder = AudioRecorder();
-  bool _isRecording = false;
-  Timer? _recordingTimer;
-  int _recordDuration = 0;
+  // bool _isRecording = false;
+  bool _isUploadingMedia = false;
+  // Timer? _recordingTimer;
+  // int _recordDuration = 0;
 
   Map<String, dynamic>? _replyMessage;
 
   String? _chatId;
   String? _assignedSalesId;
   bool _isLoading = true;
-  bool _isUploadingMedia = false;
+  // bool _isUploadingMedia = false; // This was already present, keeping the one above.
 
   static const int _messagesLimit = 30;
   DocumentSnapshot? _lastDocument;
@@ -269,9 +270,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
-    _messagesSubscription?.cancel();
-    _audioRecorder.dispose();
-    _recordingTimer?.cancel();
+    // _audioRecorder.dispose(); // DISABLED
+    // _recordingTimer?.cancel(); // DISABLED
+    _messages.clear();
     super.dispose();
   }
 
@@ -499,77 +500,33 @@ class _UserChatScreenState extends State<UserChatScreen> {
         .update({'unreadByUser': FieldValue.increment(-1)});
   }
 
-  // --- RECORDING FUNCTIONS ---
-  Future<void> _startRecording() async {
-    try {
-      var status = await Permission.microphone.status;
-      if (status.isDenied) status = await Permission.microphone.request();
+  // void _cancelReply() => setState(() => _replyMessage = null);
 
-      if (await _audioRecorder.hasPermission()) {
-        final dir = await getTemporaryDirectory();
-        final path =
-            '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+  // ---RECORDING --- DISABLED
+  // Future<void> _startRecording() async {
+  //   // Recording functionality disabled
+  // }
+  //
+  // Future<void> _stopRecording({bool send = true}) async {
+  //     }
+  //   } catch (e) {
+  //     print("Error stopping record: $e");
+  //     setState(() => _isUploadingMedia = false);
+  //   }
+  // }
 
-        // const config = RecordConfig(encoder: AudioEncoder.aacLc);
+  // Future<void> _cancelRecording() async {
+  //   await _stopRecording(send: false);
+  //   setState(() {
+  //     _recordDuration = 0;
+  //   });
+  // }
 
-        await _audioRecorder.start(config, path: path);
-
-        setState(() {
-          _isRecording = true;
-          _recordDuration = 0;
-        });
-
-        _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          setState(() {
-            _recordDuration++;
-          });
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("يرجى تفعيل صلاحية الميكروفون")),
-        );
-      }
-    } catch (e) {
-      print("Error starting record: $e");
-    }
-  }
-
-  Future<void> _stopRecording({bool send = true}) async {
-    try {
-      final path = await _audioRecorder.stop();
-      _recordingTimer?.cancel();
-      setState(() {
-        _isRecording = false;
-      });
-
-      if (send && path != null) {
-        final file = File(path);
-        setState(() => _isUploadingMedia = true);
-        final audioUrl = await WordPressMediaService.uploadAudio(file);
-        setState(() => _isUploadingMedia = false);
-
-        if (audioUrl != null) {
-          await _sendMessage(audioUrl: audioUrl, messageType: 'audio');
-        }
-      }
-    } catch (e) {
-      print("Error stopping record: $e");
-      setState(() => _isUploadingMedia = false);
-    }
-  }
-
-  Future<void> _cancelRecording() async {
-    await _stopRecording(send: false);
-    setState(() {
-      _recordDuration = 0;
-    });
-  }
-
-  String _formatRecordDuration(int seconds) {
-    final mins = (seconds ~/ 60).toString().padLeft(2, '0');
-    final secs = (seconds % 60).toString().padLeft(2, '0');
-    return '$mins:$secs';
-  }
+  // String _formatRecordDuration(int seconds) {
+  //   final mins = (seconds ~/ 60).toString().padLeft(2, '0');
+  //   final secs = (seconds % 60).toString().padLeft(2, '0');
+  //   return '$mins:$secs';
+  // }
 
   // --- MEDIA FUNCTIONS ---
   Future<void> _pickAndSendImage() async {
@@ -948,192 +905,190 @@ class _UserChatScreenState extends State<UserChatScreen> {
                   top: BorderSide(color: Colors.white.withOpacity(0.1)),
                 ),
               ),
-              child: _isRecording
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: _cancelRecording,
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              _formatRecordDuration(_recordDuration),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "جاري التسجيل...",
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                        SizedBox(width: 10.w),
-                        GestureDetector(
-                          onTap: () => _stopRecording(send: true),
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.primaryColor,
-                            radius: 24.r,
-                            child: const Icon(Icons.send, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _isUploadingMedia
-                              ? null
-                              : () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: AppColors.secondaryColor,
-                                    builder: (_) => Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ListTile(
-                                          leading: const Icon(
-                                            Icons.image,
-                                            color: Colors.white,
-                                          ),
-                                          title: const Text(
-                                            'إرسال صورة',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _pickAndSendImage();
-                                          },
+              child:
+                  // _isRecording
+                  //     ? Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           IconButton(
+                  //             icon: const Icon(Icons.delete, color: Colors.red),
+                  //             onPressed: _cancelRecording,
+                  //           ),
+                  //           Expanded(
+                  //             child: Center(
+                  //               child: Text(
+                  //                 _formatRecordDuration(_recordDuration),
+                  //                 style: TextStyle(
+                  //                   color: Colors.white,
+                  //                   fontSize: 18.sp,
+                  //                   fontWeight: FontWeight.bold,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           const Text(
+                  //             "جاري التسجيل...",
+                  //             style: TextStyle(color: Colors.white70),
+                  //           ),
+                  //           SizedBox(width: 10.w),
+                  //           GestureDetector(
+                  //             onTap: () => _stopRecording(send: true),
+                  //             child: CircleAvatar(
+                  //               backgroundColor: AppColors.primaryColor,
+                  //               radius: 24.r,
+                  //               child: const Icon(Icons.send, color: Colors.white),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       )
+                  //     :
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _isUploadingMedia
+                            ? null
+                            : () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: AppColors.secondaryColor,
+                                  builder: (_) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.image,
+                                          color: Colors.white,
                                         ),
-                                        ListTile(
-                                          leading: const Icon(
-                                            Icons.attach_file,
-                                            color: Colors.white,
-                                          ),
-                                          title: const Text(
-                                            'إرسال ملف',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _pickAndSendFile();
-                                          },
+                                        title: const Text(
+                                          'إرسال صورة',
+                                          style: TextStyle(color: Colors.white),
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                          child: Container(
-                            width: 44.w,
-                            height: 44.h,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(24.r),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                            ),
-                            child: _isUploadingMedia
-                                ? const Center(
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _pickAndSendImage();
+                                        },
                                       ),
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.attach_file,
+                                          color: Colors.white,
+                                        ),
+                                        title: const Text(
+                                          'إرسال ملف',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _pickAndSendFile();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                        child: Container(
+                          width: 44.w,
+                          height: 44.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(24.r),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                            ),
+                          ),
+                          child: _isUploadingMedia
+                              ? const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
                                     ),
-                                  )
-                                : const Icon(
-                                    Icons.attach_file,
-                                    color: Colors.white,
-                                    size: 20,
                                   ),
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(24.r),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(24.r),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
-                                  ),
-                                ),
-                                child: TextField(
-                                  controller: _messageController,
-                                  onChanged: (val) {
-                                    setState(() {});
-                                  },
-                                  style: const TextStyle(color: Colors.white),
-                                  maxLines: null,
-                                  decoration: const InputDecoration(
-                                    hintText: 'اكتب رسالتك...',
-                                    hintStyle: TextStyle(color: Colors.white60),
-                                    border: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        GestureDetector(
-                          onTap:
-                              (_messageController.text.trim().isNotEmpty ||
-                                  _replyMessage != null)
-                              ? () => _sendMessage()
-                              : null, // Mic disabled
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(24.r),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                width: 44.w,
-                                height: 44.h,
-                                decoration: BoxDecoration(
-                                  color:
-                                      (_messageController.text
-                                              .trim()
-                                              .isNotEmpty ||
-                                          _replyMessage != null)
-                                      ? Colors.white.withOpacity(0.2)
-                                      : Colors.red.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(24.r),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Icon(
-                                  (_messageController.text.trim().isNotEmpty ||
-                                          _replyMessage != null)
-                                      ? Icons.send_rounded
-                                      : Icons.mic_rounded,
+                                )
+                              : const Icon(
+                                  Icons.attach_file,
                                   color: Colors.white,
-                                  size: 22,
+                                  size: 20,
+                                ),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(24.r),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: _messageController,
+                                onChanged: (val) {
+                                  setState(() {});
+                                },
+                                style: const TextStyle(color: Colors.white),
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  hintText: 'اكتب رسالتك...',
+                                  hintStyle: TextStyle(color: Colors.white60),
+                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(width: 10.w),
+                      GestureDetector(
+                        onTap:
+                            (_messageController.text.trim().isNotEmpty ||
+                                _replyMessage != null)
+                            ? () => _sendMessage()
+                            : null, // Mic disabled
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              width: 44.w,
+                              height: 44.h,
+                              decoration: BoxDecoration(
+                                color:
+                                    (_messageController.text
+                                            .trim()
+                                            .isNotEmpty ||
+                                        _replyMessage != null)
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.red.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(24.r),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Icon(
+                                (_messageController.text.trim().isNotEmpty ||
+                                        _replyMessage != null)
+                                    ? Icons.send_rounded
+                                    : Icons.mic_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
             ),
           ],
         ),

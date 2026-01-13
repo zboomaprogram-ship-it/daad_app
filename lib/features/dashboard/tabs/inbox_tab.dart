@@ -616,13 +616,14 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-  final AudioRecorder _audioRecorder = AudioRecorder();
+  // DISABLED: Voice recording feature
+  // final AudioRecorder _audioRecorder = AudioRecorder();
 
   String? _userId;
-  bool _isRecording = false;
+  // bool _isRecording = false;
   bool _isUploadingMedia = false;
-  Timer? _recordingTimer;
-  int _recordDuration = 0;
+  // Timer? _recordingTimer;
+  // int _recordDuration = 0;
   Map<String, dynamic>? _replyMessage;
 
   @override
@@ -636,8 +637,8 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
-    _audioRecorder.dispose();
-    _recordingTimer?.cancel();
+    // _audioRecorder.dispose(); // DISABLED
+    // _recordingTimer?.cancel(); // DISABLED
     super.dispose();
   }
 
@@ -684,54 +685,54 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
 
   void _cancelReply() => setState(() => _replyMessage = null);
 
-  // --- RECORDING ---
-  Future<void> _startRecording() async {
-    try {
-      var status = await Permission.microphone.status;
-      if (status.isDenied) status = await Permission.microphone.request();
-
-      if (await _audioRecorder.hasPermission()) {
-        final dir = await getTemporaryDirectory();
-        final path =
-            '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
-        await _audioRecorder.start(
-          const RecordConfig(encoder: AudioEncoder.aacLc),
-          path: path,
-        );
-        setState(() {
-          _isRecording = true;
-          _recordDuration = 0;
-        });
-        _recordingTimer = Timer.periodic(
-          const Duration(seconds: 1),
-          (timer) => setState(() => _recordDuration++),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> _stopRecording({bool send = true}) async {
-    final path = await _audioRecorder.stop();
-    _recordingTimer?.cancel();
-    setState(() => _isRecording = false);
-    if (send && path != null) {
-      setState(() => _isUploadingMedia = true);
-      final audioUrl = await WordPressMediaService.uploadAudio(File(path));
-      setState(() => _isUploadingMedia = false);
-      if (audioUrl != null) {
-        await _sendMessage(audioUrl: audioUrl, messageType: 'audio');
-      }
-    }
-  }
-
-  Future<void> _cancelRecording() async {
-    await _stopRecording(send: false);
-    setState(() {
-      _recordDuration = 0;
-    });
-  }
+  // --- RECORDING --- DISABLED
+  // Future<void> _startRecording() async {
+  //   try {
+  //     var status = await Permission.microphone.status;
+  //     if (status.isDenied) status = await Permission.microphone.request();
+  //
+  //     if (await _audioRecorder.hasPermission()) {
+  //       final dir = await getTemporaryDirectory();
+  //       final path =
+  //           '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+  //       await _audioRecorder.start(
+  //         const RecordConfig(encoder: AudioEncoder.aacLc),
+  //         path: path,
+  //       );
+  //       setState(() {
+  //         _isRecording = true;
+  //         _recordDuration = 0;
+  //       });
+  //       _recordingTimer = Timer.periodic(
+  //         const Duration(seconds: 1),
+  //         (timer) => setState(() => _recordDuration++),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+  //
+  // Future<void> _stopRecording({bool send = true}) async {
+  //   final path = await _audioRecorder.stop();
+  //   _recordingTimer?.cancel();
+  //   setState(() => _isRecording = false);
+  //   if (send && path != null) {
+  //     setState(() => _isUploadingMedia = true);
+  //     final audioUrl = await WordPressMediaService.uploadAudio(File(path));
+  //     setState(() => _isUploadingMedia = false);
+  //     if (audioUrl != null) {
+  //       await _sendMessage(audioUrl: audioUrl, messageType: 'audio');
+  //     }
+  //   }
+  // }
+  //
+  // Future<void> _cancelRecording() async {
+  //   await _stopRecording(send: false);
+  //   setState(() {
+  //     _recordDuration = 0;
+  //   });
+  // }
 
   // --- SEND MESSAGE ---
   Future<void> _sendMessage({
@@ -971,123 +972,93 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
             Container(
               padding: EdgeInsets.all(16.r),
               color: Colors.white10,
-              child: _isRecording
-                  ? Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _cancelRecording(),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              _formatDuration(_recordDuration),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => _stopRecording(send: true),
-                          child: const CircleAvatar(child: Icon(Icons.send)),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _isUploadingMedia
-                              ? null
-                              : () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: AppColors.secondaryColor,
-                                    builder: (_) => Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ListTile(
-                                          leading: const Icon(
-                                            Icons.image,
-                                            color: Colors.white,
-                                          ),
-                                          title: const Text(
-                                            'صورة',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _pickAndSendImage();
-                                          },
-                                        ),
-                                        ListTile(
-                                          leading: const Icon(
-                                            Icons.attach_file,
-                                            color: Colors.white,
-                                          ),
-                                          title: const Text(
-                                            'ملف',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _pickAndSendFile();
-                                          },
-                                        ),
-                                      ],
+              // DISABLED: Recording UI removed
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: _isUploadingMedia
+                        ? null
+                        : () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: AppColors.secondaryColor,
+                              builder: (_) => Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(
+                                      Icons.image,
+                                      color: Colors.white,
                                     ),
-                                  );
-                                },
-                          child: Container(
-                            width: 44.w,
-                            height: 44.h,
-                            decoration: BoxDecoration(
-                              color: Colors.white10,
-                              borderRadius: BorderRadius.circular(24.r),
-                              border: Border.all(color: Colors.white24),
-                            ),
-                            child: _isUploadingMedia
-                                ? const Center(
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
+                                    title: const Text(
+                                      'صورة',
+                                      style: TextStyle(color: Colors.white),
                                     ),
-                                  )
-                                : const Icon(
-                                    Icons.attach_file,
-                                    color: Colors.white,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _pickAndSendImage();
+                                    },
                                   ),
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            onChanged: (val) => setState(() {}),
-                            style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
-                              hintText: 'اكتب ردك...',
-                              hintStyle: TextStyle(color: Colors.white60),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.send, color: Colors.blue),
-                          onPressed: _messageController.text.trim().isNotEmpty
-                              ? () => _sendMessage()
-                              : null, // Mic disabled
-                        ),
-                      ],
+                                  ListTile(
+                                    leading: const Icon(
+                                      Icons.attach_file,
+                                      color: Colors.white,
+                                    ),
+                                    title: const Text(
+                                      'ملف',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _pickAndSendFile();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                    child: Container(
+                      width: 44.w,
+                      height: 44.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(24.r),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: _isUploadingMedia
+                          ? const Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : const Icon(Icons.attach_file, color: Colors.white),
                     ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      onChanged: (val) => setState(() {}),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: 'اكتب ردك...',
+                        hintStyle: TextStyle(color: Colors.white60),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send, color: Colors.blue),
+                    onPressed: _messageController.text.trim().isNotEmpty
+                        ? () => _sendMessage()
+                        : null, // Mic disabled
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -1095,8 +1066,8 @@ class _SharedSupportChatState extends State<_SharedSupportChat> {
     );
   }
 
-  String _formatDuration(int s) =>
-      '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
+  // String _formatDuration(int s) =>
+  //     '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
 }
 
 // ============================================
