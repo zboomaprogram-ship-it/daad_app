@@ -8,7 +8,6 @@ import 'package:daad_app/core/utils/notification_utils/notification_utils.dart';
 import 'package:daad_app/core/utils/services/deep_link_handler.dart';
 import 'package:daad_app/core/utils/helpers/debouncer.dart';
 
-import 'package:daad_app/features/contact/voice_message_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Clipboard/Haptic
 import 'package:daad_app/core/widgets/app_text.dart';
@@ -1196,13 +1195,13 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
               // Voice messages currently disabled
-              const Text(
-                '🎤 الرسائل الصوتية معطلة مؤقتاً',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
+              // const Text(
+              //   '🎤 الرسائل الصوتية معطلة مؤقتاً',
+              //   style: TextStyle(
+              //     color: Colors.white70,
+              //     fontStyle: FontStyle.italic,
+              //   ),
+              // ),
               if (type == 'file')
                 GestureDetector(
                   onTap: () => _openFile(context, url),
