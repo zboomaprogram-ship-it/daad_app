@@ -31,6 +31,14 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   
+  # ✅ Pin Firebase to 10.x for Xcode 14 compatibility (11.x requires Swift 6/Xcode 16+)
+  pod 'Firebase/Core', '10.29.0'
+  pod 'Firebase/Auth', '10.29.0'
+  pod 'Firebase/Firestore', '10.29.0'
+  pod 'Firebase/Messaging', '10.29.0'
+  pod 'Firebase/Storage', '10.29.0'
+  pod 'Firebase/RemoteConfig', '10.29.0'
+  
   pod 'SDWebImage', '<= 5.19.0'
   target 'RunnerTests' do
     inherit! :search_paths

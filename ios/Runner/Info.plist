@@ -7,6 +7,9 @@
 	<false/>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>
 	<false/>
+	<!-- ✅ CRITICAL: Disable FCM auto-init - prevents crash during plugin registration -->
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
